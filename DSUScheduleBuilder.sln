@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27130.2020
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DSUScheduleBuilder", "DSUScheduleBuilder\DSUScheduleBuilder.csproj", "{758A716A-9BF2-4090-9046-9CA2ED07C69B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DSUScheduleBuilderServer", "DSUScheduleBuilderServer\DSUScheduleBuilderServer.csproj", "{4C9AAA5F-EC01-4EA4-98EA-EFA65DD8994D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{758A716A-9BF2-4090-9046-9CA2ED07C69B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{758A716A-9BF2-4090-9046-9CA2ED07C69B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{758A716A-9BF2-4090-9046-9CA2ED07C69B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C9AAA5F-EC01-4EA4-98EA-EFA65DD8994D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C9AAA5F-EC01-4EA4-98EA-EFA65DD8994D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C9AAA5F-EC01-4EA4-98EA-EFA65DD8994D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C9AAA5F-EC01-4EA4-98EA-EFA65DD8994D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
