@@ -1,0 +1,4 @@
+{
+    "info":"DELETE THIS FIELD, IT'S PURELY FOR CONVEYING INFORMATION; Change your config json file name to {name}_config.json so that .gitignore picks it up",
+    "browser": "{path to webdriver}"
+}
