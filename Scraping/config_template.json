@@ -1,4 +1,6 @@
 {
     "info":"DELETE THIS FIELD, IT'S PURELY FOR CONVEYING INFORMATION; Change your config json file name to {name}_config.json so that .gitignore picks it up",
-    "browser": "{path to webdriver}"
+    "browser": "{path to webdriver}",
+    "type": "{type of webdriver, 'chrome' for google chrome driver, 'firefox' for firefox}",
+    "headless": false
 }
