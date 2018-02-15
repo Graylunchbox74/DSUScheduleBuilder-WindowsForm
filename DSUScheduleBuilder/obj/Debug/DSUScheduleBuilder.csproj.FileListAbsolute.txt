@@ -1,0 +1,9 @@
+D:\DSUScheduleBuilder\DSUScheduleBuilder\bin\Debug\DSUScheduleBuilder.exe
+D:\DSUScheduleBuilder\DSUScheduleBuilder\bin\Debug\DSUScheduleBuilder.pdb
+D:\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.Login.resources
+D:\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.MainMenu.resources
+D:\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.Properties.Resources.resources
+D:\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.csproj.GenerateResource.Cache
+D:\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.csproj.CoreCompileInputs.cache
+D:\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.exe
+D:\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.pdb

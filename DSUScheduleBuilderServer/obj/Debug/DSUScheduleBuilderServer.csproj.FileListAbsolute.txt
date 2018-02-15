@@ -1,0 +1,6 @@
+D:\DSUScheduleBuilder\DSUScheduleBuilderServer\bin\Debug\DSUScheduleBuilderServer.exe
+D:\DSUScheduleBuilder\DSUScheduleBuilderServer\bin\Debug\DSUScheduleBuilderServer.pdb
+D:\DSUScheduleBuilder\DSUScheduleBuilderServer\obj\Debug\DSUScheduleBuilderServer.csprojResolveAssemblyReference.cache
+D:\DSUScheduleBuilder\DSUScheduleBuilderServer\obj\Debug\DSUScheduleBuilderServer.csproj.CoreCompileInputs.cache
+D:\DSUScheduleBuilder\DSUScheduleBuilderServer\obj\Debug\DSUScheduleBuilderServer.exe
+D:\DSUScheduleBuilder\DSUScheduleBuilderServer\obj\Debug\DSUScheduleBuilderServer.pdb
