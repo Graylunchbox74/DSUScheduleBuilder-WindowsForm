@@ -9,9 +9,9 @@ using System.Windows.Forms;
 
 namespace DSUScheduleBuilder
 {
-    public partial class Form2 : Form
+    public partial class UpdateUser : Form
     {
-        public Form2()
+        public UpdateUser()
         {
             InitializeComponent();
         }

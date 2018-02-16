@@ -1,6 +1,6 @@
 ﻿namespace DSUScheduleBuilder
 {
-    partial class Form2
+    partial class UpdateUser
     {
         /// <summary>
         /// Required designer variable.
@@ -28,17 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.SuspendLayout();
-            // 
-            // Form2
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.components = new System.ComponentModel.Container();
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(953, 649);
-            this.Name = "Form2";
-            this.Text = "Form2";
-            this.ResumeLayout(false);
-
+            this.Text = "Form1";
         }
 
         #endregion

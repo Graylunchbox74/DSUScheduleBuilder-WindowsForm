@@ -7,3 +7,5 @@ D:\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.csproj.Gen
 D:\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.csproj.CoreCompileInputs.cache
 D:\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.exe
 D:\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.pdb
+D:\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.csprojResolveAssemblyReference.cache
+D:\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.Form2.resources
