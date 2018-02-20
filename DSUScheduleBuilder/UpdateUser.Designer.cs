@@ -59,6 +59,8 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(201, 26);
             this.textBox1.TabIndex = 1;
+            this.textBox1.Text = "<username>";
+            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // label1
             // 
@@ -104,11 +106,12 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(25, 172);
+            this.label4.Location = new System.Drawing.Point(29, 172);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(93, 20);
             this.label4.TabIndex = 7;
             this.label4.Text = "Add Course";
+            this.label4.Click += new System.EventHandler(this.label4_Click);
             // 
             // label5
             // 
