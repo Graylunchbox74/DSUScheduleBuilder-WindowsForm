@@ -9,6 +9,7 @@ namespace DSUScheduleBuilderServer
     {
         static void Main(string[] args)
         {
+            
         }
     }
 }

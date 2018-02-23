@@ -9,3 +9,15 @@ D:\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.exe
 D:\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.pdb
 D:\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.csprojResolveAssemblyReference.cache
 D:\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.Form2.resources
+C:\Users\brend\source\repos\DSUScheduleBuilder\DSUScheduleBuilder\bin\Debug\DSUScheduleBuilder.exe
+C:\Users\brend\source\repos\DSUScheduleBuilder\DSUScheduleBuilder\bin\Debug\DSUScheduleBuilder.pdb
+C:\Users\brend\source\repos\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.csprojResolveAssemblyReference.cache
+C:\Users\brend\source\repos\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.NewUser.resources
+C:\Users\brend\source\repos\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.Login.resources
+C:\Users\brend\source\repos\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.MainMenu.resources
+C:\Users\brend\source\repos\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.Properties.Resources.resources
+C:\Users\brend\source\repos\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.UpdateUser.resources
+C:\Users\brend\source\repos\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.csproj.GenerateResource.Cache
+C:\Users\brend\source\repos\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.csproj.CoreCompileInputs.cache
+C:\Users\brend\source\repos\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.exe
+C:\Users\brend\source\repos\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.pdb

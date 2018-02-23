@@ -68,6 +68,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WeekView.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <EmbeddedResource Include="NewUser.resx">
       <DependentUpon>NewUser.cs</DependentUpon>
     </EmbeddedResource>
@@ -89,6 +92,7 @@
     <EmbeddedResource Include="UpdateUser.resx">
       <DependentUpon>UpdateUser.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="Properties\DataSources\ScheduleData.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
