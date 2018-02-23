@@ -1,2 +1,4 @@
 .vs/
 Scraping/*_config.json
+DSUScheduleBuilder/bin/
+DSUScheduleBuilder/obj/
