@@ -90,9 +90,9 @@
             // 
             // weekView1
             // 
-            this.weekView1.Location = new System.Drawing.Point(244, 121);
+            this.weekView1.Location = new System.Drawing.Point(124, 10);
             this.weekView1.Name = "weekView1";
-            this.weekView1.Size = new System.Drawing.Size(271, 166);
+            this.weekView1.Size = new System.Drawing.Size(872, 513);
             this.weekView1.TabIndex = 5;
             this.weekView1.Text = "weekView1";
             // 
@@ -100,7 +100,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(748, 568);
+            this.ClientSize = new System.Drawing.Size(1005, 534);
             this.Controls.Add(this.weekView1);
             this.Controls.Add(this.CurrentBtn);
             this.Controls.Add(this.LogoutBtn);
