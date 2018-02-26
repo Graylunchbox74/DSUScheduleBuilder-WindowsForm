@@ -45,3 +45,4 @@ C:\Users\Thomas\Source\Repos\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSU
 C:\Users\Thomas\Source\Repos\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.pdb
 C:\Users\Thomas\Source\Repos\DSUScheduleBuilder\DSUScheduleBuilder\bin\Debug\DSUScheduleBuilder.exe
 C:\Users\Thomas\Source\Repos\DSUScheduleBuilder\DSUScheduleBuilder\bin\Debug\DSUScheduleBuilder.pdb
+C:\Users\Thomas\Source\Repos\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.csprojResolveAssemblyReference.cache
