@@ -1,10 +1,11 @@
 from re import match
+from selenium.webdriver.common.keys import Keys
 from splinter import Browser
 from time import sleep
-import glob, json
+import glob, json, requests
 
 class Course:
-    Open              = False
+    Open               = False
 
     AcademicLevel      = ""
     CourseCode         = ""
@@ -16,14 +17,17 @@ class Course:
     MeetingInformation = ""
     Professor          = ""
     
-    Credits           = 0
-    TimeEnd           = 0
-    TimeStart         = 0
+    Credits            = 0
+    SlotsAvailable     = 0
+    SlotsCapacity      = 0
+    SlotsWaitlist      = 0
+    TimeEnd            = 0
+    TimeStart          = 0
 
-    Lab               = None
-    Prereqcourse      = None
-    Prereqnoncourse   = None
-    Prerequisites     = None
+    Lab                = None
+    Prereqcourse       = None
+    Prereqnoncourse    = None
+    Prerequisites      = None
 
 class Teacher:
     Email = ""
@@ -54,13 +58,14 @@ def main():
             selectDropdown("LIST_VAR1_1", subject)
             selectDropdown("VAR6", "DSU")
             b.find_by_name("SUBMIT2").click()
-            if b.text_is_present("No classes meeting the search criteria have been found."):
+            if b.is_text_present("No classes meeting the search criteria have been found."):
                 continue
-            m = match("Page (\d+) of (\d+)")
+            m = match("Page (\d+) of (\d+)", b.find_by_xpath('//*[@id="GROUP_Grp_WSS_COURSE_SECTIONS_GWT"]/table/tbody/tr[1]/td/table/tbody/tr/td[2]/div').text)
             if m:
                 while m.group(1) != m.group(2):    
-                    m = match("Page (\d+) of (\d+)")
+                    m = match("Page (\d+) of (\d+)", b.find_by_xpath('//*[@id="GROUP_Grp_WSS_COURSE_SECTIONS_GWT"]/table/tbody/tr[1]/td/table/tbody/tr/td[2]/div').text)
                     courses.extend(scrapeTable(b.find_by_xpath('//*[@id="GROUP_Grp_WSS_COURSE_SECTIONS_GWT"]/table/tbody/tr[2]/td/table')))
+                    b.find_by_xpath('//*[@id="GROUP_Grp_WSS_COURSE_SECTIONS_GWT"]/table/tbody/tr[1]/td/table/tbody/tr/td[1]/table/tbody/tr/td[1]/table/tbody/tr/td[3]/button').click()
             else:
                 courses.extend(scrapeTable(b.find_by_xpath('//*[@id="GROUP_Grp_WSS_COURSE_SECTIONS_GWT"]/table/tbody/tr[2]/td/table')))
     #print(semesters)
@@ -84,15 +89,17 @@ def getToQuery():
 
 def scrapeTable(tab):
     courses = []
-    for tr in tab.find_by_tag("tr")[1:]:
+    for n, tr in enumerate(tab.find_by_tag("tr")):
+        if n == 0:
+            continue
         course = Course()
         link = ""
         for e, td in enumerate(tr.find_by_tag("td")):
             if e == 2:
                 course.Open = "Open" in td.text
             elif e == 3:
-                link = td.find_by_tag("a").first.click()
-                #Start
+                b.visit("https://wa-dsu.prod.sdbor.edu/WebAdvisor/webadvisor" + match(r"javascript:window\.open\('(.*)', .*", td.find_by_tag("a")["onclick"]).group(1))
+                #Start scraping for the bulk of the course data
                 course.CourseName = b.find_by_id("VAR1").first.text
                 course.CourseCode = b.find_by_id("VAR2").first.text
                 course.CourseDescription = b.find_by_id("VAR3").first.text
@@ -100,11 +107,18 @@ def scrapeTable(tab):
                 course.Credits = float(b.find_by_id("VAR4").first.text)
                 course.DateStart = b.find_by_id("VAR6").first.text
                 course.DateEnd = b.find_by_id("VAR7").first.text
-                course.MeetingInformation = b.find_by_id("LIST_VAR12_1")first.text
+                course.MeetingInformation = b.find_by_id("LIST_VAR12_1").first.text
                 course.Teacher = Teacher()
                 course.Teacher.Email = b.find_by_id("LIST_VAR10_1").first.text
                 course.Teacher.Name = b.find_by_id("LIST_VAR7_1").first.text
                 course.Teacher.Phone = b.find_by_id("LIST_VAR8_1").first.text
+            elif e == 7:
+                nm = match("(\d+) \/ (\d+) \/ (\d+)", td.text)
+                course.SlotsAvailable = nm.group(1)
+                course.SlotsCapacity = nm.group(2)
+                course.SlotsWaitlist = nm.group(3)
+            elif e == 9:
+                course.AcademicLevel = td.text
         courses.append(course)
     return courses
 
