@@ -42,6 +42,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SearchCourses.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SearchCourses.Designer.cs">
+      <DependentUpon>SearchCourses.cs</DependentUpon>
+    </Compile>
     <Compile Include="UpdateUser.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -89,6 +95,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="SearchCourses.resx">
+      <DependentUpon>SearchCourses.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UpdateUser.resx">
       <DependentUpon>UpdateUser.cs</DependentUpon>
     </EmbeddedResource>

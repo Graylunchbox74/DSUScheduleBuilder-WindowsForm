@@ -35,5 +35,12 @@ namespace DSUScheduleBuilder
         {
 
         }
+
+        private void SearchBtn_Click(object sender, EventArgs e)
+        {
+            SearchCourses s = new SearchCourses();
+            s.Show();
+            this.Hide();
+        }
     }
 }

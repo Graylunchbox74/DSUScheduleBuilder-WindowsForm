@@ -33,3 +33,15 @@ C:\Users\DSU\source\repos\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUSch
 C:\Users\DSU\source\repos\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.csproj.CoreCompileInputs.cache
 C:\Users\DSU\source\repos\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.exe
 C:\Users\DSU\source\repos\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.pdb
+C:\Users\Thomas\Source\Repos\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.NewUser.resources
+C:\Users\Thomas\Source\Repos\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.Login.resources
+C:\Users\Thomas\Source\Repos\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.MainMenu.resources
+C:\Users\Thomas\Source\Repos\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.Properties.Resources.resources
+C:\Users\Thomas\Source\Repos\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.SearchCourses.resources
+C:\Users\Thomas\Source\Repos\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.UpdateUser.resources
+C:\Users\Thomas\Source\Repos\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.csproj.GenerateResource.Cache
+C:\Users\Thomas\Source\Repos\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.csproj.CoreCompileInputs.cache
+C:\Users\Thomas\Source\Repos\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.exe
+C:\Users\Thomas\Source\Repos\DSUScheduleBuilder\DSUScheduleBuilder\obj\Debug\DSUScheduleBuilder.pdb
+C:\Users\Thomas\Source\Repos\DSUScheduleBuilder\DSUScheduleBuilder\bin\Debug\DSUScheduleBuilder.exe
+C:\Users\Thomas\Source\Repos\DSUScheduleBuilder\DSUScheduleBuilder\bin\Debug\DSUScheduleBuilder.pdb
