@@ -1,2 +1,3 @@
 .vs/
 Scraping/*_config.json
+Scraping/*.log
