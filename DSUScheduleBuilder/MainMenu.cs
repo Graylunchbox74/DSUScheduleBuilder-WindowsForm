@@ -30,5 +30,17 @@ namespace DSUScheduleBuilder
         {
 
         }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void SearchBtn_Click(object sender, EventArgs e)
+        {
+            SearchCourses s = new SearchCourses();
+            s.Show();
+            this.Hide();
+        }
     }
 }
