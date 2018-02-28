@@ -18,7 +18,7 @@ namespace DSUScheduleBuilder
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void LoginBtn_Click(object sender, EventArgs e)
         {
             if (UsernameTextbox.Text != "Username" && PasswordTextbox.Text != "Password")
             {
