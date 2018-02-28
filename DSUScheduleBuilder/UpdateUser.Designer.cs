@@ -28,164 +28,164 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.button1 = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.textBox3 = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.button2 = new System.Windows.Forms.Button();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
-            this.comboBox3 = new System.Windows.Forms.ComboBox();
+            this.ConfirmButton = new System.Windows.Forms.Button();
+            this.UserTextbox = new System.Windows.Forms.TextBox();
+            this.NameLabel = new System.Windows.Forms.Label();
+            this.PasswdLabel = new System.Windows.Forms.Label();
+            this.ConfirmPasswdLabel = new System.Windows.Forms.Label();
+            this.PasswordTextbox = new System.Windows.Forms.TextBox();
+            this.ConfirmTextbox = new System.Windows.Forms.TextBox();
+            this.AddCourseLabel = new System.Windows.Forms.Label();
+            this.AddTakenLabel = new System.Windows.Forms.Label();
+            this.CancelButton = new System.Windows.Forms.Button();
+            this.AddDropdown = new System.Windows.Forms.ComboBox();
+            this.RemoveTakenLabel = new System.Windows.Forms.Label();
+            this.AddTakenDropdown = new System.Windows.Forms.ComboBox();
+            this.RemoveTakenDropdown = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
-            // button1
+            // ConfirmButton
             // 
-            this.button1.Location = new System.Drawing.Point(124, 407);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(173, 47);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Confirm Changes";
-            this.button1.UseVisualStyleBackColor = true;
+            this.ConfirmButton.Location = new System.Drawing.Point(124, 407);
+            this.ConfirmButton.Name = "ConfirmButton";
+            this.ConfirmButton.Size = new System.Drawing.Size(173, 47);
+            this.ConfirmButton.TabIndex = 0;
+            this.ConfirmButton.Text = "Confirm Changes";
+            this.ConfirmButton.UseVisualStyleBackColor = true;
             // 
-            // textBox1
+            // UserTextbox
             // 
-            this.textBox1.Location = new System.Drawing.Point(96, 26);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(201, 26);
-            this.textBox1.TabIndex = 1;
-            this.textBox1.Text = "<username>";
-            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            this.UserTextbox.Location = new System.Drawing.Point(96, 26);
+            this.UserTextbox.Name = "UserTextbox";
+            this.UserTextbox.Size = new System.Drawing.Size(201, 26);
+            this.UserTextbox.TabIndex = 1;
+            this.UserTextbox.Text = "<username>";
             // 
-            // label1
+            // NameLabel
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(25, 26);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(55, 20);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Name:";
+            this.NameLabel.AutoSize = true;
+            this.NameLabel.Location = new System.Drawing.Point(25, 26);
+            this.NameLabel.Name = "NameLabel";
+            this.NameLabel.Size = new System.Drawing.Size(55, 20);
+            this.NameLabel.TabIndex = 2;
+            this.NameLabel.Text = "Name:";
             // 
-            // label2
+            // PasswdLabel
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(25, 76);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(82, 20);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Password:";
+            this.PasswdLabel.AutoSize = true;
+            this.PasswdLabel.Location = new System.Drawing.Point(25, 76);
+            this.PasswdLabel.Name = "PasswdLabel";
+            this.PasswdLabel.Size = new System.Drawing.Size(82, 20);
+            this.PasswdLabel.TabIndex = 3;
+            this.PasswdLabel.Text = "Password:";
             // 
-            // label3
+            // ConfirmPasswdLabel
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(25, 115);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(137, 20);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "Confirm Password";
+            this.ConfirmPasswdLabel.AutoSize = true;
+            this.ConfirmPasswdLabel.Location = new System.Drawing.Point(25, 115);
+            this.ConfirmPasswdLabel.Name = "ConfirmPasswdLabel";
+            this.ConfirmPasswdLabel.Size = new System.Drawing.Size(137, 20);
+            this.ConfirmPasswdLabel.TabIndex = 4;
+            this.ConfirmPasswdLabel.Text = "Confirm Password";
             // 
-            // textBox2
+            // PasswordTextbox
             // 
-            this.textBox2.Location = new System.Drawing.Point(113, 76);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(184, 26);
-            this.textBox2.TabIndex = 5;
+            this.PasswordTextbox.Location = new System.Drawing.Point(113, 76);
+            this.PasswordTextbox.Name = "PasswordTextbox";
+            this.PasswordTextbox.PasswordChar = '*';
+            this.PasswordTextbox.Size = new System.Drawing.Size(184, 26);
+            this.PasswordTextbox.TabIndex = 5;
             // 
-            // textBox3
+            // ConfirmTextbox
             // 
-            this.textBox3.Location = new System.Drawing.Point(164, 115);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(133, 26);
-            this.textBox3.TabIndex = 6;
+            this.ConfirmTextbox.Location = new System.Drawing.Point(164, 115);
+            this.ConfirmTextbox.Name = "ConfirmTextbox";
+            this.ConfirmTextbox.PasswordChar = '*';
+            this.ConfirmTextbox.Size = new System.Drawing.Size(133, 26);
+            this.ConfirmTextbox.TabIndex = 6;
             // 
-            // label4
+            // AddCourseLabel
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(29, 172);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(93, 20);
-            this.label4.TabIndex = 7;
-            this.label4.Text = "Add Course";
-            this.label4.Click += new System.EventHandler(this.label4_Click);
+            this.AddCourseLabel.AutoSize = true;
+            this.AddCourseLabel.Location = new System.Drawing.Point(29, 172);
+            this.AddCourseLabel.Name = "AddCourseLabel";
+            this.AddCourseLabel.Size = new System.Drawing.Size(93, 20);
+            this.AddCourseLabel.TabIndex = 7;
+            this.AddCourseLabel.Text = "Add Course";
             // 
-            // label5
+            // AddTakenLabel
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(25, 250);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(141, 20);
-            this.label5.TabIndex = 8;
-            this.label5.Text = "Add Taken Course";
+            this.AddTakenLabel.AutoSize = true;
+            this.AddTakenLabel.Location = new System.Drawing.Point(25, 250);
+            this.AddTakenLabel.Name = "AddTakenLabel";
+            this.AddTakenLabel.Size = new System.Drawing.Size(141, 20);
+            this.AddTakenLabel.TabIndex = 8;
+            this.AddTakenLabel.Text = "Add Taken Course";
             // 
-            // button2
+            // CancelButton
             // 
-            this.button2.Location = new System.Drawing.Point(29, 407);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(85, 47);
-            this.button2.TabIndex = 9;
-            this.button2.Text = "Cancel";
-            this.button2.UseVisualStyleBackColor = true;
+            this.CancelButton.Location = new System.Drawing.Point(29, 407);
+            this.CancelButton.Name = "CancelButton";
+            this.CancelButton.Size = new System.Drawing.Size(85, 47);
+            this.CancelButton.TabIndex = 9;
+            this.CancelButton.Text = "Cancel";
+            this.CancelButton.UseVisualStyleBackColor = true;
+            this.CancelButton.Click += new System.EventHandler(this.CancelButton_Click);
             // 
-            // comboBox1
+            // AddDropdown
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(29, 195);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(171, 28);
-            this.comboBox1.TabIndex = 10;
+            this.AddDropdown.FormattingEnabled = true;
+            this.AddDropdown.Location = new System.Drawing.Point(29, 195);
+            this.AddDropdown.Name = "AddDropdown";
+            this.AddDropdown.Size = new System.Drawing.Size(171, 28);
+            this.AddDropdown.TabIndex = 10;
             // 
-            // label6
+            // RemoveTakenLabel
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(29, 325);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(171, 20);
-            this.label6.TabIndex = 11;
-            this.label6.Text = "Remove Taken Course";
+            this.RemoveTakenLabel.AutoSize = true;
+            this.RemoveTakenLabel.Location = new System.Drawing.Point(29, 325);
+            this.RemoveTakenLabel.Name = "RemoveTakenLabel";
+            this.RemoveTakenLabel.Size = new System.Drawing.Size(171, 20);
+            this.RemoveTakenLabel.TabIndex = 11;
+            this.RemoveTakenLabel.Text = "Remove Taken Course";
             // 
-            // comboBox2
+            // AddTakenDropdown
             // 
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Location = new System.Drawing.Point(29, 273);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(171, 28);
-            this.comboBox2.TabIndex = 12;
+            this.AddTakenDropdown.FormattingEnabled = true;
+            this.AddTakenDropdown.Location = new System.Drawing.Point(29, 273);
+            this.AddTakenDropdown.Name = "AddTakenDropdown";
+            this.AddTakenDropdown.Size = new System.Drawing.Size(171, 28);
+            this.AddTakenDropdown.TabIndex = 12;
             // 
-            // comboBox3
+            // RemoveTakenDropdown
             // 
-            this.comboBox3.FormattingEnabled = true;
-            this.comboBox3.Location = new System.Drawing.Point(29, 348);
-            this.comboBox3.Name = "comboBox3";
-            this.comboBox3.Size = new System.Drawing.Size(171, 28);
-            this.comboBox3.TabIndex = 13;
-            this.comboBox3.SelectedIndexChanged += new System.EventHandler(this.comboBox3_SelectedIndexChanged);
+            this.RemoveTakenDropdown.FormattingEnabled = true;
+            this.RemoveTakenDropdown.Location = new System.Drawing.Point(29, 348);
+            this.RemoveTakenDropdown.Name = "RemoveTakenDropdown";
+            this.RemoveTakenDropdown.Size = new System.Drawing.Size(171, 28);
+            this.RemoveTakenDropdown.TabIndex = 13;
             // 
             // UpdateUser
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(346, 466);
-            this.Controls.Add(this.comboBox3);
-            this.Controls.Add(this.comboBox2);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.textBox3);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.RemoveTakenDropdown);
+            this.Controls.Add(this.AddTakenDropdown);
+            this.Controls.Add(this.RemoveTakenLabel);
+            this.Controls.Add(this.AddDropdown);
+            this.Controls.Add(this.CancelButton);
+            this.Controls.Add(this.AddTakenLabel);
+            this.Controls.Add(this.AddCourseLabel);
+            this.Controls.Add(this.ConfirmTextbox);
+            this.Controls.Add(this.PasswordTextbox);
+            this.Controls.Add(this.ConfirmPasswdLabel);
+            this.Controls.Add(this.PasswdLabel);
+            this.Controls.Add(this.NameLabel);
+            this.Controls.Add(this.UserTextbox);
+            this.Controls.Add(this.ConfirmButton);
             this.Name = "UpdateUser";
-            this.Text = "Add Taken Course";
+            this.Text = "Update User";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -193,19 +193,19 @@
 
         #endregion
 
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.TextBox textBox3;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.ComboBox comboBox1;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.ComboBox comboBox2;
-        private System.Windows.Forms.ComboBox comboBox3;
+        private System.Windows.Forms.Button ConfirmButton;
+        private System.Windows.Forms.TextBox UserTextbox;
+        private System.Windows.Forms.Label NameLabel;
+        private System.Windows.Forms.Label PasswdLabel;
+        private System.Windows.Forms.Label ConfirmPasswdLabel;
+        private System.Windows.Forms.TextBox PasswordTextbox;
+        private System.Windows.Forms.TextBox ConfirmTextbox;
+        private System.Windows.Forms.Label AddCourseLabel;
+        private System.Windows.Forms.Label AddTakenLabel;
+        private System.Windows.Forms.Button CancelButton;
+        private System.Windows.Forms.ComboBox AddDropdown;
+        private System.Windows.Forms.Label RemoveTakenLabel;
+        private System.Windows.Forms.ComboBox AddTakenDropdown;
+        private System.Windows.Forms.ComboBox RemoveTakenDropdown;
     }
 }

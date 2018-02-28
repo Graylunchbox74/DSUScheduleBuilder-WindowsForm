@@ -16,19 +16,19 @@ namespace DSUScheduleBuilder
             InitializeComponent();
         }
 
-        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
-        {
 
+        private void ConfirmButton_Click(object sender, EventArgs e)
+        {
+            MainMenu x = new MainMenu();
+            x.Show();
+            this.Hide();
         }
 
-        private void label4_Click(object sender, EventArgs e)
+        private void CancelButton_Click(object sender, EventArgs e)
         {
-
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
+            MainMenu x = new MainMenu();
+            x.Show();
+            this.Hide();
         }
     }
 }

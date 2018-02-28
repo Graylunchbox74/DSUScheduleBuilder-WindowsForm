@@ -28,7 +28,9 @@ namespace DSUScheduleBuilder
 
         private void LogoutBtn_Click(object sender, EventArgs e)
         {
-
+            Login l = new Login();
+            l.Show();
+            this.Hide();
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -45,6 +47,13 @@ namespace DSUScheduleBuilder
 
         private void MainMenu_FormClosed(object sender, FormClosedEventArgs e) {
             Application.Exit();
+        }
+
+        private void EditAcctBtn_Click(object sender, EventArgs e)
+        {
+            UpdateUser u = new UpdateUser();
+            u.Show();
+            this.Hide();
         }
     }
 }

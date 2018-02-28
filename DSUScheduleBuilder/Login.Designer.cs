@@ -54,6 +54,7 @@
             this.NewUserBtn.TabIndex = 1;
             this.NewUserBtn.Text = "New User";
             this.NewUserBtn.UseVisualStyleBackColor = true;
+            this.NewUserBtn.Click += new System.EventHandler(this.NewUserBtn_Click);
             // 
             // UsernameTextbox
             // 
@@ -76,9 +77,9 @@
             this.PasswordTextbox.Size = new System.Drawing.Size(230, 35);
             this.PasswordTextbox.TabIndex = 3;
             this.PasswordTextbox.Text = "Password";
+            this.PasswordTextbox.TextChanged += new System.EventHandler(this.PasswordTextbox_TextChanged);
             this.PasswordTextbox.GotFocus += new System.EventHandler(this.PasswordTextbox_GotFocus);
             this.PasswordTextbox.LostFocus += new System.EventHandler(this.PasswordTextbox_LostFocus);
-            this.PasswordTextbox.TextChanged += new System.EventHandler(this.PasswordTextbox_TextChanged);
             // 
             // Login
             // 
@@ -91,7 +92,7 @@
             this.Controls.Add(this.LoginBtn);
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "Login";
-            this.Text = "Form1";
+            this.Text = "Login";
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -38,10 +38,9 @@
             // 
             // SearchBtn
             // 
-            this.SearchBtn.Location = new System.Drawing.Point(10, 50);
-            this.SearchBtn.Margin = new System.Windows.Forms.Padding(2);
+            this.SearchBtn.Location = new System.Drawing.Point(15, 77);
             this.SearchBtn.Name = "SearchBtn";
-            this.SearchBtn.Size = new System.Drawing.Size(109, 35);
+            this.SearchBtn.Size = new System.Drawing.Size(164, 54);
             this.SearchBtn.TabIndex = 0;
             this.SearchBtn.Text = "Search For Classes";
             this.SearchBtn.UseVisualStyleBackColor = true;
@@ -49,30 +48,28 @@
             // 
             // MajorBtn
             // 
-            this.MajorBtn.Location = new System.Drawing.Point(9, 89);
-            this.MajorBtn.Margin = new System.Windows.Forms.Padding(2);
+            this.MajorBtn.Location = new System.Drawing.Point(14, 137);
             this.MajorBtn.Name = "MajorBtn";
-            this.MajorBtn.Size = new System.Drawing.Size(109, 35);
+            this.MajorBtn.Size = new System.Drawing.Size(164, 54);
             this.MajorBtn.TabIndex = 1;
             this.MajorBtn.Text = "Search For Major";
             this.MajorBtn.UseVisualStyleBackColor = true;
             // 
             // EditAcctBtn
             // 
-            this.EditAcctBtn.Location = new System.Drawing.Point(10, 129);
-            this.EditAcctBtn.Margin = new System.Windows.Forms.Padding(2);
+            this.EditAcctBtn.Location = new System.Drawing.Point(15, 198);
             this.EditAcctBtn.Name = "EditAcctBtn";
-            this.EditAcctBtn.Size = new System.Drawing.Size(109, 35);
+            this.EditAcctBtn.Size = new System.Drawing.Size(164, 54);
             this.EditAcctBtn.TabIndex = 2;
             this.EditAcctBtn.Text = "Account Options";
             this.EditAcctBtn.UseVisualStyleBackColor = true;
+            this.EditAcctBtn.Click += new System.EventHandler(this.EditAcctBtn_Click);
             // 
             // LogoutBtn
             // 
-            this.LogoutBtn.Location = new System.Drawing.Point(10, 169);
-            this.LogoutBtn.Margin = new System.Windows.Forms.Padding(2);
+            this.LogoutBtn.Location = new System.Drawing.Point(15, 260);
             this.LogoutBtn.Name = "LogoutBtn";
-            this.LogoutBtn.Size = new System.Drawing.Size(109, 35);
+            this.LogoutBtn.Size = new System.Drawing.Size(164, 54);
             this.LogoutBtn.TabIndex = 3;
             this.LogoutBtn.Text = "Logout";
             this.LogoutBtn.UseVisualStyleBackColor = true;
@@ -80,10 +77,9 @@
             // 
             // CurrentBtn
             // 
-            this.CurrentBtn.Location = new System.Drawing.Point(9, 10);
-            this.CurrentBtn.Margin = new System.Windows.Forms.Padding(2);
+            this.CurrentBtn.Location = new System.Drawing.Point(14, 15);
             this.CurrentBtn.Name = "CurrentBtn";
-            this.CurrentBtn.Size = new System.Drawing.Size(109, 35);
+            this.CurrentBtn.Size = new System.Drawing.Size(164, 54);
             this.CurrentBtn.TabIndex = 4;
             this.CurrentBtn.Text = "Current Schedule";
             this.CurrentBtn.UseVisualStyleBackColor = true;
@@ -91,24 +87,24 @@
             // 
             // weekView1
             // 
-            this.weekView1.Location = new System.Drawing.Point(124, 10);
+            this.weekView1.Location = new System.Drawing.Point(186, 15);
+            this.weekView1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.weekView1.Name = "weekView1";
-            this.weekView1.Size = new System.Drawing.Size(872, 513);
+            this.weekView1.Size = new System.Drawing.Size(1308, 789);
             this.weekView1.TabIndex = 5;
             this.weekView1.Text = "weekView1";
             // 
             // MainMenu
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1005, 534);
+            this.ClientSize = new System.Drawing.Size(1508, 822);
             this.Controls.Add(this.weekView1);
             this.Controls.Add(this.CurrentBtn);
             this.Controls.Add(this.LogoutBtn);
             this.Controls.Add(this.EditAcctBtn);
             this.Controls.Add(this.MajorBtn);
             this.Controls.Add(this.SearchBtn);
-            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "MainMenu";
             this.Text = "MainMenu";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainMenu_FormClosed);

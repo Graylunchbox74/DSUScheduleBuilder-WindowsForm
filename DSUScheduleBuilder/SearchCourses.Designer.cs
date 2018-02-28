@@ -159,7 +159,7 @@
             this.Controls.Add(this.prefixLabel);
             this.Controls.Add(this.termLabel);
             this.Name = "SearchCourses";
-            this.Text = "SearchCourses";
+            this.Text = "Search Courses";
             this.ResumeLayout(false);
             this.PerformLayout();
 

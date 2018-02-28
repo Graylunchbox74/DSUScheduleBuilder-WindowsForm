@@ -26,6 +26,8 @@ namespace DSUScheduleBuilder
                 x.Show();
                 this.Hide();
             }
+            else
+                MessageBox.Show("Please provide a valid username and password");
         }
 
         private void UsernameTextbox_GotFocus(object sender, EventArgs e)
@@ -70,5 +72,11 @@ namespace DSUScheduleBuilder
                 PasswordTextbox.PasswordChar = '*';
         }
 
+        private void NewUserBtn_Click(object sender, EventArgs e)
+        {
+            NewUser n = new NewUser();
+            n.Show();
+            this.Hide();
+        }
     }
 }

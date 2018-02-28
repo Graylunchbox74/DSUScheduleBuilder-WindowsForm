@@ -37,33 +37,37 @@
             // 
             // NameTxt
             // 
-            this.NameTxt.Location = new System.Drawing.Point(12, 12);
+            this.NameTxt.Location = new System.Drawing.Point(14, 15);
+            this.NameTxt.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.NameTxt.Name = "NameTxt";
-            this.NameTxt.Size = new System.Drawing.Size(200, 22);
+            this.NameTxt.Size = new System.Drawing.Size(224, 26);
             this.NameTxt.TabIndex = 0;
             this.NameTxt.Text = "Name";
             // 
             // PasswordTxt
             // 
-            this.PasswordTxt.Location = new System.Drawing.Point(12, 40);
+            this.PasswordTxt.Location = new System.Drawing.Point(14, 50);
+            this.PasswordTxt.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.PasswordTxt.Name = "PasswordTxt";
-            this.PasswordTxt.Size = new System.Drawing.Size(200, 22);
+            this.PasswordTxt.Size = new System.Drawing.Size(224, 26);
             this.PasswordTxt.TabIndex = 1;
             this.PasswordTxt.Text = "Password";
             // 
             // ConfirmTxt
             // 
-            this.ConfirmTxt.Location = new System.Drawing.Point(12, 68);
+            this.ConfirmTxt.Location = new System.Drawing.Point(14, 85);
+            this.ConfirmTxt.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.ConfirmTxt.Name = "ConfirmTxt";
-            this.ConfirmTxt.Size = new System.Drawing.Size(200, 22);
+            this.ConfirmTxt.Size = new System.Drawing.Size(224, 26);
             this.ConfirmTxt.TabIndex = 2;
             this.ConfirmTxt.Text = "Confirm Password";
             // 
             // TakenCoursesBtn
             // 
-            this.TakenCoursesBtn.Location = new System.Drawing.Point(12, 107);
+            this.TakenCoursesBtn.Location = new System.Drawing.Point(14, 134);
+            this.TakenCoursesBtn.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.TakenCoursesBtn.Name = "TakenCoursesBtn";
-            this.TakenCoursesBtn.Size = new System.Drawing.Size(200, 44);
+            this.TakenCoursesBtn.Size = new System.Drawing.Size(225, 55);
             this.TakenCoursesBtn.TabIndex = 3;
             this.TakenCoursesBtn.Text = "Select Already Taken Courses";
             this.TakenCoursesBtn.UseVisualStyleBackColor = true;
@@ -75,23 +79,25 @@
             "Computer Science",
             "Cyber Operations",
             "Network Security Administration"});
-            this.MajorDdl.Location = new System.Drawing.Point(12, 169);
+            this.MajorDdl.Location = new System.Drawing.Point(14, 211);
+            this.MajorDdl.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.MajorDdl.Name = "MajorDdl";
-            this.MajorDdl.Size = new System.Drawing.Size(200, 24);
+            this.MajorDdl.Size = new System.Drawing.Size(224, 28);
             this.MajorDdl.TabIndex = 4;
             // 
-            // Form2
+            // NewUser
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(297, 649);
+            this.ClientSize = new System.Drawing.Size(334, 811);
             this.Controls.Add(this.MajorDdl);
             this.Controls.Add(this.TakenCoursesBtn);
             this.Controls.Add(this.ConfirmTxt);
             this.Controls.Add(this.PasswordTxt);
             this.Controls.Add(this.NameTxt);
-            this.Name = "Form2";
-            this.Text = "Form2";
+            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.Name = "NewUser";
+            this.Text = "New User";
             this.ResumeLayout(false);
             this.PerformLayout();
 
