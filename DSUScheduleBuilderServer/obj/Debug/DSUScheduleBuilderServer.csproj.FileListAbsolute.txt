@@ -6,7 +6,7 @@ D:\DSUScheduleBuilder\DSUScheduleBuilderServer\obj\Debug\DSUScheduleBuilderServe
 D:\DSUScheduleBuilder\DSUScheduleBuilderServer\obj\Debug\DSUScheduleBuilderServer.pdb
 C:\Users\Thomas\Source\Repos\DSUScheduleBuilder\DSUScheduleBuilderServer\bin\Debug\DSUScheduleBuilderServer.exe
 C:\Users\Thomas\Source\Repos\DSUScheduleBuilder\DSUScheduleBuilderServer\bin\Debug\DSUScheduleBuilderServer.pdb
-C:\Users\Thomas\Source\Repos\DSUScheduleBuilder\DSUScheduleBuilderServer\obj\Debug\DSUScheduleBuilderServer.csprojResolveAssemblyReference.cache
 C:\Users\Thomas\Source\Repos\DSUScheduleBuilder\DSUScheduleBuilderServer\obj\Debug\DSUScheduleBuilderServer.csproj.CoreCompileInputs.cache
 C:\Users\Thomas\Source\Repos\DSUScheduleBuilder\DSUScheduleBuilderServer\obj\Debug\DSUScheduleBuilderServer.exe
 C:\Users\Thomas\Source\Repos\DSUScheduleBuilder\DSUScheduleBuilderServer\obj\Debug\DSUScheduleBuilderServer.pdb
+C:\Users\Thomas\source\repos\DSUScheduleBuilder\DSUScheduleBuilderServer\obj\Debug\DSUScheduleBuilderServer.csprojResolveAssemblyReference.cache

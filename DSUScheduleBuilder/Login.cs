@@ -11,8 +11,7 @@ namespace DSUScheduleBuilder
 {
     public partial class Login : Form
     {
-        bool UsernameChng = false;
-        bool PasswordChng = false;
+        bool placeholder = true;
 
         public Login()
         {
@@ -21,7 +20,7 @@ namespace DSUScheduleBuilder
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (UsernameTxt.Text != "Username" && PasswordTxt.Text != "Password")
+            if (UsernameTextbox.Text != "Username" && PasswordTextbox.Text != "Password")
             {
                 MainMenu x = new MainMenu();
                 x.Show();
@@ -29,22 +28,47 @@ namespace DSUScheduleBuilder
             }
         }
 
-        private void UsernameTxt_TextChanged(object sender, EventArgs e)
+        private void UsernameTextbox_GotFocus(object sender, EventArgs e)
         {
-            if (UsernameChng == false)
+            // Clear placeholder text
+            if (UsernameTextbox.Text == "Username")
+                UsernameTextbox.Text = "";
+        }
+
+        private void UsernameTextbox_LostFocus(object sender, EventArgs e)
+        {
+            // Restore placeholder text
+            if (UsernameTextbox.Text == "")
+                UsernameTextbox.Text = "Username";
+        }
+
+        private void PasswordTextbox_GotFocus(object sender, EventArgs e)
+        {
+            // Clear placeholder text
+            if (PasswordTextbox.Text == "Password")
             {
-                UsernameTxt.Text = "";
-                UsernameChng = true;
+                PasswordTextbox.Text = "";
+                placeholder = false;
             }
         }
 
-        private void PasswordTxt_TextChanged(object sender, EventArgs e)
+        private void PasswordTextbox_LostFocus(object sender, EventArgs e)
         {
-            if (PasswordChng == false)
+            // Restore placeholder text and disable password hiding
+            if (PasswordTextbox.Text == "")
             {
-                PasswordTxt.Text = "";
-                PasswordChng = true;
+                placeholder = true;
+                PasswordTextbox.PasswordChar = '\0';
+                PasswordTextbox.Text = "Password";
             }
         }
+
+        private void PasswordTextbox_TextChanged(object sender, EventArgs e)
+        {
+            // Hide Password if there is no placeholder
+            if(placeholder == false)
+                PasswordTextbox.PasswordChar = '*';
+        }
+
     }
 }
