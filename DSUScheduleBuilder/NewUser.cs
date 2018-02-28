@@ -15,5 +15,23 @@ namespace DSUScheduleBuilder
         {
             InitializeComponent();
         }
+
+        private void CreateUserButton_Click(object sender, EventArgs e)
+        {
+
+            // Code to add user to database goes here
+
+            MainMenu x = new MainMenu();
+            x.Show();
+            this.Hide();
+        }
+
+        private void CancelButton_Click(object sender, EventArgs e)
+        {
+            Login l = new Login();
+            l.Show();
+            this.Hide();
+        }
+
     }
 }

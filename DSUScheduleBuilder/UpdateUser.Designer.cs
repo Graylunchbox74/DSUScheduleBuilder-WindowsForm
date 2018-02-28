@@ -37,7 +37,7 @@
             this.ConfirmTextbox = new System.Windows.Forms.TextBox();
             this.AddCourseLabel = new System.Windows.Forms.Label();
             this.AddTakenLabel = new System.Windows.Forms.Label();
-            this.CancelButton = new System.Windows.Forms.Button();
+            this.CancelBtn = new System.Windows.Forms.Button();
             this.AddDropdown = new System.Windows.Forms.ComboBox();
             this.RemoveTakenLabel = new System.Windows.Forms.Label();
             this.AddTakenDropdown = new System.Windows.Forms.ComboBox();
@@ -52,6 +52,7 @@
             this.ConfirmButton.TabIndex = 0;
             this.ConfirmButton.Text = "Confirm Changes";
             this.ConfirmButton.UseVisualStyleBackColor = true;
+            this.ConfirmButton.Click += new System.EventHandler(this.ConfirmButton_Click_1);
             // 
             // UserTextbox
             // 
@@ -122,15 +123,15 @@
             this.AddTakenLabel.TabIndex = 8;
             this.AddTakenLabel.Text = "Add Taken Course";
             // 
-            // CancelButton
+            // CancelBtn
             // 
-            this.CancelButton.Location = new System.Drawing.Point(29, 407);
-            this.CancelButton.Name = "CancelButton";
-            this.CancelButton.Size = new System.Drawing.Size(85, 47);
-            this.CancelButton.TabIndex = 9;
-            this.CancelButton.Text = "Cancel";
-            this.CancelButton.UseVisualStyleBackColor = true;
-            this.CancelButton.Click += new System.EventHandler(this.CancelButton_Click);
+            this.CancelBtn.Location = new System.Drawing.Point(29, 407);
+            this.CancelBtn.Name = "CancelBtn";
+            this.CancelBtn.Size = new System.Drawing.Size(85, 47);
+            this.CancelBtn.TabIndex = 9;
+            this.CancelBtn.Text = "Cancel";
+            this.CancelBtn.UseVisualStyleBackColor = true;
+            this.CancelBtn.Click += new System.EventHandler(this.CancelButton_Click);
             // 
             // AddDropdown
             // 
@@ -174,7 +175,7 @@
             this.Controls.Add(this.AddTakenDropdown);
             this.Controls.Add(this.RemoveTakenLabel);
             this.Controls.Add(this.AddDropdown);
-            this.Controls.Add(this.CancelButton);
+            this.Controls.Add(this.CancelBtn);
             this.Controls.Add(this.AddTakenLabel);
             this.Controls.Add(this.AddCourseLabel);
             this.Controls.Add(this.ConfirmTextbox);
@@ -202,7 +203,7 @@
         private System.Windows.Forms.TextBox ConfirmTextbox;
         private System.Windows.Forms.Label AddCourseLabel;
         private System.Windows.Forms.Label AddTakenLabel;
-        private System.Windows.Forms.Button CancelButton;
+        private System.Windows.Forms.Button CancelBtn;
         private System.Windows.Forms.ComboBox AddDropdown;
         private System.Windows.Forms.Label RemoveTakenLabel;
         private System.Windows.Forms.ComboBox AddTakenDropdown;
