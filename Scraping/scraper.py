@@ -2,7 +2,7 @@ from re import match
 from selenium.webdriver.common.keys import Keys
 from splinter import Browser
 from time import sleep
-import glob, json, requests
+import glob, json, os, requests
 
 class Course:
     Open               = False
@@ -47,6 +47,8 @@ executable_path = {'executable_path': config['browser']}
 b = Browser(config['type'], headless=config['headless'], **executable_path)
 
 def main():
+    initToQuery()
+
     getToQuery()
     courses = []
     semesters = getSemesters()
@@ -71,6 +73,23 @@ def main():
     #print(semesters)
     print(b.url)
     b.quit()
+
+def initToQuery():
+    url = "https://portal.sdbor.edu"
+    b.visit(url)
+    b.find_by_id("username").fill(config["wa_username"])
+    b.find_by_id("password").fill(config["wa_password"] + "\n")
+    #b.find_by_id("WebPartWPQ4")
+    b.visit(url + "/dsu-student/Pages/default.aspx")
+    while b.is_element_not_present_by_text("WebAdvisor for Prospective Students"):
+        b.visit(url + "/dsu-student/Pages/default.aspx")
+    b.find_by_text("WebAdvisor for Prospective Students").click()
+    while b.is_element_not_present_by_text("Admission Information", 1):
+        pass
+    b.find_by_text("Admission Information").first.click()
+    while b.is_element_not_present_by_text("Search for Class Sections", 1):
+        pass
+    b.find_by_text("Search for Class Sections").first.click()
 
 def getSemesters(): #assumes that you're already on the Prospective students search page
     select = b.find_by_id("VAR1")
