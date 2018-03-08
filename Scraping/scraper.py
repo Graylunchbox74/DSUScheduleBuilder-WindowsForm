@@ -53,27 +53,59 @@ def main():
     subjects  = getSubjects()
     for semester in semesters:
         for subject in subjects:
-            for x in getExtraExits():
-                x.click()
-            if b.is_element_present_by_text("Section Selection Results"):
-                b.find_by_text("Section Selection Results").first.click()
-                b.find_by_text("Go back").first.click()
-                while b.is_element_not_present_by_id("VAR1", 1):
-                    pass
-            selectDropdown("VAR1", semester)
-            selectDropdown("LIST_VAR1_1", subject)
-            selectDropdown("VAR6", "DSU")
-            b.find_by_id("WASubmit").first.click()
-            if b.is_text_present("No classes meeting the search criteria have been found."):
-                continue
-            # m = match("Page (\d+) of (\d+)", b.find_by_xpath('//*[@id="GROUP_Grp_WSS_COURSE_SECTIONS_GWT"]/table/tbody/tr[1]/td/table/tbody/tr/td[2]/div').text)
-            # if m:
-            #     while m.group(1) != m.group(2):    
-            #         m = match("Page (\d+) of (\d+)", b.find_by_xpath('//*[@id="GROUP_Grp_WSS_COURSE_SECTIONS_GWT"]/table/tbody/tr[1]/td/table/tbody/tr/td[2]/div').text)
-            #         courses.extend(scrapeTable(b.find_by_xpath('//*[@id="GROUP_Grp_WSS_COURSE_SECTIONS_GWT"]/table/tbody/tr[2]/td/table')))
-            #         b.find_by_xpath('//*[@id="GROUP_Grp_WSS_COURSE_SECTIONS_GWT"]/table/tbody/tr[1]/td/table/tbody/tr/td[1]/table/tbody/tr/td[1]/table/tbody/tr/td[3]/button').click()
-            # else:
-            #     courses.extend(scrapeTable(b.find_by_xpath('//*[@id="GROUP_Grp_WSS_COURSE_SECTIONS_GWT"]/table/tbody/tr[2]/td/table')))
+            unsuccessfulRun = True
+            while unsuccessfulRun:
+            try:
+                for x in getExtraExits():
+                    x.click()
+                if b.is_element_present_by_text("Section Selection Results"):
+                    b.find_by_text("Section Selection Results").first.click()
+                    b.find_by_text("Go back").first.click()
+                    while b.is_element_not_present_by_id("VAR1", 1):
+                        pass
+                elif not b.is_element_present_by_text("Search for Class Sections"):
+                    b.execute_script("window.location.reload()")
+                    sleep(1)
+                    continue
+                selectDropdown("VAR1", semester)
+                selectDropdown("LIST_VAR1_1", subject)
+                selectDropdown("VAR6", "DSU")
+                unsuccessfulClick = True
+                while unsuccessfulClick:
+                    try:
+                        b.find_by_id("WASubmit").first.click()
+                        unsuccessfulClick = False
+                    except:
+                        print("Click failed for {0}, trying again".format(subject))
+                        sleep(1)
+                badResult = False
+                while not badResult and b.is_element_not_present_by_text("Section Selection Results", 1):
+                    badResult = b.is_text_present("No classes meeting the search criteria have been found.")
+                if badResult:
+                    continue
+                print(b.find_by_css('table[summary="Paged Table Navigation Area"]').first.find_by_css('td[align="right"]').first.text)
+                currentPage, totalPages = "0", "1"
+                while currentPage != totalPages:
+                    m = match("Page (\d+) of (\d+)", b.find_by_css('table[summary="Paged Table Navigation Area"]').first.find_by_css('td[align="right"]').first.text)
+                    currentPage, totalPages = match.groups(1)
+
+                    for x in getExtraExits():
+                        x.click()
+                    b.find_by_css('input[value="NEXT"]').first.click()
+                unsuccessfulRun = False
+                # m = match("Page (\d+) of (\d+)", b.find_by_xpath('//*[@id="GROUP_Grp_WSS_COURSE_SECTIONS_GWT"]/table/tbody/tr[1]/td/table/tbody/tr/td[2]/div').text)
+                # if m:
+                #     while m.group(1) != m.group(2):    
+                #         m = match("Page (\d+) of (\d+)", b.find_by_xpath('//*[@id="GROUP_Grp_WSS_COURSE_SECTIONS_GWT"]/table/tbody/tr[1]/td/table/tbody/tr/td[2]/div').text)
+                #         courses.extend(scrapeTable(b.find_by_xpath('//*[@id="GROUP_Grp_WSS_COURSE_SECTIONS_GWT"]/table/tbody/tr[2]/td/table')))
+                #         b.find_by_xpath('//*[@id="GROUP_Grp_WSS_COURSE_SECTIONS_GWT"]/table/tbody/tr[1]/td/table/tbody/tr/td[1]/table/tbody/tr/td[1]/table/tbody/tr/td[3]/button').click()
+                # else:
+                #     courses.extend(scrapeTable(b.find_by_xpath('//*[@id="GROUP_Grp_WSS_COURSE_SECTIONS_GWT"]/table/tbody/tr[2]/td/table')))
+            except splinter.exceptions.ElementDoesNotExist as e:
+                b.execute_script("window.location.reload()")
+            except Exception as e:
+                print("Trying again after error: \n{0}".format(e))
+
     #print(semesters)
     print(b.url)
     b.quit()
@@ -83,7 +115,6 @@ def initToQuery():
     b.visit(url)
     b.find_by_id("username").fill(config["wa_username"])
     b.find_by_id("password").fill(config["wa_password"] + "\n")
-    #b.find_by_id("WebPartWPQ4")
     b.visit(url + "/dsu-student/Pages/default.aspx")
     while b.is_element_not_present_by_text("WebAdvisor for Prospective Students"):
         b.visit(url + "/dsu-student/Pages/default.aspx")
@@ -132,7 +163,10 @@ def scrapeTable(tab):
             if e == 2:
                 course.Open = "Open" in td.text
             elif e == 3:
-                b.visit("https://wa-dsu.prod.sdbor.edu/WebAdvisor/webadvisor" + match(r"javascript:window\.open\('(.*)', .*", td.find_by_tag("a")["onclick"]).group(1))
+                #b.visit("https://wa-dsu.prod.sdbor.edu/WebAdvisor/webadvisor" + match(r"javascript:window\.open\('(.*)', .*", td.find_by_tag("a")["onclick"]).group(1))
+                td.find_by_tag("a").first.click()
+                while b.is_element_not_present_by_text("Section Information", 1):
+                    print("Waiting on Section Information")
                 #Start scraping for the bulk of the course data
                 course.CourseName = b.find_by_id("VAR1").first.text
                 course.CourseCode = b.find_by_id("VAR2").first.text
