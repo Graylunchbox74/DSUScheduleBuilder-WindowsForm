@@ -47,29 +47,33 @@ executable_path = {'executable_path': config['browser']}
 b = Browser(config['type'], headless=config['headless'], **executable_path)
 
 def main():
-    initToQuery()
-
-    getToQuery()
     courses = []
+    initToQuery()
     semesters = getSemesters()
     subjects  = getSubjects()
     for semester in semesters:
         for subject in subjects:
-            getToQuery()
+            for x in getExtraExits():
+                x.click()
+            if b.is_element_present_by_text("Section Selection Results"):
+                b.find_by_text("Section Selection Results").first.click()
+                b.find_by_text("Go back").first.click()
+                while b.is_element_not_present_by_id("VAR1", 1):
+                    pass
             selectDropdown("VAR1", semester)
             selectDropdown("LIST_VAR1_1", subject)
             selectDropdown("VAR6", "DSU")
-            b.find_by_name("SUBMIT2").click()
+            b.find_by_id("WASubmit").first.click()
             if b.is_text_present("No classes meeting the search criteria have been found."):
                 continue
-            m = match("Page (\d+) of (\d+)", b.find_by_xpath('//*[@id="GROUP_Grp_WSS_COURSE_SECTIONS_GWT"]/table/tbody/tr[1]/td/table/tbody/tr/td[2]/div').text)
-            if m:
-                while m.group(1) != m.group(2):    
-                    m = match("Page (\d+) of (\d+)", b.find_by_xpath('//*[@id="GROUP_Grp_WSS_COURSE_SECTIONS_GWT"]/table/tbody/tr[1]/td/table/tbody/tr/td[2]/div').text)
-                    courses.extend(scrapeTable(b.find_by_xpath('//*[@id="GROUP_Grp_WSS_COURSE_SECTIONS_GWT"]/table/tbody/tr[2]/td/table')))
-                    b.find_by_xpath('//*[@id="GROUP_Grp_WSS_COURSE_SECTIONS_GWT"]/table/tbody/tr[1]/td/table/tbody/tr/td[1]/table/tbody/tr/td[1]/table/tbody/tr/td[3]/button').click()
-            else:
-                courses.extend(scrapeTable(b.find_by_xpath('//*[@id="GROUP_Grp_WSS_COURSE_SECTIONS_GWT"]/table/tbody/tr[2]/td/table')))
+            # m = match("Page (\d+) of (\d+)", b.find_by_xpath('//*[@id="GROUP_Grp_WSS_COURSE_SECTIONS_GWT"]/table/tbody/tr[1]/td/table/tbody/tr/td[2]/div').text)
+            # if m:
+            #     while m.group(1) != m.group(2):    
+            #         m = match("Page (\d+) of (\d+)", b.find_by_xpath('//*[@id="GROUP_Grp_WSS_COURSE_SECTIONS_GWT"]/table/tbody/tr[1]/td/table/tbody/tr/td[2]/div').text)
+            #         courses.extend(scrapeTable(b.find_by_xpath('//*[@id="GROUP_Grp_WSS_COURSE_SECTIONS_GWT"]/table/tbody/tr[2]/td/table')))
+            #         b.find_by_xpath('//*[@id="GROUP_Grp_WSS_COURSE_SECTIONS_GWT"]/table/tbody/tr[1]/td/table/tbody/tr/td[1]/table/tbody/tr/td[1]/table/tbody/tr/td[3]/button').click()
+            # else:
+            #     courses.extend(scrapeTable(b.find_by_xpath('//*[@id="GROUP_Grp_WSS_COURSE_SECTIONS_GWT"]/table/tbody/tr[2]/td/table')))
     #print(semesters)
     print(b.url)
     b.quit()
@@ -90,6 +94,8 @@ def initToQuery():
     while b.is_element_not_present_by_text("Search for Class Sections", 1):
         pass
     b.find_by_text("Search for Class Sections").first.click()
+    while b.is_element_not_present_by_id("VAR1", 1):
+        pass
 
 def getSemesters(): #assumes that you're already on the Prospective students search page
     select = b.find_by_id("VAR1")
@@ -100,6 +106,15 @@ def getSubjects(): #assumes that you're already on the Prospective students sear
     select = b.find_by_id("LIST_VAR1_1")
     options = select.first.find_by_tag("option")
     return [x['value'] for x in options if x.text]
+
+def getExtraExits():
+    l = b.find_by_text("x")
+    if len(l) > 1:
+        for x in l[1:]:
+            yield x
+    
+
+
 
 def getToQuery():
     b.visit("https://wa-dsu.prod.sdbor.edu/WebAdvisor/webadvisor")
