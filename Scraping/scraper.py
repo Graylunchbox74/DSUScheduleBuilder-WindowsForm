@@ -1,6 +1,5 @@
 from re import match
-from selenium.webdriver.common.keys import Keys
-from splinter import Browser
+from splinter import Browser, exceptions
 from time import sleep
 import glob, json, os, requests
 
@@ -54,13 +53,21 @@ def main():
     for semester in semesters:
         for subject in subjects:
             unsuccessfulRun = True
+            run = 0
             while unsuccessfulRun:
-            try:
+                run += 1
+                print("Run", run)
+                #try:
                 for x in getExtraExits():
                     x.click()
                 if b.is_element_present_by_text("Section Selection Results"):
-                    b.find_by_text("Section Selection Results").first.click()
-                    b.find_by_text("Go back").first.click()
+                    unsuccessfulBackOut = True
+                    while unsuccessfulBackOut:
+                        try:
+                            b.find_by_text("Go back").first.click()
+                            unsuccessfulBackOut = False
+                        except Exception as e:
+                            print("Failed to go back: ", e)
                     while b.is_element_not_present_by_id("VAR1", 1):
                         pass
                 elif not b.is_element_present_by_text("Search for Class Sections"):
@@ -75,23 +82,30 @@ def main():
                     try:
                         b.find_by_id("WASubmit").first.click()
                         unsuccessfulClick = False
-                    except:
+                    except Exception as e:
+                        print(e)
                         print("Click failed for {0}, trying again".format(subject))
-                        sleep(1)
+                        sleep(2.5)
                 badResult = False
                 while not badResult and b.is_element_not_present_by_text("Section Selection Results", 1):
                     badResult = b.is_text_present("No classes meeting the search criteria have been found.")
                 if badResult:
+                    unsuccessfulRun = False
                     continue
                 print(b.find_by_css('table[summary="Paged Table Navigation Area"]').first.find_by_css('td[align="right"]').first.text)
                 currentPage, totalPages = "0", "1"
                 while currentPage != totalPages:
+                    while b.is_element_not_present_by_css('table[summary="Paged Table Navigation Area"]'):
+                        pass
                     m = match("Page (\d+) of (\d+)", b.find_by_css('table[summary="Paged Table Navigation Area"]').first.find_by_css('td[align="right"]').first.text)
-                    currentPage, totalPages = match.groups(1)
-
+                    currentPage, totalPages = m.groups(1)
+                    scrapeTable(b.find_by_css('table[summary="Sections"]'))
                     for x in getExtraExits():
                         x.click()
                     b.find_by_css('input[value="NEXT"]').first.click()
+                    if currentPage != totalPages:
+                        while not b.is_text_present("Page {0} of {1}", int(currentPage) + 1, totalPages):
+                            sleep(1)
                 unsuccessfulRun = False
                 # m = match("Page (\d+) of (\d+)", b.find_by_xpath('//*[@id="GROUP_Grp_WSS_COURSE_SECTIONS_GWT"]/table/tbody/tr[1]/td/table/tbody/tr/td[2]/div').text)
                 # if m:
@@ -101,13 +115,10 @@ def main():
                 #         b.find_by_xpath('//*[@id="GROUP_Grp_WSS_COURSE_SECTIONS_GWT"]/table/tbody/tr[1]/td/table/tbody/tr/td[1]/table/tbody/tr/td[1]/table/tbody/tr/td[3]/button').click()
                 # else:
                 #     courses.extend(scrapeTable(b.find_by_xpath('//*[@id="GROUP_Grp_WSS_COURSE_SECTIONS_GWT"]/table/tbody/tr[2]/td/table')))
-            except splinter.exceptions.ElementDoesNotExist as e:
-                b.execute_script("window.location.reload()")
-            except Exception as e:
-                print("Trying again after error: \n{0}".format(e))
-
-    #print(semesters)
-    print(b.url)
+                # except exceptions.ElementDoesNotExist as e:
+                #     b.execute_script("window.location.reload()")
+                # except Exception as e:
+                #     print("Trying again after error: \n{0}".format(e))
     b.quit()
 
 def initToQuery():
@@ -139,10 +150,10 @@ def getSubjects(): #assumes that you're already on the Prospective students sear
     return [x['value'] for x in options if x.text]
 
 def getExtraExits():
-    l = b.find_by_text("x")
+    l = list(b.find_by_css('button[type="button"][class="btn btn-sm btn-danger"]'))
     if len(l) > 1:
-        for x in l[1:]:
-            yield x
+        return l[1:]
+    return []
     
 
 
@@ -154,17 +165,21 @@ def getToQuery():
 
 def scrapeTable(tab):
     courses = []
-    for n, tr in enumerate(tab.find_by_tag("tr")):
+    for n in range(len(tab.find_by_tag("tr"))):
         if n == 0:
             continue
         course = Course()
         link = ""
-        for e, td in enumerate(tr.find_by_tag("td")):
+        for e in range(len(tab.find_by_tag("tr")[n].find_by_tag("td"))):
+            try:
+                print(e, tab.find_by_tag("tr")[n].find_by_tag("td")[e].text)
+            except:
+                pass
             if e == 2:
-                course.Open = "Open" in td.text
+                course.Open = "Open" in tab.find_by_tag("tr")[n].find_by_tag("td")[e].text
             elif e == 3:
                 #b.visit("https://wa-dsu.prod.sdbor.edu/WebAdvisor/webadvisor" + match(r"javascript:window\.open\('(.*)', .*", td.find_by_tag("a")["onclick"]).group(1))
-                td.find_by_tag("a").first.click()
+                tab.find_by_tag("tr")[n].find_by_tag("td")[e].find_by_tag("a").first.click()
                 while b.is_element_not_present_by_text("Section Information", 1):
                     print("Waiting on Section Information")
                 #Start scraping for the bulk of the course data
@@ -180,13 +195,16 @@ def scrapeTable(tab):
                 course.Teacher.Email = b.find_by_id("LIST_VAR10_1").first.text
                 course.Teacher.Name = b.find_by_id("LIST_VAR7_1").first.text
                 course.Teacher.Phone = b.find_by_id("LIST_VAR8_1").first.text
+                for x in getExtraExits():
+                    x.click()
             elif e == 7:
-                nm = match("(\d+) \/ (\d+) \/ (\d+)", td.text)
-                course.SlotsAvailable = nm.group(1)
-                course.SlotsCapacity = nm.group(2)
-                course.SlotsWaitlist = nm.group(3)
+                nm = match(r"(-?\d+) +\/ +(-?\d+) +\/ +(-?\d+)", tab.find_by_tag("tr")[n].find_by_tag("td")[e].text)
+                course.SlotsAvailable = int(nm.group(1))
+                course.SlotsCapacity = int(nm.group(2))
+                course.SlotsWaitlist = int(nm.group(3))
             elif e == 9:
-                course.AcademicLevel = td.text
+                course.AcademicLevel = tab.find_by_tag("tr")[n].find_by_tag("td")[e].text
+        print(course)
         courses.append(course)
     return courses
 
