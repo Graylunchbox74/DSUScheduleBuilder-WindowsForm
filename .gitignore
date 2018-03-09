@@ -1,8 +1,3 @@
 \.vs/
 Scraping/*_config.json
-<<<<<<< HEAD
 Scraping/*.log
-=======
-DSUScheduleBuilder/bin/
-DSUScheduleBuilder/obj/
->>>>>>> c55a1e169f065a144b81f8adefce44214db83521
