@@ -15,12 +15,12 @@ func checkErr(err error) {
 	}
 }
 
-func newUser() {
+func newUser(name, password, major string) {
 	db, err := sql.Open("sqlite3", "./userDatabase.db")
 	checkErr(err)
 	stmt, err := db.Prepare("INSERT INTO user (name, password, major) values(?,?,?)")
 	checkErr(err)
-	_, err = stmt.Exec("Riley", "hello", "CS")
+	_, err = stmt.Exec(name, password, major)
 	checkErr(err)
 
 }
@@ -40,6 +40,6 @@ func main() {
 			c.JSON(200, gin.H{"msg": ""})
 		})
 	}
-	newUser()
+	newUser("Thomas", "Password", "Applied Computer Science")
 	r.Run(":4200")
 }
