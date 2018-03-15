@@ -14,7 +14,9 @@ class Course:
     DateEnd            = ""
     Location           = ""
     MeetingInformation = ""
-    Professor          = ""
+    ProfessorEmail     = ""
+    Supplies           = ""
+    Semester           = ""
     
     Credits            = 0
     SlotsAvailable     = 0
@@ -23,20 +25,32 @@ class Course:
     TimeEnd            = 0
     TimeStart          = 0
 
-    Lab                = None
-    Prereqcourse       = None
-    Prereqnoncourse    = None
-    Prerequisites      = None
+    ConcurrentCourses  = []
+    PrereqCourse       = []
+    PrereqNonCourse    = []
+    Prerequisites      = []
+
 
 class Teacher:
     Email = ""
     Name  = ""
     Phone = ""
+    def __init__(self, e, n, p):
+        self.Email = e
+        self.Name = n
+        self.Phone = p
+
 
 """ JSON Model for Data
     {
-        CourseCodes: [{List of course codes as strings}],
-        Courses:     ["{Course Code}": {Course Object}]
+        "Teachers": {"{Teacher Email}": {Teacher Object}},
+        "TotalTime": "{Total time it took for the data for all semesters to be collected}",
+        "{Semester}": {
+            "Time": "{Time it took for the data to be collected for the given semester}",
+            "Courses": {
+                "{Subject}": {"Course Code": {"{Section Codes}": {Course Object}}}
+            }
+        }        
     }
 """
 
@@ -44,61 +58,73 @@ with open(glob.glob("*_config.json")[0]) as fi:
     config = json.load(fi)
 executable_path = {'executable_path': config['browser']}
 b = Browser(config['type'], headless=config['headless'], **executable_path)
+teachers = {}
+totalData = {"Teachers": {}}
 
-def main():
-    courses = []
+def main():    
     initToQuery()
     semesters = getSemesters()
     subjects  = getSubjects()
     for semester in semesters:
+        subjectCourses = {}
         for subject in subjects:
+            subject = "CSC"
             unsuccessfulRun = True
             run = 0
             while unsuccessfulRun:
                 run += 1
                 print("Run", run)
-                try:
-                    for x in getExtraExits():
-                        x.click()
-                    if b.is_element_present_by_text("Section Selection Results"):
-                        unsuccessfulBackOut = True
-                        while unsuccessfulBackOut:
-                            try:
-                                b.find_by_text("Go back").first.click()
-                                unsuccessfulBackOut = False
-                            except Exception as e:
-                                print("Failed to go back: ", e)
-                        while b.is_element_not_present_by_id("VAR1", 1):
-                            pass
-                    elif not b.is_element_present_by_text("Search for Class Sections"):
-                        b.execute_script("window.location.reload()")
-                        while b.is_element_not_present_by_text("Search for Class Sections", 1):
-                            pass
-                    selectDropdown("VAR1", semester)
-                    selectDropdown("LIST_VAR1_1", subject)
-                    selectDropdown("VAR6", "DSU")
-                    b.find_by_id("WASubmit").first.click()
-                    badResult = False
-                    while not badResult and b.is_element_not_present_by_text("Section Selection Results", 1):
-                        badResult = b.is_text_present("No classes meeting the search criteria have been found.")
-                    if badResult:
-                        unsuccessfulRun = False
-                        continue
-                    print(b.find_by_css('table[summary="Paged Table Navigation Area"]').first.find_by_css('td[align="right"]').first.text)
-                    currentPage, totalPages = "0", "1"
-                    while currentPage != totalPages:
-                        while b.is_element_not_present_by_css('table[summary="Paged Table Navigation Area"]'):
-                            pass
-                        m = match("Page (\d+) of (\d+)", b.find_by_css('table[summary="Paged Table Navigation Area"]').first.find_by_css('td[align="right"]').first.text)
-                        currentPage, totalPages = m.groups(1)
-                        scrapeTable(b.find_by_css('table[summary="Sections"]'))
-                        for x in getExtraExits():
-                            x.click()
-                        b.find_by_css('input[value="NEXT"]').first.click()
-                        if currentPage != totalPages:
-                            while not b.is_text_present("Page {0} of {1}", int(currentPage) + 1, totalPages):
-                                sleep(1)
+                # try:
+                handleExtraExits()
+                if b.is_element_present_by_text("Section Selection Results"):
+                    unsuccessfulBackOut = True
+                    while unsuccessfulBackOut:
+                        try:
+                            b.find_by_text("Go back").first.click()
+                            unsuccessfulBackOut = False
+                        except Exception as e:
+                            print("Failed to go back: ", e)
+                    while b.is_element_not_present_by_id("VAR1", 1):
+                        pass
+                elif not b.is_element_present_by_text("Search for Class Sections"):
+                    b.execute_script("window.location.reload()")
+                    while b.is_element_not_present_by_text("Search for Class Sections", 1):
+                        pass
+                if b.is_element_not_present_by_id("VAR1", 5):
+                    b.execute_script("window.location.reload()")
+                    sleep(1)
+                    continue
+                selectDropdown("VAR1", semester)
+                selectDropdown("LIST_VAR1_1", subject)
+                selectDropdown("VAR6", "DSU")
+                b.find_by_id("WASubmit").first.click()
+                badResult = False
+                while not badResult and b.is_element_not_present_by_text("Section Selection Results", 1):
+                    badResult = b.is_text_present("No classes meeting the search criteria have been found.")
+                if badResult:
                     unsuccessfulRun = False
+                    continue
+                print(b.find_by_css('table[summary="Paged Table Navigation Area"]').first.find_by_css('td[align="right"]').first.text)
+                currentPage, totalPages = "0", "1"
+                courses = []
+                while currentPage != totalPages:
+                    while b.is_element_not_present_by_css('table[summary="Paged Table Navigation Area"]'):
+                        pass
+                    m = match("Page (\d+) of (\d+)", b.find_by_css('table[summary="Paged Table Navigation Area"]').first.find_by_css('td[align="right"]').first.text)
+                    currentPage, totalPages = m.groups(1)
+                    courses.extend(scrapeTable(b.find_by_css('table[summary="Sections"]')))
+                    handleExtraExits()
+                    b.find_by_css('input[value="NEXT"]').first.click()
+                    if currentPage != totalPages:
+                        while not b.is_text_present("Page {0} of {1}".format(int(currentPage) + 1, totalPages)):
+                            sleep(1)
+                subjectCourses[subject] = {}
+                for c in courses:
+                    if c.CourseCode in subjectCourses[subject]:
+                        subjectCourses[subject][c.CourseCode].append({c.CourseCodeSection: objectToDict(c)})
+                    else:
+                        subjectCourses[subject][c.CourseCode] = [{c.CourseCodeSection: objectToDict(c)}]
+                unsuccessfulRun = False
                     # m = match("Page (\d+) of (\d+)", b.find_by_xpath('//*[@id="GROUP_Grp_WSS_COURSE_SECTIONS_GWT"]/table/tbody/tr[1]/td/table/tbody/tr/td[2]/div').text)
                     # if m:
                     #     while m.group(1) != m.group(2):    
@@ -109,13 +135,21 @@ def main():
                     #     courses.extend(scrapeTable(b.find_by_xpath('//*[@id="GROUP_Grp_WSS_COURSE_SECTIONS_GWT"]/table/tbody/tr[2]/td/table')))
                     # except exceptions.ElementDoesNotExist as e:
                     #     b.execute_script("window.location.reload()")
-                except Exception as e:
-                    print("Trying again after error: \n{0}".format(e))
-                    b.execute_script("window.location.reload()")
-                    while b.is_element_not_present_by_text("Search for Class Sections", 1):
-                        pass
-                        #You are not logged in. You must be logged in to access information. Try refreshing the page in your browser.
-    b.quit()
+                # except Exception as e:
+                #     print("Trying again after error: \n{0}".format(e))
+                #     b.execute_script("window.location.reload()")
+                #     while b.is_element_not_present_by_text("Search for Class Sections", 1):
+                #         pass
+                #         #You are not logged in. You must be logged in to access information. Try refreshing the page in your browser.
+                break
+            break
+        totalData[semester] = subjectCourses
+        break
+    for t in teachers:
+        totalData["Teachers"][teachers[t].Email] = objectToDict(teachers[t])
+    print(totalData)
+    with open("test2.json", "w") as fi:
+        json.dump(totalData, fi)
 
 def initToQuery():
     url = "https://portal.sdbor.edu"
@@ -124,7 +158,7 @@ def initToQuery():
     b.find_by_id("password").fill(config["wa_password"] + "\n")
     b.visit(url + "/dsu-student/Pages/default.aspx")
     while b.is_element_not_present_by_text("WebAdvisor for Prospective Students"):
-        b.visit(url + "/dsu-student/Pages/default.aspx")
+        pass
     b.find_by_text("WebAdvisor for Prospective Students").click()
     while b.is_element_not_present_by_text("Admission Information", 1):
         pass
@@ -145,13 +179,13 @@ def getSubjects(): #assumes that you're already on the Prospective students sear
     options = select.first.find_by_tag("option")
     return [x['value'] for x in options if x.text]
 
-def getExtraExits():
-    l = list(b.find_by_css('button[type="button"][class="btn btn-sm btn-danger"]'))
-    if len(l) > 1:
-        return l[1:]
-    return []
+def handleExtraExits():
+    for e, x in enumerate(b.find_by_css('button[type="button"][class="btn btn-sm btn-danger"]')):
+        if e:
+            x.click()
     
-
+def objectToDict(obj):
+    return {attr: getattr(obj, attr) for attr in type(obj).__dict__ if not attr.startswith("__")}
 
 
 def getToQuery():
@@ -176,19 +210,27 @@ def scrapeTable(tab):
                     print("Waiting on Section Information")
                 #Start scraping for the bulk of the course data
                 course.CourseName = b.find_by_id("VAR1").first.text
-                course.CourseCode = b.find_by_id("VAR2").first.text
+                course.CourseCodeSection = b.find_by_id("VAR2").first.text
+                nm = match(r"(.+-.+)-.+", course.CourseCodeSection)
+                course.CourseCode = nm.groups(1)[0] if nm is not None else course.CourseCodeSection
                 course.CourseDescription = b.find_by_id("VAR3").first.text
                 course.Location = b.find_by_id("VAR40").first.text
                 course.Credits = float(b.find_by_id("VAR4").first.text)
                 course.DateStart = b.find_by_id("VAR6").first.text
                 course.DateEnd = b.find_by_id("VAR7").first.text
                 course.MeetingInformation = b.find_by_id("LIST_VAR12_1").first.text
-                course.Teacher = Teacher()
-                course.Teacher.Email = b.find_by_id("LIST_VAR10_1").first.text
-                course.Teacher.Name = b.find_by_id("LIST_VAR7_1").first.text
-                course.Teacher.Phone = b.find_by_id("LIST_VAR8_1").first.text
-                for x in getExtraExits():
-                    x.click()
+                course.ProfessorEmail = b.find_by_id("LIST_VAR10_1").first.text
+                #b.find_by_id("LIST_VAR10_1").first.text
+                #b.find_by_id("LIST_VAR7_1").first.text
+                #b.find_by_id("LIST_VAR8_1").first.text
+                # if course.ProfessorEmail and course.ProfessorEmail not in teachers:
+                #     teachers[course.ProfessorEmail] = Teacher(b.find_by_id("LIST_VAR10_1").first.text, b.find_by_id("LIST_VAR7_1").first.text, b.find_by_id("LIST_VAR8_1").first.text)
+                # else if course.ProfessorEmail:
+
+                #course.Teacher.Email = b.find_by_id("LIST_VAR10_1").first.text
+                #course.Teacher.Name = b.find_by_id("LIST_VAR7_1").first.text
+                #course.Teacher.Phone = b.find_by_id("LIST_VAR8_1").first.text
+                handleExtraExits()
             elif e == 7:
                 nm = match(r"(-?\d+) +\/ +(-?\d+) +\/ +(-?\d+)", tab.find_by_tag("tr")[n].find_by_tag("td")[e].text)
                 if nm is None:
@@ -199,16 +241,12 @@ def scrapeTable(tab):
                     course.SlotsWaitlist = int(nm.group(3))
             elif e == 9:
                 course.AcademicLevel = tab.find_by_tag("tr")[n].find_by_tag("td")[e].text
-        print(course)
         courses.append(course)
     return courses
 
 def selectDropdown(ddt, t): #assumes that you're already on the Prospective students search page
     selects = b.find_by_id(ddt).first
     selects.select(t)
-
-def writeCoursesToJSON(l):
-    pass
 
 if __name__ == "__main__":
     main()
