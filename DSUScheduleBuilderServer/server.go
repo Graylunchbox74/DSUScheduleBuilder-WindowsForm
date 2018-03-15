@@ -9,18 +9,29 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+//make the database global, db = pointer to a database
+var db *sql.DB
+
+//check if there was an error
 func checkErr(err error) {
 	if err != nil {
 		panic(err)
 	}
 }
 
+//create new user given name, password, string, by inputing into database
 func newUser(name, password, major string) {
-	db, err := sql.Open("sqlite3", "./userDatabase.db")
-	checkErr(err)
 	stmt, err := db.Prepare("INSERT INTO user (name, password, major) values(?,?,?)")
 	checkErr(err)
 	_, err = stmt.Exec(name, password, major)
+	checkErr(err)
+
+}
+
+//initialize
+func init() {
+	var err error
+	db, err = sql.Open("sqlite3", "./userDatabase.db")
 	checkErr(err)
 
 }
