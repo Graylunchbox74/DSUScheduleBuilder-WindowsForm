@@ -1,3 +1,4 @@
 \.vs/
 Scraping/*_config.json
+Scraping/test*.json
 Scraping/*.log
