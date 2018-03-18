@@ -137,7 +137,7 @@ def main():
                     while currentPage != totalPages:
                         while b.is_element_not_present_by_css('table[summary="Paged Table Navigation Area"]'):
                             pass
-                        m = match("Page (\d+) of (\d+)", b.find_by_css('table[summary="Paged Table Navigation Area"]').first.find_by_css('td[align="right"]').first.text)
+                        m = match(r"Page (\d+) of (\d+)", b.find_by_css('table[summary="Paged Table Navigation Area"]').first.find_by_css('td[align="right"]').first.text)
                         currentPage, totalPages = m.groups(1)
                         courses.extend(scrapeTable(b.find_by_css('table[summary="Sections"]')))
                         handleExtraExits()
@@ -287,15 +287,15 @@ def scrapeTeachers(tab):
     return rl
 
 def getPrereqs(s):
-    AND = re.findall("\+ (\w+ \d+) ?", s) + re.findall("^(\w+ \d+) \+", s) + re.findall("^(\w+ \d+)$", s)
-    OR  = re.findall("\+ (\w+ \d+) ?", s) + re.findall("^(\w+ \d+) \+", s)
-    return {"and": list(map(lambda a: a.replace(" ", "-"), AND)), "or": list(map(lambda a: a.replace(" ", "-"), OR))}
+    AND = re.findall(r"\+ (\w+ \d+) ?", s) + re.findall(r"^(\w+ \d+) \+", s) + re.findall(r"^(\w+ \d+)$", s)
+    OR  = re.findall(r"\+ (\w+ \d+) ?", s) + re.findall(r"^(\w+ \d+) \+", s)
+    return {"and": replaceSpaces(AND), "or": replaceSpaces(OR)}
 
 def replaceSpaces(l):
     return list(map(lambda a: a.replace(" ", "-"), l))
 
 def getConcurrent(s):
-    return replaceSpaces(re.findall("(\w+ \d+)", s))
+    return replaceSpaces(re.findall(r"(\w+ \d+)", s))
 
 def getTimes(s):
 	r = re.search(r"(\d\d\:\d\d)(\w\w) - (\d\d\:\d\d)(\w\w)", s)
