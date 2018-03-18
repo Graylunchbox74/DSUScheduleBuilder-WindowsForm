@@ -294,15 +294,6 @@ def getPrereqs(s):
 def getConcurrent(s):
     return list(map(lambda a: a.replace(" ", "-"), re.findall("(\w+ \d+)", s)))
 
-def getConcurrent(s):
-    return list(map(lambda a: a.replace(" ", "-"), re.findall("(\w+ \d+)", s)))
-
-def getConcurrent(s):
-    return list(map(lambda a: a.replace(" ", "-"), re.findall("(\w+ \d+)", s)))
-
-def getConcurrent(s):
-    return list(map(lambda a: a.replace(" ", "-"), re.findall("(\w+ \d+)", s)))
-
 def getTimes(s):
 	r = re.search(r"(\d\d\:\d\d)(\w\w) - (\d\d\:\d\d)(\w\w)", s)
 	if r is None:
