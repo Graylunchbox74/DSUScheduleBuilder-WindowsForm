@@ -291,8 +291,11 @@ def getPrereqs(s):
     OR  = re.findall("\+ (\w+ \d+) ?", s) + re.findall("^(\w+ \d+) \+", s)
     return {"and": list(map(lambda a: a.replace(" ", "-"), AND)), "or": list(map(lambda a: a.replace(" ", "-"), OR))}
 
+def replaceSpaces(l):
+    return list(map(lambda a: a.replace(" ", "-"), l))
+
 def getConcurrent(s):
-    return list(map(lambda a: a.replace(" ", "-"), re.findall("(\w+ \d+)", s)))
+    return replaceSpaces(re.findall("(\w+ \d+)", s))
 
 def getTimes(s):
 	r = re.search(r"(\d\d\:\d\d)(\w\w) - (\d\d\:\d\d)(\w\w)", s)
