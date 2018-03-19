@@ -94,7 +94,7 @@ def main():
     b.quit()
     semestersDict = {}
     for semester in semesters:
-        p = subprocess.Popen(["python", "scraper.py", semester], shell=True, stdout=subprocess.PIPE)
+        p = subprocess.Popen(["python", "scraper.py", semester], shell=True)
         semestersDict[semester] = p
     for semester in semestersDict:
         semestersDict[semester].wait()
