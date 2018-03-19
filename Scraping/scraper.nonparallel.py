@@ -92,75 +92,76 @@ totalData = {"Teachers": {}}
 
 def main():    
     initToQuery()
+    semesters = getSemesters()
     subjects  = getSubjects()
-    semester = sys.argv[1]
-    subjectCourses = {}
-    for subject in subjects:
-        unsuccessfulRun = True
-        run = 0
-        while unsuccessfulRun:
-            run += 1
-            print("Run", run, "For", subject)
-            try:
-                handleExtraExits()
-                if b.is_element_present_by_text("Section Selection Results"):
-                    unsuccessfulBackOut = True
-                    while unsuccessfulBackOut:
-                        try:
-                            b.find_by_text("Go back").first.click()
-                            unsuccessfulBackOut = False
-                        except Exception as e:
-                            print("Failed to go back: ", e)
-                    while b.is_element_not_present_by_id("VAR1", 1):
-                        pass
-                elif not b.is_element_present_by_text("Search for Class Sections"):
+    for semester in semesters:
+        subjectCourses = {}
+        for subject in subjects:
+            unsuccessfulRun = True
+            run = 0
+            while unsuccessfulRun:
+                run += 1
+                print("Run", run, "For", subject)
+                try:
+                    handleExtraExits()
+                    if b.is_element_present_by_text("Section Selection Results"):
+                        unsuccessfulBackOut = True
+                        while unsuccessfulBackOut:
+                            try:
+                                b.find_by_text("Go back").first.click()
+                                unsuccessfulBackOut = False
+                            except Exception as e:
+                                print("Failed to go back: ", e)
+                        while b.is_element_not_present_by_id("VAR1", 1):
+                            pass
+                    elif not b.is_element_present_by_text("Search for Class Sections"):
+                        b.execute_script("window.location.reload()")
+                        while b.is_element_not_present_by_text("Search for Class Sections", 1):
+                            pass
+                    if b.is_element_not_present_by_id("VAR1", 5):
+                        b.execute_script("window.location.reload()")
+                        sleep(2)
+                        continue
+                    selectDropdown("VAR1", semester)
+                    selectDropdown("LIST_VAR1_1", subject)
+                    selectDropdown("VAR6", "DSU")
+                    b.find_by_id("WASubmit").first.click()
+                    badResult = False
+                    while not badResult and b.is_element_not_present_by_text("Section Selection Results", 1):
+                        badResult = b.is_text_present("No classes meeting the search criteria have been found.")
+                    if badResult:
+                        unsuccessfulRun = False
+                        continue
+                    currentPage, totalPages = "0", "1"
+                    courses = []
+                    while currentPage != totalPages:
+                        while b.is_element_not_present_by_css('table[summary="Paged Table Navigation Area"]'):
+                            pass
+                        m = match(r"Page (\d+) of (\d+)", b.find_by_css('table[summary="Paged Table Navigation Area"]').first.find_by_css('td[align="right"]').first.text)
+                        currentPage, totalPages = m.groups(1)
+                        courses.extend(scrapeTable(b.find_by_css('table[summary="Sections"]')))
+                        handleExtraExits()
+                        b.find_by_css('input[value="NEXT"]').first.click()
+                        if currentPage != totalPages:
+                            while not b.is_text_present("Page {0} of {1}".format(int(currentPage) + 1, totalPages)):
+                                sleep(1)
+                    subjectCourses[subject] = {}
+                    for c in courses:
+                        if c.CourseCode in subjectCourses[subject]:
+                            subjectCourses[subject][c.CourseCode].append({c.CourseCodeSection: objectToDict(c)})
+                        else:
+                            subjectCourses[subject][c.CourseCode] = [{c.CourseCodeSection: objectToDict(c)}]
+                    unsuccessfulRun = False
+                except Exception as e:
+                    print("Trying again after error: \n{0}".format(e))
                     b.execute_script("window.location.reload()")
                     while b.is_element_not_present_by_text("Search for Class Sections", 1):
                         pass
-                if b.is_element_not_present_by_id("VAR1", 5):
-                    b.execute_script("window.location.reload()")
-                    sleep(2)
-                    continue
-                selectDropdown("VAR1", semester)
-                selectDropdown("LIST_VAR1_1", subject)
-                selectDropdown("VAR6", "DSU")
-                b.find_by_id("WASubmit").first.click()
-                badResult = False
-                while not badResult and b.is_element_not_present_by_text("Section Selection Results", 1):
-                    badResult = b.is_text_present("No classes meeting the search criteria have been found.")
-                if badResult:
-                    unsuccessfulRun = False
-                    continue
-                currentPage, totalPages = "0", "1"
-                courses = []
-                while currentPage != totalPages:
-                    while b.is_element_not_present_by_css('table[summary="Paged Table Navigation Area"]'):
-                        pass
-                    m = match(r"Page (\d+) of (\d+)", b.find_by_css('table[summary="Paged Table Navigation Area"]').first.find_by_css('td[align="right"]').first.text)
-                    currentPage, totalPages = m.groups(1)
-                    courses.extend(scrapeTable(b.find_by_css('table[summary="Sections"]')))
-                    handleExtraExits()
-                    b.find_by_css('input[value="NEXT"]').first.click()
-                    if currentPage != totalPages:
-                        while not b.is_text_present("Page {0} of {1}".format(int(currentPage) + 1, totalPages)):
-                            sleep(1)
-                subjectCourses[subject] = {}
-                for c in courses:
-                    if c.CourseCode in subjectCourses[subject]:
-                        subjectCourses[subject][c.CourseCode].append({c.CourseCodeSection: objectToDict(c)})
-                    else:
-                        subjectCourses[subject][c.CourseCode] = [{c.CourseCodeSection: objectToDict(c)}]
-                unsuccessfulRun = False
-            except Exception as e:
-                print("Trying again after error: \n{0}".format(e))
-                b.execute_script("window.location.reload()")
-                while b.is_element_not_present_by_text("Search for Class Sections", 1):
-                    pass
-                    #You are not logged in. You must be logged in to access information. Try refreshing the page in your browser.
-    totalData[semester] = subjectCourses
+                        #You are not logged in. You must be logged in to access information. Try refreshing the page in your browser.
+        totalData[semester] = subjectCourses
     for t in teachers:
         totalData["Teachers"][teachers[t].Email] = objectToDict(teachers[t])
-    with open("{0}.json".format(semester), "w") as fi:
+    with open("test2.json", "w") as fi:
         json.dump(totalData, fi)
     b.quit()
 
