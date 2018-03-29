@@ -2,5 +2,7 @@
     "info":"DELETE THIS FIELD, IT'S PURELY FOR CONVEYING INFORMATION; Change your config json file name to {name}_config.json so that .gitignore picks it up",
     "browser": "{path to webdriver}",
     "type": "{type of webdriver, 'chrome' for google chrome driver, 'firefox' for firefox}",
+    "wa_username": "{Username for logging to D2L to get data}",
+    "wa_password": "{Password for logging to D2L to get data}",
     "headless": false
 }
