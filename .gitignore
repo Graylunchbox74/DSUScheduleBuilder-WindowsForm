@@ -2,3 +2,6 @@
 Scraping/*_config.json
 Scraping/test*.json
 Scraping/*.log
+
+DSUScheduleBuilder/bin/
+DSUScheduleBuilder/obj/
