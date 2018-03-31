@@ -48,13 +48,20 @@ func doesUserExist(name string) bool {
 	return false
 }
 
+func getUserID(name string) int {
+	//get the user id of the person with this name
+	var uid int
+	rows, err := db.Query("SELECT id FROM user WHERE name=" + name)
+	checkErr(err)
+	rows.Scan(&uid)
+	return uid
+}
+
 //delete a user given their name from the database
 func deleteUser(name string) {
 	if doesUserExist(name) {
-		//get the user id of the person with this name
-		var uid int
-		rows, err := db.Query("SELECT id FROM user WHERE name=" + name)
-		rows.Scan(&uid)
+
+		uid := getUserID(name)
 
 		//delete the user from the user table
 		stmt, err := db.Prepare("DELETE FROM user WHERE name=" + name)
@@ -90,12 +97,8 @@ func newUser(name, password, major string) {
 		_, err = stmt.Exec(name, password, major)
 		checkErr(err)
 
-		rows, err := db.Query("SELECT id FROM user")
-		checkErr(err)
-		var uid int
-		for rows.Next() {
-			rows.Scan(&uid)
-		}
+		uid := getUserID(name)
+
 		stmt, err = db.Prepare("CREATE TABLE PreviousClasses" + strconv.Itoa(uid) + " (classID VARCHAR, credits INT)")
 		checkErr(err)
 		_, err = stmt.Exec()
