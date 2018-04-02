@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
@@ -33,44 +32,36 @@ func checkPasswordHash(password, hash string) bool {
 
 func doesUserExist(name string) bool {
 	var uid int
-	err := db.QueryRow("SELECT name FROM user WHERE name=$1", name).Scan(&uid)
+	err := db.QueryRow("SELECT id FROM user WHERE name=$1", name).Scan(&uid)
 
 	if err == nil {
-		return false
+		return true
 	}
-	return true
+	return false
+}
 
+func getUserID(name string) int {
+	var uid int
+	err := db.QueryRow("SELECT id FROM user WHERE name=$1", name).Scan(&uid)
+	checkErr(err)
+	return uid
 }
 
 //delete a user given their name from the database
 func deleteUser(name string) {
 	if doesUserExist(name) {
 		//get the user id of the person with this name
-		var uid int
-		stmt, err := db.Query("SELECT id FROM user WHERE name=$1", name)
-		checkErr(err)
-		stmt.Next()
-		err = stmt.Scan(&uid)
-		stmt.Close()
-		checkErr(err)
-		println(strconv.Itoa(uid))
+		uid := getUserID(name)
 
 		//delete the user from the user table
-		_, err = db.Exec("DELETE FROM user WHERE id=$1", uid)
+		_, err := db.Exec("DELETE FROM user WHERE id=$1", uid)
 		checkErr(err)
-		/*
-			//delete the table that stores the users enrolled courses
-			stmt, err = db.Prepare("DROP TABLE enrolledCourses" + strconv.Itoa(uid))
-			checkErr(err)
-			_, err = stmt.Exec()
-			checkErr(err)
 
-			//delete the table that stores the users enrolled courses
-			stmt, err = db.Prepare("DROP TABLE previousCourses" + strconv.Itoa(uid))
-			checkErr(err)
-			_, err = stmt.Exec()
-			checkErr(err)
-		*/
+		_, err = db.Exec("DELETE FROM PreviousClasses WHERE userID=$1", uid)
+		checkErr(err)
+
+		_, err = db.Exec("DELETE FROM EnrolledClasses WHERE userID=$1", uid)
+		checkErr(err)
 	}
 }
 
@@ -79,34 +70,12 @@ func newUser(name, password, major string) {
 
 	if !doesUserExist(name) {
 
-		stmt, err := db.Prepare("INSERT INTO user (name, password, major) values(?,?,?)")
-		checkErr(err)
 		//hash the password to store it
-		password, err = hashPassword(password)
-		checkErr(err)
-		stmt.Close()
-
-		_, err = stmt.Exec(name, password, major)
+		password, err := hashPassword(password)
 		checkErr(err)
 
-		rows, err := db.Query("SELECT id FROM user WHERE name=$1", name)
+		_, err = db.Exec("INSERT INTO user (name, password, major) values($1,$2,$3)", name, password, major)
 		checkErr(err)
-		var uid int
-		rows.Next()
-		rows.Scan(&uid)
-		rows.Close()
-
-		stmt, err = db.Prepare("CREATE TABLE PreviousClasses" + strconv.Itoa(uid) + " (classID VARCHAR, credits INT)")
-		checkErr(err)
-		_, err = stmt.Exec()
-		checkErr(err)
-		stmt.Close()
-
-		stmt, err = db.Prepare("CREATE TABLE EnrolledClasses" + strconv.Itoa(uid) + " (classID VARCHAR, className VARCHAR, teacher VARCHAR, location VARCHAR, startTime TIME, endTime TIME, startDate DATE, endDate DATE, credits INT)")
-		checkErr(err)
-		_, err = stmt.Exec()
-		checkErr(err)
-		stmt.Close()
 	}
 }
 
