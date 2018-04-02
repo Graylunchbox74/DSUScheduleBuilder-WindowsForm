@@ -30,9 +30,8 @@ func checkPasswordHash(password, hash string) bool {
 	return err == nil
 }
 
-func doesUserExist(name string) bool {
-	var uid int
-	err := db.QueryRow("SELECT id FROM user WHERE name=$1", name).Scan(&uid)
+func doesUserExist(uid int) bool {
+	err := db.QueryRow("SELECT id FROM user WHERE id=$1", uid).Scan(&uid)
 
 	if err == nil {
 		return true
@@ -48,11 +47,8 @@ func getUserID(name string) int {
 }
 
 //delete a user given their name from the database
-func deleteUser(name string) {
-	if doesUserExist(name) {
-		//get the user id of the person with this name
-		uid := getUserID(name)
-
+func deleteUser(uid int) {
+	if doesUserExist(uid) {
 		//delete the user from the user table
 		_, err := db.Exec("DELETE FROM user WHERE id=$1", uid)
 		checkErr(err)
@@ -68,7 +64,10 @@ func deleteUser(name string) {
 //create new user given name, password, string, by inputing into database
 func newUser(name, password, major string) {
 
-	if !doesUserExist(name) {
+	var uid int
+	err := db.QueryRow("SELECT id FROM user WHERE name=$1", name).Scan(&uid)
+	//the user does not currently exist in the database with the same name
+	if err != nil {
 
 		//hash the password to store it
 		password, err := hashPassword(password)
@@ -103,6 +102,5 @@ func main() {
 		})
 	}
 	newUser("Thomas", "Password", "Applied Computer Science")
-	deleteUser("Thomas")
 	r.Run(":4200")
 }
