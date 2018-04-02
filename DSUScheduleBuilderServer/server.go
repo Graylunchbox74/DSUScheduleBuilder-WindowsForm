@@ -32,20 +32,14 @@ func checkPasswordHash(password, hash string) bool {
 }
 
 func doesUserExist(name string) bool {
-	rows, err := db.Query("SELECT name FROM user")
-	checkErr(err)
+	var uid int
+	err := db.QueryRow("SELECT name FROM user WHERE name=$1", name).Scan(&uid)
 
-	var tmpName string
-	//check each name in the database to see if there is someone with the same name
-	for rows.Next() {
-		rows.Scan(&tmpName)
-		if tmpName == name {
-			//user with that name already exists
-			return true
-		}
+	if err == nil {
+		return false
 	}
-	//user does not exist
-	return false
+	return true
+
 }
 
 //delete a user given their name from the database
@@ -53,26 +47,30 @@ func deleteUser(name string) {
 	if doesUserExist(name) {
 		//get the user id of the person with this name
 		var uid int
-		rows, err := db.Query("SELECT id FROM user WHERE name=" + name)
-		rows.Scan(&uid)
+		stmt, err := db.Query("SELECT id FROM user WHERE name=$1", name)
+		checkErr(err)
+		stmt.Next()
+		err = stmt.Scan(&uid)
+		stmt.Close()
+		checkErr(err)
+		println(strconv.Itoa(uid))
 
 		//delete the user from the user table
-		stmt, err := db.Prepare("DELETE FROM user WHERE name=" + name)
+		_, err = db.Exec("DELETE FROM user WHERE id=$1", uid)
 		checkErr(err)
-		_, err = stmt.Exec()
-		checkErr(err)
+		/*
+			//delete the table that stores the users enrolled courses
+			stmt, err = db.Prepare("DROP TABLE enrolledCourses" + strconv.Itoa(uid))
+			checkErr(err)
+			_, err = stmt.Exec()
+			checkErr(err)
 
-		//delete the table that stores the users enrolled courses
-		stmt, err = db.Prepare("DROP TABLE enrolledCourses" + strconv.Itoa(uid))
-		checkErr(err)
-		_, err = stmt.Exec()
-		checkErr(err)
-
-		//delete the table that stores the users enrolled courses
-		stmt, err = db.Prepare("DROP TABLE previousCourses" + strconv.Itoa(uid))
-		checkErr(err)
-		_, err = stmt.Exec()
-		checkErr(err)
+			//delete the table that stores the users enrolled courses
+			stmt, err = db.Prepare("DROP TABLE previousCourses" + strconv.Itoa(uid))
+			checkErr(err)
+			_, err = stmt.Exec()
+			checkErr(err)
+		*/
 	}
 }
 
@@ -86,32 +84,36 @@ func newUser(name, password, major string) {
 		//hash the password to store it
 		password, err = hashPassword(password)
 		checkErr(err)
+		stmt.Close()
 
 		_, err = stmt.Exec(name, password, major)
 		checkErr(err)
 
-		rows, err := db.Query("SELECT id FROM user")
+		rows, err := db.Query("SELECT id FROM user WHERE name=$1", name)
 		checkErr(err)
 		var uid int
-		for rows.Next() {
-			rows.Scan(&uid)
-		}
+		rows.Next()
+		rows.Scan(&uid)
+		rows.Close()
+
 		stmt, err = db.Prepare("CREATE TABLE PreviousClasses" + strconv.Itoa(uid) + " (classID VARCHAR, credits INT)")
 		checkErr(err)
 		_, err = stmt.Exec()
 		checkErr(err)
+		stmt.Close()
 
 		stmt, err = db.Prepare("CREATE TABLE EnrolledClasses" + strconv.Itoa(uid) + " (classID VARCHAR, className VARCHAR, teacher VARCHAR, location VARCHAR, startTime TIME, endTime TIME, startDate DATE, endDate DATE, credits INT)")
 		checkErr(err)
 		_, err = stmt.Exec()
 		checkErr(err)
+		stmt.Close()
 	}
 }
 
 //initialize
 func init() {
 	var err error
-	db, err = sql.Open("sqlite3", "./userDatabase.db")
+	db, err = sql.Open("sqlite3", "./userDatabase.db?_busy_timeout=5000")
 	checkErr(err)
 
 }
@@ -132,5 +134,6 @@ func main() {
 		})
 	}
 	newUser("Thomas", "Password", "Applied Computer Science")
+	deleteUser("Thomas")
 	r.Run(":4200")
 }
