@@ -80,8 +80,11 @@ func newUser(name, password, major string) {
 
 func addEnrolledClass(uid, startTime, endTime, credits int, classID, className, teacher, location, startDate, endDate string) {
 	//make sure this class does not exist for the user with this id already, else skip
-	rows, _ := db.QueryRow("SELECT userID FROM EnrolledClasses WHERE uid=$1 AND classID=$2", uid, classID)
-	if {
+	var tmp int
+	tmp = -1
+	_ = db.QueryRow("SELECT userID FROM EnrolledClasses WHERE userID=$1 AND classID=$2", uid, classID).Scan(&tmp)
+	println(tmp)
+	if tmp == -1 {
 		_, err := db.Exec("INSERT INTO EnrolledClasses (userID, classID, className, teacher, location, startTime, endTime, startDate, endDate, credits) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)", uid, classID, className, teacher, location, startTime, endTime, startDate, endDate, credits)
 		checkErr(err)
 	}
@@ -90,8 +93,11 @@ func addEnrolledClass(uid, startTime, endTime, credits int, classID, className, 
 func addPreviousClass(uid, startTime, endTime, credits int, classID, className, teacher, startDate, endDate string) {
 
 	//make sure this class does not exist for the user with this id already, else skip
-	err := db.QueryRow("SELECT userID FROM PreviousClasses WHERE uid=$1 AND classID=$2", uid, classID)
-	if err != nil {
+	var tmp int
+	tmp = -1
+	_ = db.QueryRow("SELECT userID FROM PreviousClasses WHERE userID=$1 AND classID=$2", uid, classID).Scan(&tmp)
+	println(tmp)
+	if tmp == -1 {
 		_, err := db.Exec("INSERT INTO PreviousClasses (userID, classID, className, teacher, startTime, endTime, startDate, endDate, credits) values($1,$2,$3,$4,$5,$6,$7,$8,$9)", uid, classID, className, teacher, startTime, endTime, startDate, endDate, credits)
 		checkErr(err)
 	}
