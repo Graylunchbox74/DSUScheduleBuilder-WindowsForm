@@ -78,6 +78,25 @@ func newUser(name, password, major string) {
 	}
 }
 
+func addEnrolledClass(uid, startTime, endTime, credits int, classID, className, teacher, location, startDate, endDate string) {
+	//make sure this class does not exist for the user with this id already, else skip
+	rows, _ := db.QueryRow("SELECT userID FROM EnrolledClasses WHERE uid=$1 AND classID=$2", uid, classID)
+	if {
+		_, err := db.Exec("INSERT INTO EnrolledClasses (userID, classID, className, teacher, location, startTime, endTime, startDate, endDate, credits) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)", uid, classID, className, teacher, location, startTime, endTime, startDate, endDate, credits)
+		checkErr(err)
+	}
+}
+
+func addPreviousClass(uid, startTime, endTime, credits int, classID, className, teacher, startDate, endDate string) {
+
+	//make sure this class does not exist for the user with this id already, else skip
+	err := db.QueryRow("SELECT userID FROM PreviousClasses WHERE uid=$1 AND classID=$2", uid, classID)
+	if err != nil {
+		_, err := db.Exec("INSERT INTO PreviousClasses (userID, classID, className, teacher, startTime, endTime, startDate, endDate, credits) values($1,$2,$3,$4,$5,$6,$7,$8,$9)", uid, classID, className, teacher, startTime, endTime, startDate, endDate, credits)
+		checkErr(err)
+	}
+}
+
 //initialize
 func init() {
 	var err error
@@ -101,6 +120,8 @@ func main() {
 			c.JSON(200, gin.H{"msg": ""})
 		})
 	}
-	newUser("Thomas", "Password", "Applied Computer Science")
+	//	newUser("Thomas", "Password", "Applied Computer Science")
+	addEnrolledClass(0, 0, 1, 2, "e", "test", "me", "here", "", "then")
+	//addPreviousClass(0, 0, 0, 0, "d", "d", "d", "d", "d")
 	r.Run(":4200")
 }
