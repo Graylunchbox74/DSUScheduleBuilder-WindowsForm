@@ -4,3 +4,5 @@ Scraping/test*.json
 Scraping/*.log
 DSUScheduleBuilderServer/server
 DSUScheduleBuilderServer/server.exe
+DSUScheduleBuilder/bin/
+DSUScheduleBuilder/obj/
