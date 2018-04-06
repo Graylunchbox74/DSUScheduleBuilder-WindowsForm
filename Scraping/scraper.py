@@ -91,6 +91,7 @@ teachers = {}
 totalData = {"Teachers": {}}
 
 def main():    
+    try:
     initToQuery()
     subjects  = getSubjects()
     semester = sys.argv[1]
@@ -264,7 +265,6 @@ def scrapeTable(tab):
             elif e == 9:
                 course.AcademicLevel = tab.find_by_tag("tr")[n].find_by_tag("td")[e].text
         courses.append(course)
-    sys.stdout.flush()
     return courses
 
 def scrapeTeachers(tab):
