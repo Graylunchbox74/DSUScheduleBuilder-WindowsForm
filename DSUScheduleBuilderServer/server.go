@@ -94,9 +94,9 @@ func newUser(User user) error {
 		}
 		if err == nil {
 			_, err = db.Exec("INSERT INTO user (name, password, major) values($1,$2,$3)", User.name, User.password, User.major)
-			checkLogError(funcName, "1", err)
+			go checkLogError(funcName, "1", err)
 		} else {
-			logError(funcName, "2", err)
+			go logError(funcName, "2", err)
 			return err
 		}
 	}
