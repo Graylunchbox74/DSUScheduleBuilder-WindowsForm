@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-contrib/static"
@@ -12,11 +13,17 @@ import (
 
 //make the database global, db = pointer to a database
 var db *sql.DB
+var errorChannel chan locationalError
 
 //holds the information for a single course being/has been offered
 type course struct {
 	userID, startTime, endTime, credits                       int
 	classID, className, teacher, location, startDate, endDate string
+}
+
+type locationalError struct {
+	Error                 error
+	Location, Sublocation string
 }
 
 //holds the information for a single user
@@ -32,6 +39,27 @@ func checkErr(err error) {
 	}
 }
 
+func checkLogError(location, sublocation string, err error) {
+	if err != nil {
+		errorChannel <- locationalError{err, location, sublocation}
+	}
+}
+
+func logError(location, sublocation string, err error) {
+	errorChannel <- locationalError{err, location, sublocation}
+}
+
+func errorDrain() {
+	var lErr locationalError
+	for {
+		select {
+		case lErr = <-errorChannel:
+			fmt.Println(lErr.Location, lErr.Sublocation, lErr.Error)
+			//Handle Error Logging Here
+		}
+	}
+}
+
 func hashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	return string(bytes), err
@@ -42,13 +70,9 @@ func checkPasswordHash(password, hash string) bool {
 	return err == nil
 }
 
-func doesUserExist(uid int) bool {
-	err := db.QueryRow("SELECT id FROM user WHERE id=$1", uid).Scan(&uid)
-
-	if err == nil {
-		return true
-	}
-	return false
+func doesUserExistWithField(field, value string) bool {
+	err := db.QueryRow(fmt.Sprintf("SELECT %s FROM user WHERE %s=$1", field, field), value).Scan(&value)
+	return err == nil
 }
 
 func getUserID(name string) int {
@@ -59,25 +83,28 @@ func getUserID(name string) int {
 }
 
 //create new user given name, password, string, by inputing into database
-func newUser(User user) {
-	var uid int
-	err := db.QueryRow("SELECT id FROM user WHERE name=$1", User.name).Scan(&uid)
+func newUser(User user) error {
+	funcName := "newUser"
 	//the user does not currently exist in the database with the same name
-	if err != nil {
-
+	if doesUserExistWithField("name", user.name) {
 		//hash the password to store it
-		User.password, err = hashPassword(User.password)
-		checkErr(err)
+		attempts, count := 10, 0
+		for err = nil; err != nil && count++ <= attempts; {
+			User.password, err = hashPassword(User.password)
+		}
 		if err == nil {
 			_, err = db.Exec("INSERT INTO user (name, password, major) values($1,$2,$3)", User.name, User.password, User.major)
-			checkErr(err)
+			checkLogError(funcName, "1", err)
+		} else {
+			logError(funcName, "2", err)
+			return err
 		}
 	}
 }
 
 //delete a user given a user struct from the database
 func deleteUser(User user) {
-	if doesUserExist(User.uid) {
+	if doesUserExistWithField("id" , User.uid) {
 		//delete the user from the user table
 		_, err := db.Exec("DELETE FROM user WHERE id=$1", User.uid)
 		checkErr(err)
