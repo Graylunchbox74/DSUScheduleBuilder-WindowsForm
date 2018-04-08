@@ -215,6 +215,7 @@ func init() {
 }
 
 func main() {
+	go errorDrain()
 	r := gin.Default()
 
 	r.GET("/", func(c *gin.Context) { http.ServeFile(c.Writer, c.Request, "./index.html") })
