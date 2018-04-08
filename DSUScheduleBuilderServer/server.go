@@ -28,7 +28,7 @@ type user struct {
 //check if there was an error
 func checkErr(err error) {
 	if err != nil {
-		panic(err)
+		println(err)
 	}
 }
 
@@ -68,9 +68,10 @@ func newUser(User user) {
 		//hash the password to store it
 		User.password, err = hashPassword(User.password)
 		checkErr(err)
-
-		_, err = db.Exec("INSERT INTO user (name, password, major) values($1,$2,$3)", User.name, User.password, User.major)
-		checkErr(err)
+		if err == nil {
+			_, err = db.Exec("INSERT INTO user (name, password, major) values($1,$2,$3)", User.name, User.password, User.major)
+			checkErr(err)
+		}
 	}
 }
 
@@ -80,12 +81,14 @@ func deleteUser(User user) {
 		//delete the user from the user table
 		_, err := db.Exec("DELETE FROM user WHERE id=$1", User.uid)
 		checkErr(err)
-
-		_, err = db.Exec("DELETE FROM PreviousClasses WHERE userID=$1", User.uid)
-		checkErr(err)
-
-		_, err = db.Exec("DELETE FROM EnrolledClasses WHERE userID=$1", User.uid)
-		checkErr(err)
+		if err == nil {
+			_, err = db.Exec("DELETE FROM PreviousClasses WHERE userID=$1", User.uid)
+			checkErr(err)
+			if err == nil {
+				_, err = db.Exec("DELETE FROM EnrolledClasses WHERE userID=$1", User.uid)
+				checkErr(err)
+			}
+		}
 	}
 }
 
@@ -113,10 +116,10 @@ func addEnrolledClass(class course) {
 	//make sure this class does not exist for the user with this id already, else skip
 	var tmp int
 	tmp = -1
-	_ = db.QueryRow("SELECT userID FROM EnrolledClasses WHERE userID=$1 AND classID=$2", class.userID, class.classID).Scan(&tmp)
-	println(tmp)
-	if tmp == -1 {
-		_, err := db.Exec("INSERT INTO EnrolledClasses (userID, classID, className, teacher, location, startTime, endTime, startDate, endDate, credits) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)", class.userID, class.classID, class.className, class.teacher, class.location, class.startTime, class.endTime, class.startDate, class.endDate, class.credits)
+	err := db.QueryRow("SELECT userID FROM EnrolledClasses WHERE userID=$1 AND classID=$2", class.userID, class.classID).Scan(&tmp)
+	checkErr(err)
+	if tmp == -1 && err == nil {
+		_, err = db.Exec("INSERT INTO EnrolledClasses (userID, classID, className, teacher, location, startTime, endTime, startDate, endDate, credits) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)", class.userID, class.classID, class.className, class.teacher, class.location, class.startTime, class.endTime, class.startDate, class.endDate, class.credits)
 		checkErr(err)
 	}
 }
@@ -147,10 +150,10 @@ func addPreviousClass(class course) {
 	//make sure this class does not exist for the user with this id already, else skip
 	var tmp int
 	tmp = -1
-	_ = db.QueryRow("SELECT userID FROM PreviousClasses WHERE userID=$1 AND classID=$2", class.userID, class.classID).Scan(&tmp)
-	println(tmp)
-	if tmp == -1 {
-		_, err := db.Exec("INSERT INTO PreviousClasses (userID, classID, className, teacher, startTime, endTime, startDate, endDate, credits) values($1,$2,$3,$4,$5,$6,$7,$8,$9)", class.userID, class.classID, class.className, class.teacher, class.startTime, class.endTime, class.startDate, class.endDate, class.credits)
+	err := db.QueryRow("SELECT userID FROM PreviousClasses WHERE userID=$1 AND classID=$2", class.userID, class.classID).Scan(&tmp)
+	checkErr(err)
+	if tmp == -1 && err == nil {
+		_, err = db.Exec("INSERT INTO PreviousClasses (userID, classID, className, teacher, startTime, endTime, startDate, endDate, credits) values($1,$2,$3,$4,$5,$6,$7,$8,$9)", class.userID, class.classID, class.className, class.teacher, class.startTime, class.endTime, class.startDate, class.endDate, class.credits)
 		checkErr(err)
 	}
 }
