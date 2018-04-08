@@ -41,7 +41,7 @@ func checkErr(err error) {
 
 func checkLogError(location, sublocation string, err error) {
 	if err != nil {
-		errorChannel <- locationalError{err, location, sublocation}
+		logError(location, sublocation, err)
 	}
 }
 
