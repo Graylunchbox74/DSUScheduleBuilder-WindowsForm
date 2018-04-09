@@ -2,12 +2,13 @@ package main
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"net/http"
 
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
-	_ "github.com/mattn/go-sqlite3"
+	//_ "github.com/mattn/go-sqlite3"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -70,7 +71,7 @@ func checkPasswordHash(password, hash string) bool {
 	return err == nil
 }
 
-func doesUserExistWithField(field, value string) bool {
+func doesUserExistWithField(field, value interface{}) bool {
 	err := db.QueryRow(fmt.Sprintf("SELECT %s FROM user WHERE %s=$1", field, field), value).Scan(&value)
 	return err == nil
 }
@@ -83,28 +84,34 @@ func getUserID(name string) int {
 }
 
 //create new user given name, password, string, by inputing into database
-func newUser(User user) error {
+func newUser(User user) (uint8, error) {
 	funcName := "newUser"
 	//the user does not currently exist in the database with the same name
-	if doesUserExistWithField("name", user.name) {
+	if doesUserExistWithField("name", User.name) {
 		//hash the password to store it
-		attempts, count := 10, 0
-		for err = nil; err != nil && count++ <= attempts; {
+		maxAttempts, numAttempts := 10, 0
+		var err error
+		for err = nil; err != nil && numAttempts <= maxAttempts; {
 			User.password, err = hashPassword(User.password)
+			numAttempts++
 		}
 		if err == nil {
 			_, err = db.Exec("INSERT INTO user (name, password, major) values($1,$2,$3)", User.name, User.password, User.major)
-			go checkLogError(funcName, "1", err)
-		} else {
-			go logError(funcName, "2", err)
-			return err
+			if err != nil {
+				go logError(funcName, "1", err)
+				return 1, errors.New("Error inserting new user into database")
+			}
+			return 0, nil
 		}
+		go logError(funcName, "2", err)
+		return 1, err
 	}
+	return 0, nil
 }
 
 //delete a user given a user struct from the database
 func deleteUser(User user) {
-	if doesUserExistWithField("id" , User.uid) {
+	if doesUserExistWithField("id", User.uid) {
 		//delete the user from the user table
 		_, err := db.Exec("DELETE FROM user WHERE id=$1", User.uid)
 		checkErr(err)
