@@ -58,6 +58,7 @@ func getUserID(name string) int {
 	return uid
 }
 
+//user database functions
 //create new user given name, password, string, by inputing into database
 func newUser(User user) {
 	var uid int
@@ -112,6 +113,7 @@ func getUser(name string) user {
 	return User
 }
 
+//enrolled class database functions
 func addEnrolledClass(class course) {
 	//make sure this class does not exist for the user with this id already, else skip
 	var tmp int
@@ -146,6 +148,7 @@ func getEnrolledClass(uid int, classID string) (course, error) {
 	return class, err
 }
 
+//previous class database functions
 func addPreviousClass(class course) {
 	//make sure this class does not exist for the user with this id already, else skip
 	var tmp int
