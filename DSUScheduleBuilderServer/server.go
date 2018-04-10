@@ -227,38 +227,64 @@ func getEnrolledClass(uid int, classID string) (course, uint16, error) {
 }
 
 //previous class database functions
-func addPreviousClass(class course) {
+func addPreviousClass(class course) (uint16, error) {
 	//make sure this class does not exist for the user with this id already, else skip
 	var tmp int
+	var location = "addPreviousClass"
+	var err error
 	tmp = -1
-	err := db.QueryRow("SELECT userID FROM PreviousClasses WHERE userID=$1 AND classID=$2", class.userID, class.classID).Scan(&tmp)
-	checkErr(err)
+	err = db.QueryRow("SELECT userID FROM PreviousClasses WHERE userID=$1 AND classID=$2", class.userID, class.classID).Scan(&tmp)
+	checkLogError(location, "Checking if class already exists", err)
 	if tmp == -1 && err == nil {
 		_, err = db.Exec("INSERT INTO PreviousClasses (userID, classID, className, teacher, startTime, endTime, startDate, endDate, credits) values($1,$2,$3,$4,$5,$6,$7,$8,$9)", class.userID, class.classID, class.className, class.teacher, class.startTime, class.endTime, class.startDate, class.endDate, class.credits)
-		checkErr(err)
+		checkLogError(location, "Inserting the new class into database", err)
+		if err == nil {
+			return 200, err
+		}
+	} else if tmp != -1 {
+		return 501, err
 	}
+	return 500, err
 }
 
-func deletePreviousClass(uid int, classID string) {
-	_, err := db.Exec("DELETE FROM PreviousClasses WHERE userID=$1 AND classID=$2", uid, classID)
-	checkErr(err)
+func deletePreviousClass(class course) (uint16, error) {
+	var location = "deletePreviousClass"
+	var err error
+	_, err = db.Exec("DELETE FROM PreviousClasses WHERE userID=$1 AND classID=$2", class.userID, class.classID)
+	checkLogError(location, "Deleted class from database", err)
+	if err == nil {
+		return 200, err
+	}
+	return 500, err
 }
 
 //updates an entry in the enrolledclasses table, although we cannot allow to change the userID
-func updatePreviousClass(class course, keyword, newValue string) {
+func updatePreviousClass(class course, keyword, newValue string) (uint16, error) {
+	var location = "updatePreviousClass"
+	var err error
 	if keyword != "classID" {
 		_, err := db.Exec("UPDATE PreviousClasses SET $1=$2 WHERE userID=$3 AND classID=$4", keyword, newValue, class.userID, class.classID)
-		checkErr(err)
+		checkLogError(location, "Updated something that is not classID in PreviousClasses", err)
 	} else {
 		_, err := db.Exec("UPDATE PreviousClasses SET $1=$2 WHERE userID=$3 AND className=$4", keyword, newValue, class.userID, class.className)
-		checkErr(err)
+		checkLogError(location, "Updated classID in PreviousClasses", err)
 	}
+	if err == nil {
+		return 200, err
+	}
+	return 500, err
 }
 
-func getPreviousClass(uid int, classID string) (course, error) {
+func getPreviousClass(uid int, classID string) (course, uint16, error) {
 	var class course
-	err := db.QueryRow("SELECT FROM PreviousClasses WHERE userID=$1 AND classID=$2", uid, classID).Scan(&class.userID, &class.classID, &class.className, &class.teacher, &class.startTime, &class.endTime, &class.startDate, &class.endDate, &class.credits)
-	return class, err
+	var location = "getPreviousClass"
+	var err error
+	err = db.QueryRow("SELECT FROM PreviousClasses WHERE userID=$1 AND classID=$2", uid, classID).Scan(&class.userID, &class.classID, &class.className, &class.teacher, &class.startTime, &class.endTime, &class.startDate, &class.endDate, &class.credits)
+	checkLogError(location, "Selected class from PreviousClasses", err)
+	if err == nil {
+		return class, 200, err
+	}
+	return class, 500, err
 }
 
 //initialize
