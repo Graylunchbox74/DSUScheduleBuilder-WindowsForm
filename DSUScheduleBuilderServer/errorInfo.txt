@@ -1,1 +1,4 @@
 1 - Error inserting new user into database
+200 - success
+500 - Database error
+501 - attempting to insert data that already exists in the database

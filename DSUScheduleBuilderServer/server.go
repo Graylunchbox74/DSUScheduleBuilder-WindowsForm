@@ -138,58 +138,92 @@ func deleteUser(User user) (uint16, error) {
 }
 
 //update information in the user table for a user KEYWORD = the column you want to change and NEWVALUE = the value to change to
-func updateUser(User user, keyword, newValue string) {
+func updateUser(User user, keyword, newValue string) (uint16, error) {
+	var location = "updateUser"
+	var err error
 	if newValue != "password" {
-		_, err := db.Exec("UPDATE user SET $1=$2 WHERE id=$3", keyword, newValue, User.uid)
-		checkErr(err)
+		_, err = db.Exec("UPDATE user SET $1=$2 WHERE id=$3", keyword, newValue, User.uid)
+		checkLogError(location, "Update user information that is not password", err)
 	} else {
 		newValue, _ := hashPassword(newValue)
 		_, err := db.Exec("UPDATE user SET $1=$2 WHERE id=$3", keyword, newValue, User.uid)
-		checkErr(err)
+		checkLogError(location, "Update user password", err)
 	}
+	if err == nil {
+		return 200, err
+	}
+	return 500, err
 }
 
 //given the name of a user return a structure with the user information
-func getUser(name string) user {
+func getUser(name string) (user, uint16, error) {
+	var location = "getUser"
 	var User user
 	err := db.QueryRow("SELECT FROM user WHERE name=$1", name).Scan(&User.uid, &User.name, &User.password, &User.major)
-	checkErr(err)
-	return User
+	checkLogError(location, "Selecting the user by name", err)
+	if err == nil {
+		return User, 200, err
+	}
+	return User, 500, err
 }
 
 //enrolled class database functions
-func addEnrolledClass(class course) {
+func addEnrolledClass(class course) (uint16, error) {
 	//make sure this class does not exist for the user with this id already, else skip
+	var location = "addEnrolledClass"
 	var tmp int
+	var err error
 	tmp = -1
-	err := db.QueryRow("SELECT userID FROM EnrolledClasses WHERE userID=$1 AND classID=$2", class.userID, class.classID).Scan(&tmp)
-	checkErr(err)
+	err = db.QueryRow("SELECT userID FROM EnrolledClasses WHERE userID=$1 AND classID=$2", class.userID, class.classID).Scan(&tmp)
+	checkLogError(location, "Selecting from database to see if it already exists", err)
 	if tmp == -1 && err == nil {
 		_, err = db.Exec("INSERT INTO EnrolledClasses (userID, classID, className, teacher, location, startTime, endTime, startDate, endDate, credits) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)", class.userID, class.classID, class.className, class.teacher, class.location, class.startTime, class.endTime, class.startDate, class.endDate, class.credits)
-		checkErr(err)
+		checkLogError(location, "Insert the enrolled class in the database", err)
+		if err == nil {
+			return 200, err
+		}
+	} else if tmp != -1 {
+		return 501, err
 	}
+	return 500, err
 }
 
-func deleteEnrolledClass(uid int, classID string) {
-	_, err := db.Exec("DELETE FROM EnrolledClasses WHERE userID=$1 AND classID=$2", uid, classID)
-	checkErr(err)
+func deleteEnrolledClass(class course) (uint16, error) {
+	var location = "deleteEnrolledClass"
+	_, err := db.Exec("DELETE FROM EnrolledClasses WHERE userID=$1 AND classID=$2", class.userID, class.classID)
+	checkLogError(location, "Delete enrolled class from database", err)
+	if err == nil {
+		return 200, err
+	}
+	return 500, err
 }
 
 //updates an entry in the enrolledclasses table, although we cannot allow to change the userID
-func updateEnrolledClass(class course, keyword, newValue string) {
+func updateEnrolledClass(class course, keyword, newValue string) (uint16, error) {
+	var location = "updateEnrolledClass"
+	var err error
 	if keyword != "classID" {
-		_, err := db.Exec("UPDATE EnrolledClasses SET $1=$2 WHERE userID=$3 AND classID=$4", keyword, newValue, class.userID, class.classID)
-		checkErr(err)
+		_, err = db.Exec("UPDATE EnrolledClasses SET $1=$2 WHERE userID=$3 AND classID=$4", keyword, newValue, class.userID, class.classID)
+		checkLogError(location, "Updating in EnrolledClass something that is not classID", err)
 	} else {
-		_, err := db.Exec("UPDATE EnrolledClasses SET $1=$2 WHERE userID=$3 AND className=$4", keyword, newValue, class.userID, class.className)
-		checkErr(err)
+		_, err = db.Exec("UPDATE EnrolledClasses SET $1=$2 WHERE userID=$3 AND className=$4", keyword, newValue, class.userID, class.className)
+		checkLogError(location, "Updating in EnrolledClass the classID", err)
 	}
+	if err == nil {
+		return 200, err
+	}
+	return 500, err
 }
 
-func getEnrolledClass(uid int, classID string) (course, error) {
+func getEnrolledClass(uid int, classID string) (course, uint16, error) {
 	var class course
+	var location = "getEnrolledClass"
 	err := db.QueryRow("SELECT FROM EnrolledClasses WHERE userID=$1 AND classID=$2", uid, classID).Scan(&class.userID, &class.classID, &class.className, &class.teacher, &class.location, &class.startTime, &class.endTime, &class.startDate, &class.endDate, &class.credits)
-	return class, err
+	checkLogError(location, "Selecting from the enrolledClasses table", err)
+	if err == nil {
+		return class, 200, err
+	}
+	return class, 500, err
 }
 
 //previous class database functions
