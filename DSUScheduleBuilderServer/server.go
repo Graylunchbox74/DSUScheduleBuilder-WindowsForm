@@ -22,15 +22,14 @@ type course struct {
 	classID, className, teacher, location, startDate, endDate string
 }
 
-type locationalError struct {
-	Error                 error
-	Location, Sublocation string
-}
-
 //holds the information for a single user
 type user struct {
 	uid                   int
 	name, password, major string
+}
+type locationalError struct {
+	Error                 error
+	Location, Sublocation string
 }
 
 //check if there was an error
@@ -85,7 +84,7 @@ func getUserID(name string) int {
 
 //user database functions
 //create new user given name, password, string, by inputing into database
-func newUser(User user) (uint8, error) {
+func newUser(User user) (uint16, error) {
 	funcName := "newUser"
 	//the user does not currently exist in the database with the same name
 	if doesUserExistWithField("name", User.name) {
@@ -100,31 +99,42 @@ func newUser(User user) (uint8, error) {
 			_, err = db.Exec("INSERT INTO user (name, password, major) values($1,$2,$3)", User.name, User.password, User.major)
 			if err != nil {
 				go logError(funcName, "1", err)
-				return 1, errors.New("Error inserting new user into database")
+				return 500, errors.New("Error inserting new user into database")
 			}
-			return 0, nil
+			return 200, nil
 		}
 		go logError(funcName, "2", err)
-		return 1, err
+		return 500, err
 	}
-	return 0, nil
+	return 200, nil
 }
 
 //delete a user given a user struct from the database
-func deleteUser(User user) {
+func deleteUser(User user) (uint16, error) {
+	var location = "deleteUser"
+	var err error
 	if doesUserExistWithField("id", User.uid) {
 		//delete the user from the user table
-		_, err := db.Exec("DELETE FROM user WHERE id=$1", User.uid)
-		checkErr(err)
+		_, err = db.Exec("DELETE FROM user WHERE id=$1", User.uid)
+		checkLogError(location, "Delete user information from user table", err)
 		if err == nil {
 			_, err = db.Exec("DELETE FROM PreviousClasses WHERE userID=$1", User.uid)
-			checkErr(err)
+			checkLogError(location, "Delete user information from PreviousClasses", err)
 			if err == nil {
 				_, err = db.Exec("DELETE FROM EnrolledClasses WHERE userID=$1", User.uid)
-				checkErr(err)
+				checkLogError(location, "Delete user information from EnrolledClasses", err)
+				if err == nil {
+					return 200, err
+				}
 			}
 		}
+	} else {
+		var uid int
+		err := db.QueryRow("SELECT id FROM user WHERE name=$1", User.name).Scan(&uid)
+		checkLogError(location, "Check if user exists before deleting", err)
+		return 500, err
 	}
+	return 500, err
 }
 
 //update information in the user table for a user KEYWORD = the column you want to change and NEWVALUE = the value to change to
