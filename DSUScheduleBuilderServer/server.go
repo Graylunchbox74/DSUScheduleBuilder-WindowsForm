@@ -8,7 +8,7 @@ import (
 
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
-	//_ "github.com/mattn/go-sqlite3"
+	_ "github.com/mattn/go-sqlite3"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -22,21 +22,17 @@ type course struct {
 	classID, className, teacher, location, startDate, endDate string
 }
 
-//holds the information for a single user
-type user struct {
-	uid                   int
-	name, password, major string
-}
 type locationalError struct {
 	Error                 error
 	Location, Sublocation string
 }
 
-//check if there was an error
-func checkErr(err error) {
-	if err != nil {
-		println(err)
-	}
+//User holds the information for a single user
+type User struct {
+	UID      int    `json:"uid"`
+	Name     string `json:"name"`
+	Password string `json:"password"`
+	Major    string `json:"major"`
 }
 
 func checkLogError(location, sublocation string, err error) {
@@ -78,25 +74,25 @@ func doesUserExistWithField(field, value interface{}) bool {
 func getUserID(name string) int {
 	var uid int
 	err := db.QueryRow("SELECT id FROM user WHERE name=$1", name).Scan(&uid)
-	checkErr(err)
+	checkLogError("getUserID", "1", err)
 	return uid
 }
 
 //user database functions
 //create new user given name, password, string, by inputing into database
-func newUser(User user) (uint16, error) {
+func newUser(user User) (int, error) {
 	funcName := "newUser"
 	//the user does not currently exist in the database with the same name
-	if doesUserExistWithField("name", User.name) {
+	if doesUserExistWithField("name", user.Name) {
 		//hash the password to store it
 		maxAttempts, numAttempts := 10, 0
 		var err error
 		for err = nil; err != nil && numAttempts <= maxAttempts; {
-			User.password, err = hashPassword(User.password)
+			user.Password, err = hashPassword(user.Password)
 			numAttempts++
 		}
 		if err == nil {
-			_, err = db.Exec("INSERT INTO user (name, password, major) values($1,$2,$3)", User.name, User.password, User.major)
+			_, err = db.Exec("INSERT INTO user (name, password, major) values($1,$2,$3)", user.Name, user.Password, user.Major)
 			if err != nil {
 				go logError(funcName, "1", err)
 				return 500, errors.New("Error inserting new user into database")
@@ -110,18 +106,18 @@ func newUser(User user) (uint16, error) {
 }
 
 //delete a user given a user struct from the database
-func deleteUser(User user) (uint16, error) {
+func deleteUser(user User) (int, error) {
 	var location = "deleteUser"
 	var err error
-	if doesUserExistWithField("id", User.uid) {
+	if doesUserExistWithField("id", user.UID) {
 		//delete the user from the user table
-		_, err = db.Exec("DELETE FROM user WHERE id=$1", User.uid)
+		_, err = db.Exec("DELETE FROM user WHERE id=$1", user.UID)
 		checkLogError(location, "Delete user information from user table", err)
 		if err == nil {
-			_, err = db.Exec("DELETE FROM PreviousClasses WHERE userID=$1", User.uid)
+			_, err = db.Exec("DELETE FROM PreviousClasses WHERE userID=$1", user.UID)
 			checkLogError(location, "Delete user information from PreviousClasses", err)
 			if err == nil {
-				_, err = db.Exec("DELETE FROM EnrolledClasses WHERE userID=$1", User.uid)
+				_, err = db.Exec("DELETE FROM EnrolledClasses WHERE userID=$1", user.UID)
 				checkLogError(location, "Delete user information from EnrolledClasses", err)
 				if err == nil {
 					return 200, err
@@ -130,7 +126,7 @@ func deleteUser(User user) (uint16, error) {
 		}
 	} else {
 		var uid int
-		err := db.QueryRow("SELECT id FROM user WHERE name=$1", User.name).Scan(&uid)
+		err := db.QueryRow("SELECT id FROM user WHERE id=$1", user.UID).Scan(&uid)
 		checkLogError(location, "Check if user exists before deleting", err)
 		return 500, err
 	}
@@ -138,15 +134,15 @@ func deleteUser(User user) (uint16, error) {
 }
 
 //update information in the user table for a user KEYWORD = the column you want to change and NEWVALUE = the value to change to
-func updateUser(User user, keyword, newValue string) (uint16, error) {
+func updateUser(user User, keyword, newValue string) (int, error) {
 	var location = "updateUser"
 	var err error
 	if newValue != "password" {
-		_, err = db.Exec("UPDATE user SET $1=$2 WHERE id=$3", keyword, newValue, User.uid)
+		_, err = db.Exec("UPDATE user SET $1=$2 WHERE id=$3", keyword, newValue, user.UID)
 		checkLogError(location, "Update user information that is not password", err)
 	} else {
 		newValue, _ := hashPassword(newValue)
-		_, err := db.Exec("UPDATE user SET $1=$2 WHERE id=$3", keyword, newValue, User.uid)
+		_, err := db.Exec("UPDATE user SET $1=$2 WHERE id=$3", keyword, newValue, user.UID)
 		checkLogError(location, "Update user password", err)
 	}
 	if err == nil {
@@ -156,19 +152,19 @@ func updateUser(User user, keyword, newValue string) (uint16, error) {
 }
 
 //given the name of a user return a structure with the user information
-func getUser(name string) (user, uint16, error) {
+func getUser(id int) (User, int, error) {
 	var location = "getUser"
-	var User user
-	err := db.QueryRow("SELECT FROM user WHERE name=$1", name).Scan(&User.uid, &User.name, &User.password, &User.major)
+	var user User
+	err := db.QueryRow("SELECT * FROM user WHERE id=$1", id).Scan(&user.UID, &user.Name, &user.Password, &user.Major)
 	checkLogError(location, "Selecting the user by name", err)
 	if err == nil {
-		return User, 200, err
+		return user, 200, err
 	}
-	return User, 500, err
+	return user, 500, err
 }
 
 //enrolled class database functions
-func addEnrolledClass(class course) (uint16, error) {
+func addEnrolledClass(class course) (int, error) {
 	//make sure this class does not exist for the user with this id already, else skip
 	var location = "addEnrolledClass"
 	var tmp int
@@ -188,7 +184,7 @@ func addEnrolledClass(class course) (uint16, error) {
 	return 500, err
 }
 
-func deleteEnrolledClass(class course) (uint16, error) {
+func deleteEnrolledClass(class course) (int, error) {
 	var location = "deleteEnrolledClass"
 	_, err := db.Exec("DELETE FROM EnrolledClasses WHERE userID=$1 AND classID=$2", class.userID, class.classID)
 	checkLogError(location, "Delete enrolled class from database", err)
@@ -199,7 +195,7 @@ func deleteEnrolledClass(class course) (uint16, error) {
 }
 
 //updates an entry in the enrolledclasses table, although we cannot allow to change the userID
-func updateEnrolledClass(class course, keyword, newValue string) (uint16, error) {
+func updateEnrolledClass(class course, keyword, newValue string) (int, error) {
 	var location = "updateEnrolledClass"
 	var err error
 	if keyword != "classID" {
@@ -215,7 +211,7 @@ func updateEnrolledClass(class course, keyword, newValue string) (uint16, error)
 	return 500, err
 }
 
-func getEnrolledClass(uid int, classID string) (course, uint16, error) {
+func getEnrolledClass(uid int, classID string) (course, int, error) {
 	var class course
 	var location = "getEnrolledClass"
 	err := db.QueryRow("SELECT FROM EnrolledClasses WHERE userID=$1 AND classID=$2", uid, classID).Scan(&class.userID, &class.classID, &class.className, &class.teacher, &class.location, &class.startTime, &class.endTime, &class.startDate, &class.endDate, &class.credits)
@@ -227,7 +223,7 @@ func getEnrolledClass(uid int, classID string) (course, uint16, error) {
 }
 
 //previous class database functions
-func addPreviousClass(class course) (uint16, error) {
+func addPreviousClass(class course) (int, error) {
 	//make sure this class does not exist for the user with this id already, else skip
 	var tmp int
 	var location = "addPreviousClass"
@@ -247,7 +243,7 @@ func addPreviousClass(class course) (uint16, error) {
 	return 500, err
 }
 
-func deletePreviousClass(class course) (uint16, error) {
+func deletePreviousClass(class course) (int, error) {
 	var location = "deletePreviousClass"
 	var err error
 	_, err = db.Exec("DELETE FROM PreviousClasses WHERE userID=$1 AND classID=$2", class.userID, class.classID)
@@ -259,7 +255,7 @@ func deletePreviousClass(class course) (uint16, error) {
 }
 
 //updates an entry in the enrolledclasses table, although we cannot allow to change the userID
-func updatePreviousClass(class course, keyword, newValue string) (uint16, error) {
+func updatePreviousClass(class course, keyword, newValue string) (int, error) {
 	var location = "updatePreviousClass"
 	var err error
 	if keyword != "classID" {
@@ -275,7 +271,7 @@ func updatePreviousClass(class course, keyword, newValue string) (uint16, error)
 	return 500, err
 }
 
-func getPreviousClass(uid int, classID string) (course, uint16, error) {
+func getPreviousClass(uid int, classID string) (course, int, error) {
 	var class course
 	var location = "getPreviousClass"
 	var err error
@@ -291,7 +287,9 @@ func getPreviousClass(uid int, classID string) (course, uint16, error) {
 func init() {
 	var err error
 	db, err = sql.Open("sqlite3", "./userDatabase.db?_busy_timeout=5000")
-	checkErr(err)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func main() {
@@ -303,6 +301,23 @@ func main() {
 	r.GET("/static/img/:fi", static.Serve("/static/img", static.LocalFile("static/img/", true)))
 	r.GET("/static/js/:fi", static.Serve("/static/js", static.LocalFile("static/js/", true)))
 	r.GET("/static/custom/:fi", static.Serve("/static/custom", static.LocalFile("static/custom/", true)))
+
+	r.GET("/user/:uuid", func(c *gin.Context) {
+		uuid := c.Param("uuid")
+		var userID int
+		err := db.QueryRow("SELECT uid FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&userID)
+		if err != sql.ErrNoRows {
+			if err == nil {
+				var user User
+				var code int
+				user, code, err := getUser(userID)
+				checkLogError(c.Request.URL.String(), "2", err)
+				c.JSON(code, user)
+			} else {
+				checkLogError(c.Request.URL.String(), "1", err)
+			}
+		}
+	})
 
 	api := r.Group("/api")
 	{
