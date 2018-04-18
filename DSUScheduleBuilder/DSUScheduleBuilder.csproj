@@ -55,6 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Network\HttpRequester.cs" />
     <Compile Include="SearchCourses.cs">
       <SubType>Form</SubType>
     </Compile>
