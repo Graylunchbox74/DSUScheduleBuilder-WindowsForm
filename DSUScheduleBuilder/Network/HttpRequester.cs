@@ -13,14 +13,13 @@ namespace DSUScheduleBuilder.Network {
 
         public int? errorCode { get; set; }
         public string errorMessage { get; set; }
-        public string errorLocation { get; set; }
     }
 
     class HttpRequester {
         public static void getUser(string name) {
             var rc = new RestClient("http://localhost:4200");
             var getRequest = new RestRequest(Method.GET);
-            getRequest.Resource = "user/" + name;
+            getRequest.Resource = "api/user/" + name;
 
             var response = rc.Execute<UserResponse>(getRequest);
             UserResponse user = response.Data;
