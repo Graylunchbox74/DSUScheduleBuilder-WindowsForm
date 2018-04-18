@@ -281,21 +281,51 @@ func updatePreviousClass(class course, keyword, newValue string) (int, error) {
 	return 500, err
 }
 
-func getPreviousClass(uid int, classID string) (course, int, error) {
+func getPreviousClasses(uid int) ([]course, int, error) {
+	var location = "getPreviousClasses"
+	var classes []course
 	var class course
-	var location = "getPreviousClass"
-	var err error
-	err = db.QueryRow("SELECT FROM PreviousClasses WHERE userID=$1 AND classID=$2", uid, classID).Scan(&class.userID, &class.classID, &class.className, &class.teacher, &class.startTime, &class.endTime, &class.startDate, &class.endDate, &class.credits)
-	checkLogError(location, "Selected class from PreviousClasses", err)
-	if err == nil {
-		return class, 200, err
+
+	rows, err := db.Query(`
+		SELECT 
+		FROM PreviousClasses 
+		WHERE userID=$1 AND classID=$2`, uid, classID
+	)
+
+	defer rows.Close()
+	
+	for rows.Next() {
+		class = course{}
+
+		err = rows.Scan(
+			&class.userID, &class.classID, &class.className, &class.teacher, 
+			&class.startTime, &class.endTime, &class.startDate, &class.endDate, &class.credits,
+		)
+
+		if err != nil {
+			go logError(location, "1", err)
+			return class, 5, err
+		}
+		
+		classes = append(classes, class)
 	}
-	return class, 500, err
+
+	err = rows.Err()
+
+	if err != nil {
+		go logError(location, "2", err)
+		return class, 5, err
+	}
+
+	return classes, 200, nil
 }
 
 //initialize
 func init() {
+	errorChannel = make(chan locationalError)
+
 	var err error
+
 	db, err = sql.Open("sqlite3", "./userDatabase.db?_busy_timeout=5000")
 	if err != nil {
 		panic(err)
