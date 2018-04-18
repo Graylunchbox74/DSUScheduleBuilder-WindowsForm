@@ -2,5 +2,6 @@
 2 - Session with user ID does not exist
 3 - Error getting session for user with that UUID
 4 - Error getting user from database
-5 - 
+5 - Could not get previous courses
+6 - User already exists, error inserting new user into database
 200 - success

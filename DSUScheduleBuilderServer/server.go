@@ -77,7 +77,7 @@ func checkPasswordHash(password, hash string) bool {
 
 func doesUserExistWithField(field, value interface{}) bool {
 	err := db.QueryRow(fmt.Sprintf("SELECT %s FROM user WHERE %s=$1", field, field), value).Scan(&value)
-	return err == nil
+	return err != nil
 }
 
 func createErrorStruct(code int, location, sublocation string, err error) errorStruct {
@@ -97,60 +97,70 @@ func getUserID(name string) int {
 func newUser(fname, lname, major string, password string) (int, error) {
 	location := "newUser"
 
-	//the user does not currently exist in the database with the same name
+	//the user does not currently exist in the database with the same email
 	if doesUserExistWithField("email", user.Email) {
-		//hash the password to store it
-		maxAttempts, numAttempts := 10, 0
-		var err error
-		for err = nil; err != nil && numAttempts <= maxAttempts; {
-			password, err = hashPassword(password)
-			numAttempts++
-		}
-		if err == nil {
-			_, err = db.Exec("INSERT INTO users values($1,$2,$3)", user.Fname, user.Lname, password, user.Major)
-			if err != nil {
-				go logError(location, "1", err)
-				return 500, errors.New("Error inserting new user into database")
-			}
-			return 200, nil
-		}
-		go logError(location, "2", err)
-		return 500, err
+		return 6, errors.New("User with that email already exists in database")
 	}
+
+	//hash the password to store it
+	maxAttempts, numAttempts := 10, 0
+	var err error
+	for err = nil; err != nil && numAttempts <= maxAttempts; {
+		password, err = hashPassword(user.Password)
+		numAttempts++
+	}
+
+	if err != nil {
+		go logError(location, "2", err)
+		return 1, err
+	}
+
+	_, err = db.Exec(`
+		INSERT INTO users 
+		values($1,$2,$3)`, 
+		user.Fname, user.Lname, majors,
+		minors, user.Email, password,
+	)
+		
+	if err != nil {
+		go logError(location, "1", err)
+		return 1, errors.New("Error inserting new user into database")
+	}
+
 	return 200, nil
 }
 
 //delete a user given a user struct from the database
+//NEEDS TO BE REFACTORED!
 func deleteUser(user User) (int, error) {
 	location := "deleteUser"
 	var err error
 	if doesUserExistWithField("id", user.UID) {
-		//delete the user from the user table
-		_, err = db.Exec("DELETE FROM user WHERE id=$1", user.UID)
-		checkLogError(location, "Delete user information from user table", err)
-		if err == nil {
-			_, err = db.Exec("DELETE FROM PreviousClasses WHERE userID=$1", user.UID)
-			checkLogError(location, "Delete user information from PreviousClasses", err)
-			if err == nil {
-				_, err = db.Exec("DELETE FROM EnrolledClasses WHERE userID=$1", user.UID)
-				checkLogError(location, "Delete user information from EnrolledClasses", err)
-				if err == nil {
-					return 200, err
-				}
-			}
-		}
-	} else {
 		var uid int
 		err := db.QueryRow("SELECT id FROM user WHERE id=$1", user.UID).Scan(&uid)
 		checkLogError(location, "Check if user exists before deleting", err)
 		return 500, err
+	} 
+	//delete the user from the user table
+	_, err = db.Exec("DELETE FROM user WHERE id=$1", user.UID)
+	checkLogError(location, "Delete user information from user table", err)
+	if err == nil {
+		_, err = db.Exec("DELETE FROM PreviousClasses WHERE userID=$1", user.UID)
+		checkLogError(location, "Delete user information from PreviousClasses", err)
+		if err == nil {
+			_, err = db.Exec("DELETE FROM EnrolledClasses WHERE userID=$1", user.UID)
+			checkLogError(location, "Delete user information from EnrolledClasses", err)
+			if err == nil {
+				return 200, err
+			}
+		}
 	}
 	return 500, err
 }
 
 //update information in the user table for a user KEYWORD = the column you want to change and NEWVALUE = the value to change to
 func updateUser(user User, keyword, newValue string) (int, error) {
-	var location = "updateUser"
+	location := "updateUser"
 	var err error
 	if newValue != "password" {
 		_, err = db.Exec("UPDATE user SET $1=$2 WHERE id=$3", keyword, newValue, user.UID)
@@ -168,7 +178,7 @@ func updateUser(user User, keyword, newValue string) (int, error) {
 
 //given the name of a user return a structure with the user information
 func getUser(id int) (User, int, error) {
-	var location = "getUser"
+	location := "getUser"
 	var user User
 	err := db.QueryRow("SELECT id,name,major FROM user WHERE id=$1", id).Scan(&user.UID, &user.Name, &user.Major)
 	checkLogError(location, "Selecting the user by name", err)
@@ -181,7 +191,7 @@ func getUser(id int) (User, int, error) {
 //enrolled class database functions
 func addEnrolledClass(class course) (int, error) {
 	//make sure this class does not exist for the user with this id already, else skip
-	var location = "addEnrolledClass"
+	location := "addEnrolledClass"
 	var tmp int
 	var err error
 	tmp = -1
@@ -200,7 +210,7 @@ func addEnrolledClass(class course) (int, error) {
 }
 
 func deleteEnrolledClass(class course) (int, error) {
-	var location = "deleteEnrolledClass"
+	location := "deleteEnrolledClass"
 	_, err := db.Exec("DELETE FROM EnrolledClasses WHERE userID=$1 AND classID=$2", class.userID, class.classID)
 	checkLogError(location, "Delete enrolled class from database", err)
 	if err == nil {
@@ -211,7 +221,7 @@ func deleteEnrolledClass(class course) (int, error) {
 
 //updates an entry in the enrolledclasses table, although we cannot allow to change the userID
 func updateEnrolledClass(class course, keyword, newValue string) (int, error) {
-	var location = "updateEnrolledClass"
+	location := "updateEnrolledClass"
 	var err error
 	if keyword != "classID" {
 		_, err = db.Exec("UPDATE EnrolledClasses SET $1=$2 WHERE userID=$3 AND classID=$4", keyword, newValue, class.userID, class.classID)
@@ -228,7 +238,7 @@ func updateEnrolledClass(class course, keyword, newValue string) (int, error) {
 
 func getEnrolledClass(uid int, classID string) (course, int, error) {
 	var class course
-	var location = "getEnrolledClass"
+	location := "getEnrolledClass"
 	err := db.QueryRow("SELECT FROM EnrolledClasses WHERE userID=$1 AND classID=$2", uid, classID).Scan(&class.userID, &class.classID, &class.className, &class.teacher, &class.location, &class.startTime, &class.endTime, &class.startDate, &class.endDate, &class.credits)
 	checkLogError(location, "Selecting from the enrolledClasses table", err)
 	if err == nil {
@@ -241,7 +251,7 @@ func getEnrolledClass(uid int, classID string) (course, int, error) {
 func addPreviousClass(class course) (int, error) {
 	//make sure this class does not exist for the user with this id already, else skip
 	var tmp int
-	var location = "addPreviousClass"
+	location := "addPreviousClass"
 	var err error
 	tmp = -1
 	err = db.QueryRow("SELECT userID FROM PreviousClasses WHERE userID=$1 AND classID=$2", class.userID, class.classID).Scan(&tmp)
@@ -259,7 +269,7 @@ func addPreviousClass(class course) (int, error) {
 }
 
 func deletePreviousClass(class course) (int, error) {
-	var location = "deletePreviousClass"
+	location := "deletePreviousClass"
 	var err error
 	_, err = db.Exec("DELETE FROM PreviousClasses WHERE userID=$1 AND classID=$2", class.userID, class.classID)
 	checkLogError(location, "Deleted class from database", err)
@@ -271,7 +281,7 @@ func deletePreviousClass(class course) (int, error) {
 
 //updates an entry in the enrolledclasses table, although we cannot allow to change the userID
 func updatePreviousClass(class course, keyword, newValue string) (int, error) {
-	var location = "updatePreviousClass"
+	location := "updatePreviousClass"
 	var err error
 	if keyword != "classID" {
 		_, err := db.Exec("UPDATE PreviousClasses SET $1=$2 WHERE userID=$3 AND classID=$4", keyword, newValue, class.userID, class.classID)
@@ -287,7 +297,7 @@ func updatePreviousClass(class course, keyword, newValue string) (int, error) {
 }
 
 func getPreviousClasses(uid int) ([]course, int, error) {
-	var location = "getPreviousClasses"
+	location := "getPreviousClasses"
 	var classes []course
 	var class course
 
@@ -319,7 +329,7 @@ func getPreviousClasses(uid int) ([]course, int, error) {
 
 	if err != nil {
 		go logError(location, "2", err)
-		return class, 5, err
+		return classes, 5, err
 	}
 
 	return classes, 200, nil
