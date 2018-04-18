@@ -90,8 +90,7 @@ b = Browser(config['type'], headless=config['headless'], **executable_path)
 teachers = {}
 totalData = {"Teachers": {}}
 
-def main():    
-    try:
+def main():   
     initToQuery()
     subjects  = getSubjects()
     semester = sys.argv[1]

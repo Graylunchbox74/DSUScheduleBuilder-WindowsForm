@@ -29,9 +29,13 @@ type locationalError struct {
 
 //User holds the information for a single user
 type User struct {
+	Email  string `json:"email"`
+	Fname  string `json:"fname"`
+	Lname  string `json:"lname"`
+	Majors string `json:"majors"`
+	Minors string `json:"minors"`
+	Password  string `json:"password"`
 	UID   int    `json:"uid"`
-	Name  string `json:"name"`
-	Major string `json:"major"`
 }
 
 //errorStruct holds an error
@@ -90,10 +94,11 @@ func getUserID(name string) int {
 
 //user database functions
 //create new user given name, password, string, by inputing into database
-func newUser(user User, password string) (int, error) {
-	funcName := "newUser"
+func newUser(fname, lname, major string, password string) (int, error) {
+	location := "newUser"
+
 	//the user does not currently exist in the database with the same name
-	if doesUserExistWithField("name", user.Name) {
+	if doesUserExistWithField("email", user.Email) {
 		//hash the password to store it
 		maxAttempts, numAttempts := 10, 0
 		var err error
@@ -102,14 +107,14 @@ func newUser(user User, password string) (int, error) {
 			numAttempts++
 		}
 		if err == nil {
-			_, err = db.Exec("INSERT INTO user (name, password, major) values($1,$2,$3)", user.Name, password, user.Major)
+			_, err = db.Exec("INSERT INTO users values($1,$2,$3)", user.Fname, user.Lname, password, user.Major)
 			if err != nil {
-				go logError(funcName, "1", err)
+				go logError(location, "1", err)
 				return 500, errors.New("Error inserting new user into database")
 			}
 			return 200, nil
 		}
-		go logError(funcName, "2", err)
+		go logError(location, "2", err)
 		return 500, err
 	}
 	return 200, nil
@@ -117,7 +122,7 @@ func newUser(user User, password string) (int, error) {
 
 //delete a user given a user struct from the database
 func deleteUser(user User) (int, error) {
-	var location = "deleteUser"
+	location := "deleteUser"
 	var err error
 	if doesUserExistWithField("id", user.UID) {
 		//delete the user from the user table
@@ -320,7 +325,8 @@ func getPreviousClasses(uid int) ([]course, int, error) {
 	return classes, 200, nil
 }
 
-//initialize
+
+
 func init() {
 	errorChannel = make(chan locationalError)
 
