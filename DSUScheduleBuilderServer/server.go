@@ -34,11 +34,10 @@ type User struct {
 	Major string `json:"major"`
 }
 
-//ErrorStruct holds an error
-type ErrorStruct struct {
-	ErrorStatusCode  int    `json:"errorCode"`
-	ErrorLogMessage  string `json:"errorMessage"`
-	ErrorLogLocation string `json:"errorLocation"`
+//errorStruct holds an error
+type errorStruct struct {
+	ErrorStatusCode int    `json:"errorCode"`
+	ErrorLogMessage string `json:"errorMessage"`
 }
 
 func checkLogError(location, sublocation string, err error) {
@@ -77,11 +76,9 @@ func doesUserExistWithField(field, value interface{}) bool {
 	return err == nil
 }
 
-func createErrorStruct(code int, err error) ErrorStruct {
-	var newError ErrorStruct
-	newError.ErrorLogMessage = err.Error()
-	newError.ErrorStatusCode = code
-	return newError
+func createErrorStruct(code int, location, sublocation string, err error) errorStruct {
+	go logError(location, sublocation, err)
+	return errorStruct{code, fmt.Sprintf("%s, %s: %s", location, sublocation, err.Error())}
 }
 
 func getUserID(name string) int {
@@ -173,7 +170,7 @@ func getUser(id int) (User, int, error) {
 	if err == nil {
 		return user, 200, err
 	}
-	return user, 500, err
+	return user, 4, err
 }
 
 //enrolled class database functions
@@ -306,6 +303,7 @@ func init() {
 }
 
 func main() {
+	errorChannel = make(chan locationalError)
 	go errorDrain()
 	r := gin.Default()
 
@@ -315,37 +313,39 @@ func main() {
 	r.GET("/static/js/:fi", static.Serve("/static/js", static.LocalFile("static/js/", true)))
 	r.GET("/static/custom/:fi", static.Serve("/static/custom", static.LocalFile("static/custom/", true)))
 
-	r.GET("/user/:uuid", func(c *gin.Context) {
-		uuid := c.Param("uuid")
-		var userID int
-		err := db.QueryRow("SELECT uid FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&userID)
-		if err != sql.ErrNoRows {
-			if err == nil {
-				var user User
-				user, _, err := getUser(userID)
-				checkLogError(c.Request.URL.String(), "2", err)
-				if err == nil {
-					c.JSON(200, user)
-				} else {
-					currentError := createErrorStruct(4, err)
-					c.JSON(500, currentError)
-				}
-			} else {
-				checkLogError(c.Request.URL.String(), "1", err)
-				currentError := createErrorStruct(3, err)
-				c.JSON(500, currentError)
-			}
-		} else {
-			checkLogError(c.Request.URL.String(), "3", err)
-			currentError := createErrorStruct(2, err)
-			c.JSON(500, currentError)
-		}
-	})
-
 	api := r.Group("/api")
 	{
 		api.GET("/something", func(c *gin.Context) {
 			c.JSON(200, gin.H{"msg": ""})
+		})
+
+		api.GET("/user/:uuid", func(c *gin.Context) {
+			uuid := c.Param("uuid")
+			var userID int
+			err := db.QueryRow("SELECT uid FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&userID)
+
+			if err == sql.ErrNoRows {
+				currentError := createErrorStruct(2, c.Request.URL.String(), "3", err)
+				c.JSON(500, currentError)
+				return
+			}
+
+			if err != nil {
+				currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
+				c.JSON(500, currentError)
+				return
+			}
+
+			var user User
+			user, errno, err = getUser(userID)
+
+			if err != nil {
+				currentError := createErrorStruct(errno, c.Request.URL.String(), "2", err)
+				c.JSON(500, currentError)
+				return
+			}
+
+			c.JSON(200, user)
 		})
 	}
 	r.Run(":4200")
