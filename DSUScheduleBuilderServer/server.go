@@ -29,10 +29,16 @@ type locationalError struct {
 
 //User holds the information for a single user
 type User struct {
-	UID      int    `json:"uid"`
-	Name     string `json:"name"`
-	Password string `json:"password"`
-	Major    string `json:"major"`
+	UID   int    `json:"uid"`
+	Name  string `json:"name"`
+	Major string `json:"major"`
+}
+
+//ErrorStruct holds an error
+type ErrorStruct struct {
+	ErrorStatusCode  int    `json:"errorCode"`
+	ErrorLogMessage  string `json:"errorMessage"`
+	ErrorLogLocation string `json:"errorLocation"`
 }
 
 func checkLogError(location, sublocation string, err error) {
@@ -71,6 +77,13 @@ func doesUserExistWithField(field, value interface{}) bool {
 	return err == nil
 }
 
+func createErrorStruct(code int, err error) ErrorStruct {
+	var newError ErrorStruct
+	newError.ErrorLogMessage = err.Error()
+	newError.ErrorStatusCode = code
+	return newError
+}
+
 func getUserID(name string) int {
 	var uid int
 	err := db.QueryRow("SELECT id FROM user WHERE name=$1", name).Scan(&uid)
@@ -80,7 +93,7 @@ func getUserID(name string) int {
 
 //user database functions
 //create new user given name, password, string, by inputing into database
-func newUser(user User) (int, error) {
+func newUser(user User, password string) (int, error) {
 	funcName := "newUser"
 	//the user does not currently exist in the database with the same name
 	if doesUserExistWithField("name", user.Name) {
@@ -88,11 +101,11 @@ func newUser(user User) (int, error) {
 		maxAttempts, numAttempts := 10, 0
 		var err error
 		for err = nil; err != nil && numAttempts <= maxAttempts; {
-			user.Password, err = hashPassword(user.Password)
+			password, err = hashPassword(password)
 			numAttempts++
 		}
 		if err == nil {
-			_, err = db.Exec("INSERT INTO user (name, password, major) values($1,$2,$3)", user.Name, user.Password, user.Major)
+			_, err = db.Exec("INSERT INTO user (name, password, major) values($1,$2,$3)", user.Name, password, user.Major)
 			if err != nil {
 				go logError(funcName, "1", err)
 				return 500, errors.New("Error inserting new user into database")
@@ -155,7 +168,7 @@ func updateUser(user User, keyword, newValue string) (int, error) {
 func getUser(id int) (User, int, error) {
 	var location = "getUser"
 	var user User
-	err := db.QueryRow("SELECT * FROM user WHERE id=$1", id).Scan(&user.UID, &user.Name, &user.Password, &user.Major)
+	err := db.QueryRow("SELECT id,name,major FROM user WHERE id=$1", id).Scan(&user.UID, &user.Name, &user.Major)
 	checkLogError(location, "Selecting the user by name", err)
 	if err == nil {
 		return user, 200, err
@@ -309,13 +322,23 @@ func main() {
 		if err != sql.ErrNoRows {
 			if err == nil {
 				var user User
-				var code int
-				user, code, err := getUser(userID)
+				user, _, err := getUser(userID)
 				checkLogError(c.Request.URL.String(), "2", err)
-				c.JSON(code, user)
+				if err == nil {
+					c.JSON(200, user)
+				} else {
+					currentError := createErrorStruct(4, err)
+					c.JSON(500, currentError)
+				}
 			} else {
 				checkLogError(c.Request.URL.String(), "1", err)
+				currentError := createErrorStruct(3, err)
+				c.JSON(500, currentError)
 			}
+		} else {
+			checkLogError(c.Request.URL.String(), "3", err)
+			currentError := createErrorStruct(2, err)
+			c.JSON(500, currentError)
 		}
 	})
 
