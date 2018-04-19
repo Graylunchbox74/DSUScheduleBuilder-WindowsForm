@@ -25,6 +25,7 @@ type course struct {
 
 	ClassID   string `json:"classID"`
 	ClassName string `json:"className"`
+	Location  string `json:"location"`
 	Teacher   string `json:"teacher"`
 	StartDate string `json:"startDate"`
 	EndDate   string `json:"endDate"`
