@@ -18,8 +18,16 @@ var errorChannel chan locationalError
 
 //holds the information for a single course being/has been offered
 type course struct {
-	userID, startTime, endTime, credits                       int
-	classID, className, teacher, location, startDate, endDate string
+	UserID    int `json:"uid"`
+	StartTime int `json:"startTime"`
+	EndTime   int `json:"endTime"`
+	Credits   int `json:"credits"`
+
+	ClassID   string `json:"classID"`
+	ClassName string `json:"className"`
+	Teacher   string `json:"teacher"`
+	StartDate string `json:"startDate"`
+	EndDate   string `json:"endDate"`
 }
 
 type locationalError struct {
@@ -34,8 +42,7 @@ type User struct {
 	Lname  string `json:"lname"`
 	Majors string `json:"majors"`
 	Minors string `json:"minors"`
-	Password  string `json:"password"`
-	UID   int    `json:"uid"`
+	UID    int    `json:"uid"`
 }
 
 //errorStruct holds an error
@@ -94,11 +101,11 @@ func getUserID(name string) int {
 
 //user database functions
 //create new user given name, password, string, by inputing into database
-func newUser(fname, lname, major string, password string) (int, error) {
+func newUser(fname, lname, major, email, minor string, password string) (int, error) {
 	location := "newUser"
 
 	//the user does not currently exist in the database with the same email
-	if doesUserExistWithField("email", user.Email) {
+	if doesUserExistWithField("email", email) {
 		return 6, errors.New("User with that email already exists in database")
 	}
 
@@ -106,7 +113,7 @@ func newUser(fname, lname, major string, password string) (int, error) {
 	maxAttempts, numAttempts := 10, 0
 	var err error
 	for err = nil; err != nil && numAttempts <= maxAttempts; {
-		password, err = hashPassword(user.Password)
+		password, err = hashPassword(password)
 		numAttempts++
 	}
 
@@ -117,11 +124,11 @@ func newUser(fname, lname, major string, password string) (int, error) {
 
 	_, err = db.Exec(`
 		INSERT INTO users 
-		values($1,$2,$3)`, 
-		user.Fname, user.Lname, majors,
-		minors, user.Email, password,
+		values($1,$2,$3,$4,$5)`,
+		fname, lname, major,
+		email, password,
 	)
-		
+
 	if err != nil {
 		go logError(location, "1", err)
 		return 1, errors.New("Error inserting new user into database")
@@ -140,7 +147,7 @@ func deleteUser(user User) (int, error) {
 		err := db.QueryRow("SELECT id FROM user WHERE id=$1", user.UID).Scan(&uid)
 		checkLogError(location, "Check if user exists before deleting", err)
 		return 500, err
-	} 
+	}
 	//delete the user from the user table
 	_, err = db.Exec("DELETE FROM user WHERE id=$1", user.UID)
 	checkLogError(location, "Delete user information from user table", err)
@@ -180,7 +187,7 @@ func updateUser(user User, keyword, newValue string) (int, error) {
 func getUser(id int) (User, int, error) {
 	location := "getUser"
 	var user User
-	err := db.QueryRow("SELECT id,name,major FROM user WHERE id=$1", id).Scan(&user.UID, &user.Name, &user.Major)
+	err := db.QueryRow("SELECT uid,fname,lname,email,minors,majors FROM USERS WHERE uid=$1", id).Scan(&user.UID, &user.Fname, &user.Lname, &user.Email, &user.Minors, &user.Majors)
 	checkLogError(location, "Selecting the user by name", err)
 	if err == nil {
 		return user, 200, err
@@ -195,10 +202,10 @@ func addEnrolledClass(class course) (int, error) {
 	var tmp int
 	var err error
 	tmp = -1
-	err = db.QueryRow("SELECT userID FROM EnrolledClasses WHERE userID=$1 AND classID=$2", class.userID, class.classID).Scan(&tmp)
+	err = db.QueryRow("SELECT userID FROM EnrolledClasses WHERE userID=$1 AND classID=$2", class.UserID, class.ClassID).Scan(&tmp)
 	checkLogError(location, "Selecting from database to see if it already exists", err)
 	if tmp == -1 && err == nil {
-		_, err = db.Exec("INSERT INTO EnrolledClasses (userID, classID, className, teacher, location, startTime, endTime, startDate, endDate, credits) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)", class.userID, class.classID, class.className, class.teacher, class.location, class.startTime, class.endTime, class.startDate, class.endDate, class.credits)
+		_, err = db.Exec("INSERT INTO EnrolledClasses (userID, classID, className, teacher, location, startTime, endTime, startDate, endDate, credits) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)", class.UserID, class.ClassID, class.ClassName, class.Teacher, class.Location, class.StartTime, class.EndTime, class.StartDate, class.EndDate, class.Credits)
 		checkLogError(location, "Insert the enrolled class in the database", err)
 		if err == nil {
 			return 200, err
@@ -211,7 +218,7 @@ func addEnrolledClass(class course) (int, error) {
 
 func deleteEnrolledClass(class course) (int, error) {
 	location := "deleteEnrolledClass"
-	_, err := db.Exec("DELETE FROM EnrolledClasses WHERE userID=$1 AND classID=$2", class.userID, class.classID)
+	_, err := db.Exec("DELETE FROM EnrolledClasses WHERE userID=$1 AND classID=$2", class.UserID, class.ClassID)
 	checkLogError(location, "Delete enrolled class from database", err)
 	if err == nil {
 		return 200, err
@@ -224,10 +231,10 @@ func updateEnrolledClass(class course, keyword, newValue string) (int, error) {
 	location := "updateEnrolledClass"
 	var err error
 	if keyword != "classID" {
-		_, err = db.Exec("UPDATE EnrolledClasses SET $1=$2 WHERE userID=$3 AND classID=$4", keyword, newValue, class.userID, class.classID)
+		_, err = db.Exec("UPDATE EnrolledClasses SET $1=$2 WHERE userID=$3 AND classID=$4", keyword, newValue, class.UserID, class.ClassID)
 		checkLogError(location, "Updating in EnrolledClass something that is not classID", err)
 	} else {
-		_, err = db.Exec("UPDATE EnrolledClasses SET $1=$2 WHERE userID=$3 AND className=$4", keyword, newValue, class.userID, class.className)
+		_, err = db.Exec("UPDATE EnrolledClasses SET $1=$2 WHERE userID=$3 AND className=$4", keyword, newValue, class.UserID, class.ClassName)
 		checkLogError(location, "Updating in EnrolledClass the classID", err)
 	}
 	if err == nil {
@@ -239,7 +246,7 @@ func updateEnrolledClass(class course, keyword, newValue string) (int, error) {
 func getEnrolledClass(uid int, classID string) (course, int, error) {
 	var class course
 	location := "getEnrolledClass"
-	err := db.QueryRow("SELECT FROM EnrolledClasses WHERE userID=$1 AND classID=$2", uid, classID).Scan(&class.userID, &class.classID, &class.className, &class.teacher, &class.location, &class.startTime, &class.endTime, &class.startDate, &class.endDate, &class.credits)
+	err := db.QueryRow("SELECT FROM EnrolledClasses WHERE userID=$1 AND classID=$2", uid, classID).Scan(&class.UserID, &class.ClassID, &class.ClassName, &class.Teacher, &class.Location, &class.StartTime, &class.EndTime, &class.StartDate, &class.EndDate, &class.Credits)
 	checkLogError(location, "Selecting from the enrolledClasses table", err)
 	if err == nil {
 		return class, 200, err
@@ -254,10 +261,10 @@ func addPreviousClass(class course) (int, error) {
 	location := "addPreviousClass"
 	var err error
 	tmp = -1
-	err = db.QueryRow("SELECT userID FROM PreviousClasses WHERE userID=$1 AND classID=$2", class.userID, class.classID).Scan(&tmp)
+	err = db.QueryRow("SELECT userID FROM PreviousClasses WHERE userID=$1 AND classID=$2", class.UserID, class.ClassID).Scan(&tmp)
 	checkLogError(location, "Checking if class already exists", err)
 	if tmp == -1 && err == nil {
-		_, err = db.Exec("INSERT INTO PreviousClasses (userID, classID, className, teacher, startTime, endTime, startDate, endDate, credits) values($1,$2,$3,$4,$5,$6,$7,$8,$9)", class.userID, class.classID, class.className, class.teacher, class.startTime, class.endTime, class.startDate, class.endDate, class.credits)
+		_, err = db.Exec("INSERT INTO PreviousClasses (userID, classID, className, teacher, startTime, endTime, startDate, endDate, credits) values($1,$2,$3,$4,$5,$6,$7,$8,$9)", class.UserID, class.ClassID, class.ClassName, class.Teacher, class.StartTime, class.EndTime, class.StartDate, class.EndDate, class.Credits)
 		checkLogError(location, "Inserting the new class into database", err)
 		if err == nil {
 			return 200, err
@@ -271,7 +278,7 @@ func addPreviousClass(class course) (int, error) {
 func deletePreviousClass(class course) (int, error) {
 	location := "deletePreviousClass"
 	var err error
-	_, err = db.Exec("DELETE FROM PreviousClasses WHERE userID=$1 AND classID=$2", class.userID, class.classID)
+	_, err = db.Exec("DELETE FROM PreviousClasses WHERE userID=$1 AND classID=$2", class.UserID, class.ClassID)
 	checkLogError(location, "Deleted class from database", err)
 	if err == nil {
 		return 200, err
@@ -284,10 +291,10 @@ func updatePreviousClass(class course, keyword, newValue string) (int, error) {
 	location := "updatePreviousClass"
 	var err error
 	if keyword != "classID" {
-		_, err := db.Exec("UPDATE PreviousClasses SET $1=$2 WHERE userID=$3 AND classID=$4", keyword, newValue, class.userID, class.classID)
+		_, err := db.Exec("UPDATE PreviousClasses SET $1=$2 WHERE userID=$3 AND classID=$4", keyword, newValue, class.UserID, class.ClassID)
 		checkLogError(location, "Updated something that is not classID in PreviousClasses", err)
 	} else {
-		_, err := db.Exec("UPDATE PreviousClasses SET $1=$2 WHERE userID=$3 AND className=$4", keyword, newValue, class.userID, class.className)
+		_, err := db.Exec("UPDATE PreviousClasses SET $1=$2 WHERE userID=$3 AND className=$4", keyword, newValue, class.UserID, class.ClassName)
 		checkLogError(location, "Updated classID in PreviousClasses", err)
 	}
 	if err == nil {
@@ -302,26 +309,26 @@ func getPreviousClasses(uid int) ([]course, int, error) {
 	var class course
 
 	rows, err := db.Query(`
-		SELECT 
+		SELECT *
 		FROM PreviousClasses 
-		WHERE userID=$1 AND classID=$2`, uid, classID
+		WHERE userID=$1`, uid,
 	)
 
 	defer rows.Close()
-	
+
 	for rows.Next() {
 		class = course{}
 
 		err = rows.Scan(
-			&class.userID, &class.classID, &class.className, &class.teacher, 
-			&class.startTime, &class.endTime, &class.startDate, &class.endDate, &class.credits,
+			&class.UserID, &class.ClassID, &class.ClassName, &class.Teacher,
+			&class.StartTime, &class.EndTime, &class.StartDate, &class.EndDate, &class.Credits,
 		)
 
 		if err != nil {
 			go logError(location, "1", err)
-			return class, 5, err
+			return classes, 5, err
 		}
-		
+
 		classes = append(classes, class)
 	}
 
@@ -334,8 +341,6 @@ func getPreviousClasses(uid int) ([]course, int, error) {
 
 	return classes, 200, nil
 }
-
-
 
 func init() {
 	errorChannel = make(chan locationalError)
@@ -383,7 +388,7 @@ func main() {
 			}
 
 			var user User
-			user, errno, err = getUser(userID)
+			user, errno, err := getUser(userID)
 
 			if err != nil {
 				currentError := createErrorStruct(errno, c.Request.URL.String(), "2", err)
@@ -393,6 +398,63 @@ func main() {
 
 			c.JSON(200, user)
 		})
+
+		courses := api.Group("courses")
+		{
+
+			courses.GET("/previous/:uuid", func(c *gin.Context) {
+				uuid := c.Param("uuid")
+				var userID int
+				err := db.QueryRow("SELECT uid FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&userID)
+
+				if err == sql.ErrNoRows {
+					currentError := createErrorStruct(2, c.Request.URL.String(), "3", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				if err != nil {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				var classes []course
+				classes, errno, err := getPreviousClasses(userID)
+
+				if err != nil {
+					currentError := createErrorStruct(errno, c.Request.URL.String(), "2", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				c.JSON(200, classes)
+			})
+
+			// courses.GET("/user/:uuid", func(c *gin.Context) {
+			// 	uuid := c.Param("uuid")
+			// 	var userID int
+			// 	err := db.QueryRow("SELECT uid FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&userID)
+
+			// 	if err == sql.ErrNoRows {
+			// 		currentError := createErrorStruct(2, c.Request.URL.String(), "3", err)
+			// 		c.JSON(500, currentError)
+			// 		return
+			// 	}
+
+			// 	if err != nil {
+			// 		currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
+			// 		c.JSON(500, currentError)
+			// 		return
+			// 	}
+
+			// 	//var allCources []course
+
+			//select all courses that are available to register for
+
+			// })
+
+		}
 	}
 	r.Run(":4200")
 }
