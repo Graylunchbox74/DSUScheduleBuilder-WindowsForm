@@ -13,6 +13,8 @@ namespace DSUScheduleBuilder
         [STAThread]
         static void Main()
         {
+            Network.HttpRequester.getUser("test2");
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Login());

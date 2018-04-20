@@ -90,8 +90,7 @@ b = Browser(config['type'], headless=config['headless'], **executable_path)
 teachers = {}
 totalData = {"Teachers": {}}
 
-def main():    
-    try:
+def main():   
     initToQuery()
     subjects  = getSubjects()
     semester = sys.argv[1]
@@ -161,6 +160,7 @@ def main():
     totalData[semester] = subjectCourses
     for t in teachers:
         totalData["Teachers"][teachers[t].Email] = objectToDict(teachers[t])
+
     with open("{0}.json".format(semester), "w") as fi:
         json.dump(totalData, fi)
     b.quit()
@@ -302,9 +302,9 @@ def getTimes(s):
 	if r is None:
 		return (0, 0)
 	st, et = int(r.group(1).replace(":", "")), int(r.group(3).replace(":", ""))
-	if r.group(2).lower() == "pm":
+	if r.group(2).lower() == "pm" and st < 1200:
 		st += 1200
-	if r.group(4).lower() == "pm":
+	if r.group(4).lower() == "pm" and et < 1200:
 		et += 1200
 	return (st, et)
 
