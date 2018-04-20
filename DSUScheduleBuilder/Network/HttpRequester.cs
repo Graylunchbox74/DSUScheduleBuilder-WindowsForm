@@ -27,7 +27,6 @@ namespace DSUScheduleBuilder.Network {
             var rc = new RestClient("http://localhost:4200");
             var getRequest = new RestRequest(Method.GET);
             getRequest.Resource = "api/user/" + uuid;
-
             var response = rc.Execute<UserResponse>(getRequest);
             UserResponse user = response.Data;
             if (user.errorCode != null) {

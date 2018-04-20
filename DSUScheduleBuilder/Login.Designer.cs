@@ -33,11 +33,19 @@
             this.UsernameTextbox = new System.Windows.Forms.TextBox();
             this.PasswordTextbox = new System.Windows.Forms.TextBox();
             this.ForgotLbl = new System.Windows.Forms.Label();
+            this.LoginPanel = new System.Windows.Forms.Panel();
+            this.RecoveryPanel = new System.Windows.Forms.Panel();
+            this.EmailTextBox = new System.Windows.Forms.TextBox();
+            this.GoBackButton = new System.Windows.Forms.Button();
+            this.SubmitButton = new System.Windows.Forms.Button();
+            this.RecoveryLabel = new System.Windows.Forms.Label();
+            this.LoginPanel.SuspendLayout();
+            this.RecoveryPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // LoginBtn
             // 
-            this.LoginBtn.Location = new System.Drawing.Point(14, 116);
+            this.LoginBtn.Location = new System.Drawing.Point(4, 105);
             this.LoginBtn.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.LoginBtn.Name = "LoginBtn";
             this.LoginBtn.Size = new System.Drawing.Size(126, 52);
@@ -48,7 +56,7 @@
             // 
             // NewUserBtn
             // 
-            this.NewUserBtn.Location = new System.Drawing.Point(147, 116);
+            this.NewUserBtn.Location = new System.Drawing.Point(136, 105);
             this.NewUserBtn.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.NewUserBtn.Name = "NewUserBtn";
             this.NewUserBtn.Size = new System.Drawing.Size(126, 52);
@@ -60,7 +68,7 @@
             // UsernameTextbox
             // 
             this.UsernameTextbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.UsernameTextbox.Location = new System.Drawing.Point(14, 15);
+            this.UsernameTextbox.Location = new System.Drawing.Point(3, 4);
             this.UsernameTextbox.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.UsernameTextbox.Name = "UsernameTextbox";
             this.UsernameTextbox.Size = new System.Drawing.Size(259, 35);
@@ -72,7 +80,7 @@
             // PasswordTextbox
             // 
             this.PasswordTextbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.PasswordTextbox.Location = new System.Drawing.Point(14, 60);
+            this.PasswordTextbox.Location = new System.Drawing.Point(3, 47);
             this.PasswordTextbox.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.PasswordTextbox.Name = "PasswordTextbox";
             this.PasswordTextbox.Size = new System.Drawing.Size(259, 35);
@@ -88,28 +96,94 @@
             this.ForgotLbl.Cursor = System.Windows.Forms.Cursors.Hand;
             this.ForgotLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForgotLbl.ForeColor = System.Drawing.SystemColors.Highlight;
-            this.ForgotLbl.Location = new System.Drawing.Point(14, 186);
+            this.ForgotLbl.Location = new System.Drawing.Point(3, 170);
             this.ForgotLbl.Name = "ForgotLbl";
             this.ForgotLbl.Size = new System.Drawing.Size(171, 20);
             this.ForgotLbl.TabIndex = 4;
             this.ForgotLbl.Text = "Forgot my Password";
             this.ForgotLbl.Click += new System.EventHandler(this.ForgotLbl_Click);
             // 
+            // LoginPanel
+            // 
+            this.LoginPanel.Controls.Add(this.LoginBtn);
+            this.LoginPanel.Controls.Add(this.ForgotLbl);
+            this.LoginPanel.Controls.Add(this.UsernameTextbox);
+            this.LoginPanel.Controls.Add(this.NewUserBtn);
+            this.LoginPanel.Controls.Add(this.PasswordTextbox);
+            this.LoginPanel.Location = new System.Drawing.Point(12, 12);
+            this.LoginPanel.Name = "LoginPanel";
+            this.LoginPanel.Size = new System.Drawing.Size(310, 201);
+            this.LoginPanel.TabIndex = 5;
+            // 
+            // RecoveryPanel
+            // 
+            this.RecoveryPanel.Controls.Add(this.EmailTextBox);
+            this.RecoveryPanel.Controls.Add(this.GoBackButton);
+            this.RecoveryPanel.Controls.Add(this.SubmitButton);
+            this.RecoveryPanel.Controls.Add(this.RecoveryLabel);
+            this.RecoveryPanel.Location = new System.Drawing.Point(12, 12);
+            this.RecoveryPanel.Name = "RecoveryPanel";
+            this.RecoveryPanel.Size = new System.Drawing.Size(310, 201);
+            this.RecoveryPanel.TabIndex = 6;
+            this.RecoveryPanel.Visible = false;
+            // 
+            // EmailTextBox
+            // 
+            this.EmailTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.EmailTextBox.Location = new System.Drawing.Point(0, 46);
+            this.EmailTextBox.Multiline = true;
+            this.EmailTextBox.Name = "EmailTextBox";
+            this.EmailTextBox.Size = new System.Drawing.Size(259, 35);
+            this.EmailTextBox.TabIndex = 8;
+            this.EmailTextBox.Text = "Email";
+            this.EmailTextBox.GotFocus += new System.EventHandler(this.EmailTextBox_GotFocus);
+            this.EmailTextBox.LostFocus += new System.EventHandler(this.EmailTextBox_LostFocus);
+            // 
+            // GoBackButton
+            // 
+            this.GoBackButton.Location = new System.Drawing.Point(0, 105);
+            this.GoBackButton.Name = "GoBackButton";
+            this.GoBackButton.Size = new System.Drawing.Size(126, 52);
+            this.GoBackButton.TabIndex = 7;
+            this.GoBackButton.Text = "Cancel";
+            this.GoBackButton.UseVisualStyleBackColor = true;
+            this.GoBackButton.Click += new System.EventHandler(this.GoBackButton_Click);
+            // 
+            // SubmitButton
+            // 
+            this.SubmitButton.Location = new System.Drawing.Point(137, 105);
+            this.SubmitButton.Name = "SubmitButton";
+            this.SubmitButton.Size = new System.Drawing.Size(125, 52);
+            this.SubmitButton.TabIndex = 6;
+            this.SubmitButton.Text = "Submit";
+            this.SubmitButton.UseVisualStyleBackColor = true;
+            this.SubmitButton.Click += new System.EventHandler(this.SubmitButton_Click);
+            // 
+            // RecoveryLabel
+            // 
+            this.RecoveryLabel.AutoSize = true;
+            this.RecoveryLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.RecoveryLabel.Location = new System.Drawing.Point(-5, 0);
+            this.RecoveryLabel.Name = "RecoveryLabel";
+            this.RecoveryLabel.Size = new System.Drawing.Size(202, 25);
+            this.RecoveryLabel.TabIndex = 5;
+            this.RecoveryLabel.Text = "Password Recovery";
+            // 
             // Login
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(302, 218);
-            this.Controls.Add(this.ForgotLbl);
-            this.Controls.Add(this.PasswordTextbox);
-            this.Controls.Add(this.UsernameTextbox);
-            this.Controls.Add(this.NewUserBtn);
-            this.Controls.Add(this.LoginBtn);
+            this.ClientSize = new System.Drawing.Size(349, 228);
+            this.Controls.Add(this.LoginPanel);
+            this.Controls.Add(this.RecoveryPanel);
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "Login";
             this.Text = "Login";
+            this.LoginPanel.ResumeLayout(false);
+            this.LoginPanel.PerformLayout();
+            this.RecoveryPanel.ResumeLayout(false);
+            this.RecoveryPanel.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -120,6 +194,12 @@
         private System.Windows.Forms.TextBox UsernameTextbox;
         private System.Windows.Forms.TextBox PasswordTextbox;
         private System.Windows.Forms.Label ForgotLbl;
+        private System.Windows.Forms.Panel LoginPanel;
+        private System.Windows.Forms.Panel RecoveryPanel;
+        private System.Windows.Forms.Button GoBackButton;
+        private System.Windows.Forms.Button SubmitButton;
+        private System.Windows.Forms.Label RecoveryLabel;
+        private System.Windows.Forms.TextBox EmailTextBox;
     }
 }
 
