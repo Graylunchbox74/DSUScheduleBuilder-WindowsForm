@@ -32,11 +32,12 @@
             this.NewUserBtn = new System.Windows.Forms.Button();
             this.UsernameTextbox = new System.Windows.Forms.TextBox();
             this.PasswordTextbox = new System.Windows.Forms.TextBox();
+            this.ForgotLbl = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // LoginBtn
             // 
-            this.LoginBtn.Location = new System.Drawing.Point(118, 105);
+            this.LoginBtn.Location = new System.Drawing.Point(14, 116);
             this.LoginBtn.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.LoginBtn.Name = "LoginBtn";
             this.LoginBtn.Size = new System.Drawing.Size(126, 52);
@@ -47,7 +48,7 @@
             // 
             // NewUserBtn
             // 
-            this.NewUserBtn.Location = new System.Drawing.Point(118, 165);
+            this.NewUserBtn.Location = new System.Drawing.Point(147, 116);
             this.NewUserBtn.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.NewUserBtn.Name = "NewUserBtn";
             this.NewUserBtn.Size = new System.Drawing.Size(126, 52);
@@ -62,7 +63,7 @@
             this.UsernameTextbox.Location = new System.Drawing.Point(14, 15);
             this.UsernameTextbox.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.UsernameTextbox.Name = "UsernameTextbox";
-            this.UsernameTextbox.Size = new System.Drawing.Size(230, 35);
+            this.UsernameTextbox.Size = new System.Drawing.Size(259, 35);
             this.UsernameTextbox.TabIndex = 2;
             this.UsernameTextbox.Text = "Username";
             this.UsernameTextbox.GotFocus += new System.EventHandler(this.UsernameTextbox_GotFocus);
@@ -74,18 +75,32 @@
             this.PasswordTextbox.Location = new System.Drawing.Point(14, 60);
             this.PasswordTextbox.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.PasswordTextbox.Name = "PasswordTextbox";
-            this.PasswordTextbox.Size = new System.Drawing.Size(230, 35);
+            this.PasswordTextbox.Size = new System.Drawing.Size(259, 35);
             this.PasswordTextbox.TabIndex = 3;
             this.PasswordTextbox.Text = "Password";
             this.PasswordTextbox.TextChanged += new System.EventHandler(this.PasswordTextbox_TextChanged);
             this.PasswordTextbox.GotFocus += new System.EventHandler(this.PasswordTextbox_GotFocus);
             this.PasswordTextbox.LostFocus += new System.EventHandler(this.PasswordTextbox_LostFocus);
             // 
+            // ForgotLbl
+            // 
+            this.ForgotLbl.AutoSize = true;
+            this.ForgotLbl.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.ForgotLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ForgotLbl.ForeColor = System.Drawing.SystemColors.Highlight;
+            this.ForgotLbl.Location = new System.Drawing.Point(14, 186);
+            this.ForgotLbl.Name = "ForgotLbl";
+            this.ForgotLbl.Size = new System.Drawing.Size(171, 20);
+            this.ForgotLbl.TabIndex = 4;
+            this.ForgotLbl.Text = "Forgot my Password";
+            this.ForgotLbl.Click += new System.EventHandler(this.ForgotLbl_Click);
+            // 
             // Login
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(255, 229);
+            this.ClientSize = new System.Drawing.Size(302, 218);
+            this.Controls.Add(this.ForgotLbl);
             this.Controls.Add(this.PasswordTextbox);
             this.Controls.Add(this.UsernameTextbox);
             this.Controls.Add(this.NewUserBtn);
@@ -104,6 +119,7 @@
         private System.Windows.Forms.Button NewUserBtn;
         private System.Windows.Forms.TextBox UsernameTextbox;
         private System.Windows.Forms.TextBox PasswordTextbox;
+        private System.Windows.Forms.Label ForgotLbl;
     }
 }
 

@@ -78,5 +78,11 @@ namespace DSUScheduleBuilder
             n.Show();
             this.Hide();
         }
+
+        private void ForgotLbl_Click(object sender, EventArgs e)
+        {
+            ForgotLbl.ForeColor = Color.Purple;
+        }
+
     }
 }
