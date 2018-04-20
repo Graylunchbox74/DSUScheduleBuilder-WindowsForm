@@ -4,7 +4,9 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"math/rand"
 	"net/http"
+	"time"
 
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
@@ -56,6 +58,16 @@ func checkLogError(location, sublocation string, err error) {
 	if err != nil {
 		logError(location, sublocation, err)
 	}
+}
+
+func createUUID(size int) string {
+	const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+
+	b := make([]byte, size)
+	for i := range b {
+		b[i] = letterBytes[rand.Intn(len(letterBytes))]
+	}
+	return string(b)
 }
 
 func logError(location, sublocation string, err error) {
@@ -347,6 +359,7 @@ func init() {
 	errorChannel = make(chan locationalError)
 
 	var err error
+	rand.Seed(time.Now().UnixNano())
 
 	db, err = sql.Open("sqlite3", "./userDatabase.db?_busy_timeout=5000")
 	if err != nil {
@@ -371,7 +384,7 @@ func main() {
 			c.JSON(200, gin.H{"msg": ""})
 		})
 
-		api.GET("/user/:uuid", func(c *gin.Context) {
+		api.GET("/user/getData/:uuid", func(c *gin.Context) {
 			uuid := c.Param("uuid")
 			var userID int
 			err := db.QueryRow("SELECT uid FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&userID)
@@ -398,6 +411,65 @@ func main() {
 			}
 
 			c.JSON(200, user)
+		})
+
+		api.POST("/user/login/", func(c *gin.Context) {
+			email := c.PostForm("email")
+			password := c.PostForm("password")
+			var tmp int
+			var user User
+
+			//hash password
+			password, _ = hashPassword(password)
+
+			var userPassword string
+			err := db.QueryRow("SELECT * FROM USERS WHERE email=$1", email).Scan(&user.Fname, &user.Lname, &user.Majors, &user.Minors, &user.Email, &userPassword, &user.UID)
+
+			if err == sql.ErrNoRows {
+				currentError := createErrorStruct(7, c.Request.URL.String(), "3", err)
+				c.JSON(500, currentError)
+				return
+			}
+
+			if err != nil {
+				currentError := createErrorStruct(8, c.Request.URL.String(), "1", err)
+				c.JSON(500, currentError)
+				return
+			}
+
+			err = db.QueryRow("SELECT uid from USER_SESSIONS where uid=$1", user.UID).Scan(&tmp)
+
+			if err != sql.ErrNoRows {
+				err = errors.New("User already has a uuid")
+				currentError := createErrorStruct(9, c.Request.URL.String(), "4", err)
+				c.JSON(500, currentError)
+				return
+			}
+
+			if password != userPassword {
+				err = errors.New("Password does not match")
+				currentError := createErrorStruct(6, c.Request.URL.String(), "2", err)
+				c.JSON(500, currentError)
+				return
+			}
+
+			uuid := createUUID(50)
+			err = db.QueryRow("SELECT * FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&tmp)
+
+			for err != sql.ErrNoRows {
+				uuid := createUUID(50)
+				err = db.QueryRow("SELECT * FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&tmp)
+			}
+
+			_, err = db.Exec("INSERT INTO USER_SESSIONS (uid,uuid) values($1,$2)", user.UID, uuid)
+
+			if err != nil {
+				currentError := createErrorStruct(10, c.Request.URL.String(), "5", err)
+				c.JSON(500, currentError)
+				return
+			}
+
+			c.JSON(200, gin.H{"uuid": uuid, "user": user})
 		})
 
 		courses := api.Group("courses")
@@ -432,28 +504,28 @@ func main() {
 				c.JSON(200, classes)
 			})
 
-			// courses.GET("/user/:uuid", func(c *gin.Context) {
-			// 	uuid := c.Param("uuid")
-			// 	var userID int
-			// 	err := db.QueryRow("SELECT uid FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&userID)
+			courses.GET("/", func(c *gin.Context) {
+				uuid := c.Param("uuid")
+				var userID int
+				err := db.QueryRow("SELECT uid FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&userID)
 
-			// 	if err == sql.ErrNoRows {
-			// 		currentError := createErrorStruct(2, c.Request.URL.String(), "3", err)
-			// 		c.JSON(500, currentError)
-			// 		return
-			// 	}
+				if err == sql.ErrNoRows {
+					currentError := createErrorStruct(2, c.Request.URL.String(), "3", err)
+					c.JSON(500, currentError)
+					return
+				}
 
-			// 	if err != nil {
-			// 		currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
-			// 		c.JSON(500, currentError)
-			// 		return
-			// 	}
+				if err != nil {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
+					c.JSON(500, currentError)
+					return
+				}
 
-			// 	//var allCources []course
+				//var allCources []course
 
-			//select all courses that are available to register for
+				//select all courses that are available to register for
 
-			// })
+			})
 
 		}
 	}
