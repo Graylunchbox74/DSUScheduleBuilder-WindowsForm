@@ -58,7 +58,7 @@ namespace DSUScheduleBuilder.Drawing {
                 linePen = new Pen(Brushes.Black, 1);
 
                 float y = i * TimeSlotHeight + DayOfWeekHeight;
-                e.Graphics.DrawLine(linePen, 0, y, this.Size.Width, y);
+                e.Graphics.DrawLine(linePen, 0, y, this.Size.Width - 2, y);
             }
 
             for (int i = 0; i <= 14; i++) {

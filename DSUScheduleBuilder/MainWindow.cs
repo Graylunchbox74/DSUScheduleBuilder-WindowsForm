@@ -26,6 +26,8 @@ namespace DSUScheduleBuilder
         {
             InitializeComponent();
 
+            state = States.Login;
+
             LoginPanel.Show();
             MainMenuPanel.Hide();
         }
@@ -78,13 +80,13 @@ namespace DSUScheduleBuilder
         {
             if (Login_UsernameTxt.Text != "Username" && Login_PasswordTxt.Text != "Password")
             {
-                bool succ = false;
+                User user = null;
                 HttpRequester.Default.Login(Login_UsernameTxt.Text, Login_PasswordTxt.Text, (LoginResponse lr) =>
                 {
                     if (lr.errorCode == null)
                     {
-                        Console.WriteLine("SUCCESSFULLY LOGGED IN AS: " + lr.user.ToUser().FirstName);
-                        succ = true;
+                        user = lr.user.ToUser();
+                        Console.WriteLine("SUCCESSFULLY LOGGED IN AS: " + user.FirstName);
                         return true;
                     }
 
@@ -99,9 +101,15 @@ namespace DSUScheduleBuilder
                     }
                 });
 
-                if (succ)
+                if (user != null)
                 {
                     LoginPanel.Hide();
+
+                    List<Course> courses = HttpRequester.Default.GetEnrolledCourses();
+                    weekView1.SetCourses(courses);
+
+                    WelcomeLabel.Text = "Welcome " + user.FirstName + "!";
+
                     MainMenuPanel.Show();
                 }
             }
@@ -109,6 +117,22 @@ namespace DSUScheduleBuilder
                 MessageBox.Show("Please provide a valid username and password");
         }
 
+        private void Login_NewUserBtn_Click(object sender, EventArgs e)
+        {
+            state = States.NewUser;
+            LoginPanel.Hide();
+            NewUserPanel.Show();
+        }
+
         #endregion
+
+        #region MAIN WINDOW EVENTS
+        private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            HttpRequester.Default.Logout();
+            Application.Exit();
+        }
+        #endregion
+
     }
 }
