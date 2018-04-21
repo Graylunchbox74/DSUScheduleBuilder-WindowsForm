@@ -98,8 +98,8 @@ func checkPasswordHash(password, hash string) bool {
 	return err == nil
 }
 
-func doesUserExistWithField(field, value interface{}) bool {
-	err := db.QueryRow(fmt.Sprintf("SELECT %s FROM user WHERE %s=$1", field, field), value).Scan(&value)
+func doesUserExistWithField(field, value string) bool {
+	err := db.QueryRow("SELECT %s FROM users WHERE %s=$1", field, field, value).Scan(&value)
 	return err != nil
 }
 
@@ -120,9 +120,10 @@ func getUserID(name string) int {
 func newUser(fname, lname, email, password string) (int, error) {
 	location := "newUser"
 
-	//the user does not currently exist in the database with the same email
-	if doesUserExistWithField("email", email) {
-		return 13, errors.New("User with that email already exists in database")
+	var tmp string
+	err := db.QueryRow("SELECT email from users where email=$1", email).Scan(&tmp)
+	if err != sql.ErrNoRows {
+		return 13, errors.New("the email already exists")
 	}
 
 	//hash the password to store it
@@ -138,10 +139,10 @@ func newUser(fname, lname, email, password string) (int, error) {
 	// 	return 1, err
 	// }
 
-	_, err := db.Exec(`
+	_, err = db.Exec(`
 		INSERT INTO users 
-		(fname,lname,email,password)
-		values($1,$2,$3,$4,$5)`, fname, lname, email, password,
+		(fname,lname,email,password,majors,minors)
+		values($1,$2,$3,$4,$5,$6)`, fname, lname, email, password, "", "",
 	)
 
 	if err != nil {
@@ -152,17 +153,42 @@ func newUser(fname, lname, email, password string) (int, error) {
 	return 200, nil
 }
 
+func addMajor(userID int, major string) (int, error) {
+	majors := "%|" + major + "|%"
+	var currentMajors string
+	//check if major already exits
+	err := db.QueryRow("select majors from users where majors like $1", majors).Scan(&currentMajors)
+
+	if err != sql.ErrNoRows {
+		return 14, errors.New("major alread exists for that user")
+	}
+	//get the current list of majors
+	err = db.QueryRow("select majors from users where uid=$1", userID).Scan(&currentMajors)
+
+	if err != nil {
+		return 5, err
+	}
+	//add new major
+	currentMajors = currentMajors + "|" + major + "|"
+	_, err = db.Exec("UPDATE users set majors=$1 where uid=$2", currentMajors, userID)
+	if err != nil {
+		return 15, err
+	}
+
+	return 200, err
+}
+
 //delete a user given a user struct from the database
 //NEEDS TO BE REFACTORED!
 func deleteUser(user User) (int, error) {
 	location := "deleteUser"
 	var err error
-	if doesUserExistWithField("id", user.UID) {
-		var uid int
-		err := db.QueryRow("SELECT id FROM user WHERE id=$1", user.UID).Scan(&uid)
-		checkLogError(location, "Check if user exists before deleting", err)
-		return 500, err
-	}
+	// if doesUserExistWithField("id", user.UID) {
+	// 	var uid int
+	// 	err := db.QueryRow("SELECT id FROM user WHERE id=$1", user.UID).Scan(&uid)
+	// 	checkLogError(location, "Check if user exists before deleting", err)
+	// 	return 500, err
+	// }
 	//delete the user from the user table
 	_, err = db.Exec("DELETE FROM user WHERE id=$1", user.UID)
 	checkLogError(location, "Delete user information from user table", err)
@@ -255,7 +281,7 @@ func updateEnrolledClass(classKey, keyword, newValue string) (course, int, error
 
 	err = db.QueryRow("SELECT * from EnrolledClasses where keyy=$1", parameter).Scan(
 		&newClass.UserID, &newClass.ClassID, &newClass.ClassName, &newClass.Teacher, &newClass.Location, &newClass.DaysOfWeek,
-		&newClass.StartTime, &newClass.EndTime, &newClass.StartDate, &newClass.EndDate, &newClass.Credits,
+		&newClass.StartTime, &newClass.EndTime, &newClass.StartDate, &newClass.EndDate, &newClass.Credits, &newClass.Key,
 	)
 
 	if err != nil {
@@ -283,7 +309,7 @@ func getEnrolledClasses(uid int) ([]course, int, error) {
 
 		err = rows.Scan(
 			&tmp, &class.ClassID, &class.ClassName, &class.Teacher, &class.Location, &class.DaysOfWeek,
-			&class.StartTime, &class.EndTime, &class.StartDate, &class.EndDate, &class.Credits,
+			&class.StartTime, &class.EndTime, &class.StartDate, &class.EndDate, &class.Credits, &class.Key,
 		)
 
 		if err != nil {
@@ -350,7 +376,7 @@ func updatePreviousClass(classKey, keyword, newValue string) (course, int, error
 
 	err = db.QueryRow("SELECT * from PreviousClasses where keyy=$1", parameter).Scan(
 		&newClass.UserID, &newClass.ClassID, &newClass.ClassName, &newClass.Teacher,
-		&newClass.StartTime, &newClass.EndTime, &newClass.StartDate, &newClass.EndDate, &newClass.Credits,
+		&newClass.StartTime, &newClass.EndTime, &newClass.StartDate, &newClass.EndDate, &newClass.Credits, &newClass.Key,
 	)
 
 	if err != nil {
@@ -378,7 +404,7 @@ func getPreviousClasses(uid int) ([]course, int, error) {
 
 		err = rows.Scan(
 			&tmp, &class.ClassID, &class.ClassName, &class.Teacher,
-			&class.StartTime, &class.EndTime, &class.StartDate, &class.EndDate, &class.Credits,
+			&class.StartTime, &class.EndTime, &class.StartDate, &class.EndDate, &class.Credits, &class.Key,
 		)
 
 		if err != nil {
@@ -436,8 +462,8 @@ func main() {
 		{
 
 			users.POST("/newUser/", func(c *gin.Context) {
-				fname := c.PostForm("fname")
-				lname := c.PostForm("lname")
+				fname := c.PostForm("firstName")
+				lname := c.PostForm("lastName")
 				email := c.PostForm("email")
 				password := c.PostForm("password")
 
@@ -452,6 +478,36 @@ func main() {
 				c.JSON(200, gin.H{"success": 1})
 
 			})
+
+			users.POST("/addMajor/", func(c *gin.Context) {
+				uuid := c.PostForm("uuid")
+				var userID int
+				err := db.QueryRow("SELECT uid FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&userID)
+
+				if err == sql.ErrNoRows {
+					currentError := createErrorStruct(2, c.Request.URL.String(), "3", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				if err != nil {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				major := c.PostForm("major")
+				errCode, err := addMajor(userID, major)
+
+				if err != nil {
+					currentError := createErrorStruct(errCode, c.Request.URL.String(), "4", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				c.JSON(200, gin.H{"success": 1})
+			})
+
 			users.GET("/getData/:uuid", func(c *gin.Context) {
 				uuid := c.Param("uuid")
 				var userID int
