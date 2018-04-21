@@ -36,6 +36,37 @@ type course struct {
 	EndDate    string `json:"endDate"`
 }
 
+//(sectionID ,open, academicLevel , courseID , description , courseName , startDate, endDate , location , meetingInformation, supplies , credits , slotsAvailable , slotsCapacity,
+// slotsWaitlist, timeStart, timeEnd , professorEmails , prereqNonCourse , recConcurrentCourses, reqConcurrentCourses, prereqCoursesAnd, prereqCoursesOR,instructionalMethods,term);
+type availableCourse struct {
+	SectionID            string `json:"sectionID"`
+	Open                 bool   `json:"open"`
+	AcademicLevel        string `json:"academicLevel"`
+	CourseID             string `json:"courseID"`
+	Description          string `json:"description"`
+	CourseName           string `json:"courseName"`
+	StartDate            string `json:"startDate"`
+	EndDate              string `json:"endDate"`
+	Location             string `json:"location"`
+	MeetingInformation   string `json:"meetingInformation"`
+	Supplies             string `json:"supplies"`
+	Credits              int    `json:"credits"`
+	SlotsAvailable       int    `json:"slotsAvailable"`
+	SlotsCapacity        int    `json:"slotsCapacity"`
+	SlotsWaitlist        int    `json:"slotsWaitlist"`
+	TimeStart            int    `json:"timeStart"`
+	TimeEnd              int    `json:"timeEnd"`
+	ProfessorEmails      string `json:"professorEmails"`
+	PrereqNonCourse      string `json:"prereqNonCourse"`
+	RecConcurrentCourses string `json:"recConcurrentCourses"`
+	ReqConcurrentCourses string `json:"reqConcurrentCourses"`
+	PrereqCoursesAnd     string `json:"prereqCoursesAnd"`
+	PrereqCoursesOr      string `json:"prereqCoursesOr"`
+	InstructionalMethods string `json:"instructionalMethods"`
+	Term                 string `json:"term"`
+	Key                  int    `json:"key"`
+}
+
 type locationalError struct {
 	Error                 error
 	Location, Sublocation string
