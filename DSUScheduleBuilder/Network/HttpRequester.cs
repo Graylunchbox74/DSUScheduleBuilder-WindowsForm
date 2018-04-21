@@ -54,16 +54,16 @@ namespace DSUScheduleBuilder.Network {
 
     class SingleCourseResponse : Errorable
     {
-        public string uid;
-        public int startTime;
-        public int endTime;
-        public int credits;
-        public string classID;
-        public string className;
-        public string teacher;
-        public string location;
-        public string startDate;
-        public string endDate;
+        public string uid { get; set; }
+        public int startTime { get; set; }
+        public int endTime { get; set; }
+        public int credits { get; set; }
+        public string classID { get; set; }
+        public string className { get; set; }
+        public string teacher { get; set; }
+        public string location { get; set; }
+        public string startDate { get; set; }
+        public string endDate { get; set; }
 
         public Course ToCourse()
         {
@@ -85,12 +85,24 @@ namespace DSUScheduleBuilder.Network {
 
     class CoursesResponse : Errorable
     {
-        public List<SingleCourseResponse> classes;
+        public List<SingleCourseResponse> classes { get; set; }
 
         public List<Course> ToCourses()
         {
             return classes.ConvertAll<Course>((course) => course.ToCourse());
         }
+    }
+
+    class LoginRequest
+    {
+        public string email { get; set; }
+        public string password { get; set; }
+    }
+
+    class LoginResponse : Errorable
+    {
+        public UserResponse user { get; set; }
+        public string uuid { get; set; }
     }
 
     class HttpRequester
@@ -117,6 +129,24 @@ namespace DSUScheduleBuilder.Network {
                 _default = this;
 
             _client = new RestClient(target);
+        }
+
+        public void Login(string email, string password)
+        {
+            Console.WriteLine("LOGGING IN");
+            var postRequest = new RestRequest(Method.POST)
+            {
+                RequestFormat = DataFormat.Json
+            };
+
+            postRequest.AddBody(new LoginRequest()
+            {
+                email = email,
+                password = password
+            });
+
+            var response = _client.Execute<LoginResponse>(postRequest);
+            Console.WriteLine(response.Data.uuid);
         }
 
         public User GetUser(string uuid)
@@ -160,7 +190,7 @@ namespace DSUScheduleBuilder.Network {
                 return null;
             }
 
-            if (courses.errorCode == null)
+            if (courses.errorCode != null)
             {
                 Errors.Code(courses);
                 //Properly handle errors
