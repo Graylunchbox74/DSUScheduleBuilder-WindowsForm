@@ -18,9 +18,6 @@ namespace DSUScheduleBuilder
 
         private void CancelButton_Click(object sender, EventArgs e)
         {
-            MainMenu x = new MainMenu();
-            x.Show();
-            this.Hide();
         }
 
         private void SearchButton_Click(object sender, EventArgs e)

@@ -19,25 +19,16 @@ namespace DSUScheduleBuilder
 
         private void ConfirmButton_Click(object sender, EventArgs e)
         {
-            MainMenu x = new MainMenu();
-            x.Show();
-            this.Hide();
         }
 
         private void CancelButton_Click(object sender, EventArgs e)
         {
-            MainMenu x = new MainMenu();
-            x.Show();
-            this.Hide();
         }
 
         private void ConfirmButton_Click_1(object sender, EventArgs e)
         {
             // Code to update user will go here
-
-            MainMenu x = new MainMenu();
-            x.Show();
-            this.Hide();
+            
         }
     }
 }
