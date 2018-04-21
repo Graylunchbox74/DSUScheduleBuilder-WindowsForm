@@ -269,12 +269,12 @@ func getEnrolledClasses(uid int) ([]course, int, error) {
 	)
 
 	defer rows.Close()
-
+	var tmp string
 	for rows.Next() {
 		class = course{}
 
 		err = rows.Scan(
-			&class.UserID, &class.ClassID, &class.ClassName, &class.Teacher, &class.Location,
+			&tmp, &class.ClassID, &class.ClassName, &class.Teacher, &class.Location,
 			&class.StartTime, &class.EndTime, &class.StartDate, &class.EndDate, &class.Credits,
 		)
 
@@ -357,12 +357,12 @@ func getPreviousClasses(uid int) ([]course, int, error) {
 	)
 
 	defer rows.Close()
-
+	var tmp string
 	for rows.Next() {
 		class = course{}
 
 		err = rows.Scan(
-			&class.UserID, &class.ClassID, &class.ClassName, &class.Teacher,
+			&tmp, &class.ClassID, &class.ClassName, &class.Teacher,
 			&class.StartTime, &class.EndTime, &class.StartDate, &class.EndDate, &class.Credits,
 		)
 
@@ -440,7 +440,7 @@ func main() {
 					c.JSON(500, currentError)
 					return
 				}
-
+				user.UID = 0
 				c.JSON(200, user)
 			})
 
@@ -470,7 +470,7 @@ func main() {
 					return
 				}
 
-				c.JSON(200, gin.H{"Success": 1})
+				c.JSON(200, gin.H{"success": 1})
 
 			})
 
@@ -479,7 +479,6 @@ func main() {
 				password := c.PostForm("password")
 				var tmp int
 				var user User
-
 				//hash password
 				//password, _ = hashPassword(password)
 
@@ -561,7 +560,6 @@ func main() {
 					c.JSON(500, currentError)
 					return
 				}
-
 				c.JSON(200, gin.H{"classes": classes})
 			})
 
