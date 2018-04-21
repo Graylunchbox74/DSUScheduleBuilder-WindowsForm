@@ -21,7 +21,6 @@ var errorChannel chan locationalError
 
 //holds the information for a single course being/has been offered
 type course struct {
-
 	UserID    string `json:"uid"`
 	StartTime int    `json:"startTime"`
 	EndTime   int    `json:"endTime"`
@@ -34,7 +33,6 @@ type course struct {
 	StartDate string `json:"startDate"`
 	EndDate   string `json:"endDate"`
 }
-
 
 type locationalError struct {
 	Error                 error
@@ -446,8 +444,8 @@ func main() {
 				c.JSON(200, user)
 			})
 
-			users.GET("/logout/", func(c *gin.Context) {
-				uuid := c.Param("uuid")
+			users.POST("/logout/", func(c *gin.Context) {
+				uuid := c.PostForm("uuid")
 				var uid int
 
 				err := db.QueryRow("SELECT uid FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&uid)
@@ -476,9 +474,9 @@ func main() {
 
 			})
 
-			users.GET("/login/:email/:password", func(c *gin.Context) {
-				email := c.Param("email")
-				password := c.Param("password")
+			users.POST("/login/", func(c *gin.Context) {
+				email := c.PostForm("email")
+				password := c.PostForm("password")
 				var tmp int
 				var user User
 
@@ -564,7 +562,7 @@ func main() {
 					return
 				}
 
-				c.JSON(200, gin.H{"classes":classes})
+				c.JSON(200, gin.H{"classes": classes})
 			})
 
 			courses.GET("/enrolled/:uuid", func(c *gin.Context) {
@@ -583,7 +581,6 @@ func main() {
 					c.JSON(500, currentError)
 					return
 				}
-
 				var classes []course
 				classes, errno, err := getEnrolledClasses(userID)
 
@@ -593,7 +590,7 @@ func main() {
 					return
 				}
 
-				c.JSON(200, classes)
+				c.JSON(200, gin.H{"classes": classes})
 			})
 
 			courses.GET("/", func(c *gin.Context) {
