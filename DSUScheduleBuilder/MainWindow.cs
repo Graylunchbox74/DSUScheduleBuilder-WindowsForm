@@ -183,7 +183,7 @@ namespace DSUScheduleBuilder
         #endregion
 
         #region MAIN WINDOW EVENTS
-        private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
+        private void MainWindow_FormClosed(object sender, FormClosedEventArgs e)
         {
             HttpRequester.Default.Logout();
             Application.Exit();

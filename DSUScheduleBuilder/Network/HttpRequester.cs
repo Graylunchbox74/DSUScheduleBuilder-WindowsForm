@@ -91,6 +91,8 @@ namespace DSUScheduleBuilder.Network {
 
         public List<Course> ToCourses()
         {
+            if (classes == null) return null;
+
             return classes.ConvertAll<Course>((course) => course.ToCourse());
         }
     }
@@ -181,7 +183,7 @@ namespace DSUScheduleBuilder.Network {
             Console.WriteLine("CREATING NEW USER");
             var req = new RestRequest(Method.POST)
             {
-                Resource = "api/user/new"
+                Resource = "api/user/newUser"
             };
 
             req.AddParameter("email", email);
