@@ -321,7 +321,7 @@ namespace DSUScheduleBuilder
             this.MinimumSize = new System.Drawing.Size(1024, 768);
             this.Name = "MainWindow";
             this.Text = "MainWindow";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainWindow_FormClosing);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainWindow_FormClosed);
             this.LoginPanel.ResumeLayout(false);
             this.LoginPanel.PerformLayout();
             this.NewUserPanel.ResumeLayout(false);
