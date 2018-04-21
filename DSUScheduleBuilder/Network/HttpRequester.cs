@@ -54,7 +54,7 @@ namespace DSUScheduleBuilder.Network {
 
     class SingleCourseResponse : Errorable
     {
-        //public string uid { get; set; }
+        public int key { get; set; }
         public int startTime { get; set; }
         public int endTime { get; set; }
         public int credits { get; set; }
@@ -64,12 +64,13 @@ namespace DSUScheduleBuilder.Network {
         public string location { get; set; }
         public string startDate { get; set; }
         public string endDate { get; set; }
+        public string daysOfWeek { get; set; }
 
         public Course ToCourse()
         {
             return new Course()
             {
-                //Uid = this.uid,
+                Key = this.key,
                 StartTime = this.startTime,
                 EndTime = this.endTime,
                 StartDate = this.startDate,
@@ -78,7 +79,8 @@ namespace DSUScheduleBuilder.Network {
                 ClassID = this.classID,
                 ClassName = this.className,
                 Teacher = this.teacher,
-                Location = this.location
+                Location = this.location,
+                DaysOfWeek = this.daysOfWeek
             };
         }
     }
@@ -99,7 +101,7 @@ namespace DSUScheduleBuilder.Network {
         public string uuid { get; set; }
     }
 
-    class LogoutResponse : Errorable
+    class SuccessResponse : Errorable
     {
         public int success { get; set; }
     }
@@ -154,8 +156,11 @@ namespace DSUScheduleBuilder.Network {
 
             if (worked)
             {
-                Console.WriteLine("Setting session token");
+                Console.Write("Setting session token: ");
+
                 _session_token = response.Data.uuid;
+
+                Console.WriteLine(_session_token);
             }
         }
 
@@ -168,7 +173,30 @@ namespace DSUScheduleBuilder.Network {
             };
 
             postRequest.AddParameter("uuid", _session_token);
-            var response = _client.Execute<LogoutResponse>(postRequest);
+            var response = _client.Execute<SuccessResponse>(postRequest);
+        }
+
+        public void NewUser(string email, string password, string first, string last, Func<SuccessResponse, bool> callback)
+        {
+            Console.WriteLine("CREATING NEW USER");
+            var req = new RestRequest(Method.POST)
+            {
+                Resource = "api/user/new"
+            };
+
+            req.AddParameter("email", email);
+            req.AddParameter("password", password);
+            req.AddParameter("firstName", first);
+            req.AddParameter("lastName", last);
+
+            var res = _client.Execute<SuccessResponse>(req);
+            if (res.Data == null)
+            {
+                Errors.BadData("Failed to add new user");
+                return;
+            }
+
+            callback(res.Data);
         }
 
         public User GetUser()
@@ -196,7 +224,7 @@ namespace DSUScheduleBuilder.Network {
 
             return user.ToUser();
         }
-
+        
         public List<Course> GetPreviousCourses()
         {
             var getRequest = new RestRequest(Method.GET)

@@ -28,6 +28,8 @@ namespace DSUScheduleBuilder
                 Console.WriteLine(c.ClassName);
                 Console.WriteLine(c.Teacher);
             }
+
+            this.weekView1.SetCourses(courses);
         }
 
         private void CurrentBtn_Click(object sender, EventArgs e)
