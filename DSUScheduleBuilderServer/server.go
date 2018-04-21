@@ -21,6 +21,7 @@ var errorChannel chan locationalError
 
 //holds the information for a single course being/has been offered
 type course struct {
+
 	UserID    string `json:"uid"`
 	StartTime int    `json:"startTime"`
 	EndTime   int    `json:"endTime"`
@@ -33,6 +34,7 @@ type course struct {
 	StartDate string `json:"startDate"`
 	EndDate   string `json:"endDate"`
 }
+
 
 type locationalError struct {
 	Error                 error
@@ -534,7 +536,7 @@ func main() {
 					return
 				}
 
-				c.JSON(200, classes)
+				c.JSON(200, gin.H{"classes":classes})
 			})
 
 			courses.GET("/", func(c *gin.Context) {
