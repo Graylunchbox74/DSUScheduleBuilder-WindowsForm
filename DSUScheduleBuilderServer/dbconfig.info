@@ -75,3 +75,10 @@ CREATE TABLE USERS(
 NOTES:
 majors - pipe '|' seperated list of majors for the student
 majors - pipe '|' seperated list of minors for the student
+
+CREATE TABLE PreviousClasses (userID TEXT, classID VARCHAR[20], className VARCHAR[50],
+ teacher VARCHAR[50], startTime INT, endTime INT, startDate VARCHAR[30], endDate VARCHAR[30],
+ credits INT);
+
+userID - pipe '|' seperated list of users that have taken this class
+

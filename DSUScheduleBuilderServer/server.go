@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-contrib/static"
@@ -20,10 +21,10 @@ var errorChannel chan locationalError
 
 //holds the information for a single course being/has been offered
 type course struct {
-	UserID    int `json:"uid"`
-	StartTime int `json:"startTime"`
-	EndTime   int `json:"endTime"`
-	Credits   int `json:"credits"`
+	UserID    string `json:"uid"`
+	StartTime int    `json:"startTime"`
+	EndTime   int    `json:"endTime"`
+	Credits   int    `json:"credits"`
 
 	ClassID   string `json:"classID"`
 	ClassName string `json:"className"`
@@ -320,11 +321,11 @@ func getPreviousClasses(uid int) ([]course, int, error) {
 	location := "getPreviousClasses"
 	var classes []course
 	var class course
-
+	parameter := "|" + strconv.Itoa(uid) + "|"
 	rows, err := db.Query(`
 		SELECT *
 		FROM PreviousClasses 
-		WHERE userID=$1`, uid,
+		WHERE userID LIKE $1`, parameter,
 	)
 
 	defer rows.Close()
@@ -384,94 +385,126 @@ func main() {
 			c.JSON(200, gin.H{"msg": ""})
 		})
 
-		api.GET("/user/getData/:uuid", func(c *gin.Context) {
-			uuid := c.Param("uuid")
-			var userID int
-			err := db.QueryRow("SELECT uid FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&userID)
+		users := api.Group("user")
+		{
+			users.GET("/getData/:uuid", func(c *gin.Context) {
+				uuid := c.Param("uuid")
+				var userID int
+				err := db.QueryRow("SELECT uid FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&userID)
 
-			if err == sql.ErrNoRows {
-				currentError := createErrorStruct(2, c.Request.URL.String(), "3", err)
-				c.JSON(500, currentError)
-				return
-			}
+				if err == sql.ErrNoRows {
+					currentError := createErrorStruct(2, c.Request.URL.String(), "3", err)
+					c.JSON(500, currentError)
+					return
+				}
 
-			if err != nil {
-				currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
-				c.JSON(500, currentError)
-				return
-			}
+				if err != nil {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
+					c.JSON(500, currentError)
+					return
+				}
 
-			var user User
-			user, errno, err := getUser(userID)
+				var user User
+				user, errno, err := getUser(userID)
 
-			if err != nil {
-				currentError := createErrorStruct(errno, c.Request.URL.String(), "2", err)
-				c.JSON(500, currentError)
-				return
-			}
+				if err != nil {
+					currentError := createErrorStruct(errno, c.Request.URL.String(), "2", err)
+					c.JSON(500, currentError)
+					return
+				}
 
-			c.JSON(200, user)
-		})
+				c.JSON(200, user)
+			})
 
-		api.POST("/user/login/", func(c *gin.Context) {
-			email := c.PostForm("email")
-			password := c.PostForm("password")
-			var tmp int
-			var user User
+			users.GET("/logout/", func(c *gin.Context) {
+				uuid := c.Param("uuid")
+				var uid int
 
-			//hash password
-			password, _ = hashPassword(password)
+				err := db.QueryRow("SELECT uid FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&uid)
 
-			var userPassword string
-			err := db.QueryRow("SELECT * FROM USERS WHERE email=$1", email).Scan(&user.Fname, &user.Lname, &user.Majors, &user.Minors, &user.Email, &userPassword, &user.UID)
+				if err == sql.ErrNoRows {
+					currentError := createErrorStruct(2, c.Request.URL.String(), "3", err)
+					c.JSON(500, currentError)
+					return
+				}
 
-			if err == sql.ErrNoRows {
-				currentError := createErrorStruct(7, c.Request.URL.String(), "3", err)
-				c.JSON(500, currentError)
-				return
-			}
+				if err != nil {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
+					c.JSON(500, currentError)
+					return
+				}
 
-			if err != nil {
-				currentError := createErrorStruct(8, c.Request.URL.String(), "1", err)
-				c.JSON(500, currentError)
-				return
-			}
+				_, err = db.Exec("DELETE FROM USER_SESSIONS WHERE uuid=$1", uuid)
 
-			err = db.QueryRow("SELECT uid from USER_SESSIONS where uid=$1", user.UID).Scan(&tmp)
+				if err != nil {
+					currentError := createErrorStruct(10, c.Request.URL.String(), "2", err)
+					c.JSON(500, currentError)
+					return
+				}
 
-			if err != sql.ErrNoRows {
-				err = errors.New("User already has a uuid")
-				currentError := createErrorStruct(9, c.Request.URL.String(), "4", err)
-				c.JSON(500, currentError)
-				return
-			}
+				c.JSON(200, gin.H{"Success": 1})
 
-			if password != userPassword {
-				err = errors.New("Password does not match")
-				currentError := createErrorStruct(6, c.Request.URL.String(), "2", err)
-				c.JSON(500, currentError)
-				return
-			}
+			})
 
-			uuid := createUUID(50)
-			err = db.QueryRow("SELECT * FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&tmp)
+			users.GET("/login/:email/:password", func(c *gin.Context) {
+				email := c.Param("email")
+				password := c.Param("password")
+				var tmp int
+				var user User
 
-			for err != sql.ErrNoRows {
+				//hash password
+				//password, _ = hashPassword(password)
+
+				var userPassword string
+				err := db.QueryRow("SELECT * FROM USERS WHERE email=$1", email).Scan(&user.Fname, &user.Lname, &user.Majors, &user.Minors, &user.Email, &userPassword, &user.UID)
+
+				if err == sql.ErrNoRows {
+					currentError := createErrorStruct(7, c.Request.URL.String(), "3", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				if err != nil {
+					currentError := createErrorStruct(8, c.Request.URL.String(), "1", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				err = db.QueryRow("SELECT uid from USER_SESSIONS where uid=$1", user.UID).Scan(&tmp)
+
+				if err != sql.ErrNoRows {
+					err = errors.New("User already has a uuid")
+					currentError := createErrorStruct(9, c.Request.URL.String(), "4", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				if password != userPassword {
+					err = errors.New("Password does not match")
+					currentError := createErrorStruct(6, c.Request.URL.String(), "2", err)
+					c.JSON(500, currentError)
+					return
+				}
+
 				uuid := createUUID(50)
 				err = db.QueryRow("SELECT * FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&tmp)
-			}
 
-			_, err = db.Exec("INSERT INTO USER_SESSIONS (uid,uuid) values($1,$2)", user.UID, uuid)
+				for err != sql.ErrNoRows {
+					uuid := createUUID(50)
+					err = db.QueryRow("SELECT * FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&tmp)
+				}
 
-			if err != nil {
-				currentError := createErrorStruct(10, c.Request.URL.String(), "5", err)
-				c.JSON(500, currentError)
-				return
-			}
+				_, err = db.Exec("INSERT INTO USER_SESSIONS (uid,uuid) values($1,$2)", user.UID, uuid)
 
-			c.JSON(200, gin.H{"uuid": uuid, "user": user})
-		})
+				if err != nil {
+					currentError := createErrorStruct(10, c.Request.URL.String(), "5", err)
+					c.JSON(500, currentError)
+					return
+				}
 
+				c.JSON(200, gin.H{"uuid": uuid, "user": user})
+			})
+		}
 		courses := api.Group("courses")
 		{
 
