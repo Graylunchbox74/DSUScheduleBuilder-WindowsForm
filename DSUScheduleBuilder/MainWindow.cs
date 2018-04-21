@@ -29,6 +29,7 @@ namespace DSUScheduleBuilder
             state = States.Login;
 
             LoginPanel.Show();
+            NewUserPanel.Hide();
             MainMenuPanel.Hide();
         }
 
@@ -126,6 +127,50 @@ namespace DSUScheduleBuilder
 
         #endregion
 
+        #region NEW USER EVENTS
+        private void NewUser_CreateUserBtn_Click(object sender, EventArgs e)
+        {
+            // Code to add user to database goes here
+            if (NewUser_PasswordTxt.Text != NewUser_ConfirmTxt.Text)
+            {
+                MessageBox.Show("Passwords do not match.");
+            }
+
+            bool successful = false;
+            HttpRequester.Default.NewUser(NewUser_NameTxt.Text, NewUser_PasswordTxt.Text, NewUser_FirstNameTxt.Text, NewUser_LastNameTxt.Text, (SuccessResponse s) =>
+            {
+                if (s.errorCode != null)
+                {
+                    switch (s.errorCode)
+                    {
+                        case 13:
+                            MessageBox.Show("Email already taken.");
+                            return false;
+                        default:
+                            break;
+                    }
+                }
+                successful = true;
+                return true;
+            });
+
+            if (successful)
+            {
+                state = States.Login;
+                NewUserPanel.Hide();
+                LoginPanel.Show();
+            }
+        }
+
+        private void NewUser_CancelBtn_Click(object sender, EventArgs e)
+        {
+            state = States.Login;
+            NewUserPanel.Hide();
+            LoginPanel.Show();
+        }
+
+        #endregion
+
         #region MAIN WINDOW EVENTS
         private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -133,6 +178,5 @@ namespace DSUScheduleBuilder
             Application.Exit();
         }
         #endregion
-
     }
 }

@@ -62,6 +62,12 @@
     <Compile Include="MainWindow.Designer.cs">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="Main_Menu\Search.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Main_Menu\Search.Designer.cs">
+      <DependentUpon>Search.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Course.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Network\HttpRequester.cs" />
@@ -103,6 +109,9 @@
     <Compile Include="Utils\Converter.cs" />
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Main_Menu\Search.resx">
+      <DependentUpon>Search.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="NewUser.resx">
       <DependentUpon>NewUser.cs</DependentUpon>

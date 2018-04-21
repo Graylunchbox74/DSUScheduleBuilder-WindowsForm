@@ -39,7 +39,7 @@ namespace DSUScheduleBuilder
         {
             Clear();
             currDisplay = 0;
-            weekView.Show();
+            //weekView.Show();
         }
 
         private void LogoutBtn_Click(object sender, EventArgs e)
@@ -58,8 +58,8 @@ namespace DSUScheduleBuilder
 
         private void Clear()
         {
-            if (currDisplay == 0)
-                weekView.Hide();
+            if (currDisplay == 0);
+            //weekView.Hide();
             else if (currDisplay == 1)
                 this.Controls.Remove(s);
 
@@ -72,7 +72,7 @@ namespace DSUScheduleBuilder
 
             // Create new instance of search menu
             s = new Main_Menu.Search();
-            s.Size = weekView.Size;
+            //s.Size = weekView.Size;
             this.Controls.Add(s);
         }
 
