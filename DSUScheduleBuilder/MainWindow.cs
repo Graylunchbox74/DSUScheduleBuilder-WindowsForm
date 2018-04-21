@@ -94,10 +94,12 @@ namespace DSUScheduleBuilder
                     switch (lr.errorCode)
                     {
                         case 6:
+                        case 7:
                             MessageBox.Show("Incorrect Password");
                             return false;
 
                         default:
+                            MessageBox.Show("Unknown error: " + lr.errorCode + " : " + lr.errorMessage);
                             return false;
                     }
                 });
@@ -169,6 +171,15 @@ namespace DSUScheduleBuilder
             LoginPanel.Show();
         }
 
+        #endregion
+
+        #region MAIN MENU EVENTS
+        private void MainMenu_LogoutBtn_Click(object sender, EventArgs e)
+        {
+            HttpRequester.Default.Logout();
+            MainMenuPanel.Hide();
+            LoginPanel.Show();
+        }
         #endregion
 
         #region MAIN WINDOW EVENTS
