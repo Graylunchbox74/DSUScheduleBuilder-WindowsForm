@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Text.RegularExpressions;
 
 namespace DSUScheduleBuilder
 {
@@ -77,6 +78,62 @@ namespace DSUScheduleBuilder
             NewUser n = new NewUser();
             n.Show();
             this.Hide();
+        }
+
+        private void ForgotLbl_Click(object sender, EventArgs e)
+        {
+            LoginPanel.Visible = false;
+            RecoveryPanel.Visible = true;
+            ForgotLbl.ForeColor = Color.Purple;
+
+        }
+
+        private bool CheckRegex(string s)
+        {
+            try
+            {
+                return Regex.IsMatch(s, @"^[a-zA-Z0-9]+@trojans.dsu.edu");
+                // Will change later. Test Regex
+
+            }
+            catch (RegexMatchTimeoutException)
+            {
+                return false;
+            }
+        }
+
+        private void SubmitButton_Click(object sender, EventArgs e)
+        {
+            if (CheckRegex(EmailTextBox.Text))
+            {
+                EmailTextBox.Text = "Request Sent";
+                EmailTextBox.ReadOnly = true;
+                // Add pasword recovery function here
+            }
+            else
+            {
+                EmailTextBox.Text = "Invalid email";
+            }
+
+        }
+
+        private void GoBackButton_Click(object sender, EventArgs e)
+        {
+            RecoveryPanel.Visible = false;
+            LoginPanel.Visible = true;
+        }
+
+        private void EmailTextBox_GotFocus(object sender, EventArgs e)
+        {
+            // Clear placeholder text
+            if (EmailTextBox.Text == "Email")
+                EmailTextBox.Text = "";
+        }
+        private void EmailTextBox_LostFocus(object sender, EventArgs e)
+        {
+            // Clear placeholder text
+            if (EmailTextBox.Text == "")
+                EmailTextBox.Text = "Email";
         }
     }
 }
