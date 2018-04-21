@@ -9,6 +9,8 @@ using System.Windows.Forms;
 
 namespace DSUScheduleBuilder
 {
+    using Network;
+
     public partial class MainMenu : Form
     {
         public MainMenu()
@@ -28,6 +30,8 @@ namespace DSUScheduleBuilder
 
         private void LogoutBtn_Click(object sender, EventArgs e)
         {
+            HttpRequester.Default.Logout();
+
             Login l = new Login();
             l.Show();
             this.Hide();

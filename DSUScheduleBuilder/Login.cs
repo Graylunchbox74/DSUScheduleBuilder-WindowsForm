@@ -10,6 +10,9 @@ using System.Text.RegularExpressions;
 
 namespace DSUScheduleBuilder
 {
+    using Network;
+    using Models;
+
     public partial class Login : Form
     {
         bool placeholder = true;
@@ -23,9 +26,28 @@ namespace DSUScheduleBuilder
         {
             if (UsernameTextbox.Text != "Username" && PasswordTextbox.Text != "Password")
             {
-                MainMenu x = new MainMenu();
-                x.Show();
-                this.Hide();
+                HttpRequester.Default.Login(UsernameTextbox.Text, PasswordTextbox.Text, (LoginResponse lr) =>
+                {
+                    if (lr.errorCode == null)
+                    {
+                        Console.WriteLine("SUCCESSFULLY LOGGED IN AS: " + lr.user.ToUser().FirstName);
+
+                        MainMenu m = new MainMenu();
+                        m.Show();
+                        this.Hide();
+                        return true;
+                    }
+
+                    switch (lr.errorCode)
+                    {
+                        case 6:
+                            //Password failed;
+                            return false;
+
+                        default:
+                            return false;
+                    }
+                });
             }
             else
                 MessageBox.Show("Please provide a valid username and password");

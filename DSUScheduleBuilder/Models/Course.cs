@@ -8,7 +8,7 @@ namespace DSUScheduleBuilder.Models
 {
     class Course
     {
-        public string Uid;
+        //public string Uid;
         public int StartTime;
         public int EndTime;
         public string StartDate;
