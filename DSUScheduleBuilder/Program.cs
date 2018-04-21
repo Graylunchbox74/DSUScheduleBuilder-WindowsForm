@@ -5,6 +5,9 @@ using System.Windows.Forms;
 
 namespace DSUScheduleBuilder
 {
+    using Network;
+    using Models;
+
     static class Program
     {
         /// <summary>
@@ -13,7 +16,9 @@ namespace DSUScheduleBuilder
         [STAThread]
         static void Main()
         {
-            Network.HttpRequester.getUser("test2");
+            new HttpRequester("http://localhost:4200");
+            User u = HttpRequester.Default.GetUser("test");
+            Console.WriteLine(u.LastName);
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

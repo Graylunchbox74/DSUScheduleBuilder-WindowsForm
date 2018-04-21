@@ -6,3 +6,4 @@ DSUScheduleBuilderServer/server
 DSUScheduleBuilderServer/server.exe
 DSUScheduleBuilder/bin/
 DSUScheduleBuilder/obj/
+*.user
