@@ -261,7 +261,7 @@ func getEnrolledClasses(uid int) ([]course, int, error) {
 	location := "getEnrolledClasses"
 	var classes []course
 	var class course
-	parameter := "|" + strconv.Itoa(uid) + "|"
+	parameter := "|%" + strconv.Itoa(uid) + "%|"
 	rows, err := db.Query(`
 		SELECT *
 		FROM EnrolledClasses 
@@ -274,7 +274,7 @@ func getEnrolledClasses(uid int) ([]course, int, error) {
 		class = course{}
 
 		err = rows.Scan(
-			&class.UserID, &class.ClassID, &class.ClassName, &class.Teacher,
+			&class.UserID, &class.ClassID, &class.ClassName, &class.Teacher, &class.Location,
 			&class.StartTime, &class.EndTime, &class.StartDate, &class.EndDate, &class.Credits,
 		)
 
@@ -349,7 +349,7 @@ func getPreviousClasses(uid int) ([]course, int, error) {
 	location := "getPreviousClasses"
 	var classes []course
 	var class course
-	parameter := "|" + strconv.Itoa(uid) + "|"
+	parameter := "|%" + strconv.Itoa(uid) + "%|"
 	rows, err := db.Query(`
 		SELECT *
 		FROM PreviousClasses 
