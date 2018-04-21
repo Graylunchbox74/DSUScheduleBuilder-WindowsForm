@@ -61,6 +61,7 @@
             this.ConfirmTxt.Location = new System.Drawing.Point(159, 82);
             this.ConfirmTxt.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.ConfirmTxt.Name = "ConfirmTxt";
+            this.ConfirmTxt.PasswordChar = '*';
             this.ConfirmTxt.Size = new System.Drawing.Size(181, 26);
             this.ConfirmTxt.TabIndex = 2;
             // 

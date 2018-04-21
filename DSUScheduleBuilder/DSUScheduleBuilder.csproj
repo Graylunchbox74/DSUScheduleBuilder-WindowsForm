@@ -55,6 +55,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Main_Menu\Search.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Main_Menu\Search.Designer.cs">
+      <DependentUpon>Search.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Course.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Network\HttpRequester.cs" />
@@ -93,6 +99,9 @@
     <Compile Include="WeekView.cs">
       <SubType>Component</SubType>
     </Compile>
+    <EmbeddedResource Include="Main_Menu\Search.resx">
+      <DependentUpon>Search.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="NewUser.resx">
       <DependentUpon>NewUser.cs</DependentUpon>
     </EmbeddedResource>
@@ -131,5 +140,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

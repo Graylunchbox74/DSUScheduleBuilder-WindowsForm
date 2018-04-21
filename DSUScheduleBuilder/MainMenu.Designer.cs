@@ -33,7 +33,7 @@
             this.EditAcctBtn = new System.Windows.Forms.Button();
             this.LogoutBtn = new System.Windows.Forms.Button();
             this.CurrentBtn = new System.Windows.Forms.Button();
-            this.weekView1 = new DSUScheduleBuilder.WeekView();
+            this.weekView = new DSUScheduleBuilder.WeekView();
             this.SuspendLayout();
             // 
             // SearchBtn
@@ -87,19 +87,19 @@
             // 
             // weekView1
             // 
-            this.weekView1.Location = new System.Drawing.Point(186, 15);
-            this.weekView1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.weekView1.Name = "weekView1";
-            this.weekView1.Size = new System.Drawing.Size(1308, 789);
-            this.weekView1.TabIndex = 5;
-            this.weekView1.Text = "weekView1";
+            this.weekView.Location = new System.Drawing.Point(186, 15);
+            this.weekView.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.weekView.Name = "weekView1";
+            this.weekView.Size = new System.Drawing.Size(1308, 789);
+            this.weekView.TabIndex = 5;
+            this.weekView.Text = "weekView1";
             // 
             // MainMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1508, 822);
-            this.Controls.Add(this.weekView1);
+            this.Controls.Add(this.weekView);
             this.Controls.Add(this.CurrentBtn);
             this.Controls.Add(this.LogoutBtn);
             this.Controls.Add(this.EditAcctBtn);
@@ -120,6 +120,6 @@
         private System.Windows.Forms.Button EditAcctBtn;
         private System.Windows.Forms.Button LogoutBtn;
         private System.Windows.Forms.Button CurrentBtn;
-        private WeekView weekView1;
+        private WeekView weekView;
     }
 }
