@@ -14,6 +14,9 @@ namespace DSUScheduleBuilder
 
     public partial class MainMenu : Form
     {
+        private int currDisplay = 0;
+        Main_Menu.Search s = null;
+
         public MainMenu()
         {
             InitializeComponent();
@@ -34,7 +37,9 @@ namespace DSUScheduleBuilder
 
         private void CurrentBtn_Click(object sender, EventArgs e)
         {
-
+            Clear();
+            currDisplay = 0;
+            weekView.Show();
         }
 
         private void LogoutBtn_Click(object sender, EventArgs e)
@@ -51,11 +56,24 @@ namespace DSUScheduleBuilder
 
         }
 
+        private void Clear()
+        {
+            if (currDisplay == 0)
+                weekView.Hide();
+            else if (currDisplay == 1)
+                this.Controls.Remove(s);
+
+        }
+
         private void SearchBtn_Click(object sender, EventArgs e)
         {
-            SearchCourses s = new SearchCourses();
-            s.Show();
-            this.Hide();
+            Clear();
+            currDisplay = 1;
+
+            // Create new instance of search menu
+            s = new Main_Menu.Search();
+            s.Size = weekView.Size;
+            this.Controls.Add(s);
         }
 
         private void MainMenu_FormClosed(object sender, FormClosedEventArgs e) {
