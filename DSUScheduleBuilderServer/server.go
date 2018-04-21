@@ -22,16 +22,18 @@ var errorChannel chan locationalError
 //holds the information for a single course being/has been offered
 type course struct {
 	UserID    string `json:"uid"`
+	Key       int    `json:"key"`
 	StartTime int    `json:"startTime"`
 	EndTime   int    `json:"endTime"`
 	Credits   int    `json:"credits"`
 
-	ClassID   string `json:"classID"`
-	ClassName string `json:"className"`
-	Location  string `json:"location"`
-	Teacher   string `json:"teacher"`
-	StartDate string `json:"startDate"`
-	EndDate   string `json:"endDate"`
+	ClassID    string `json:"classID"`
+	ClassName  string `json:"className"`
+	Location   string `json:"location"`
+	DaysOfWeek string `json:"daysOfWeek"`
+	Teacher    string `json:"teacher"`
+	StartDate  string `json:"startDate"`
+	EndDate    string `json:"endDate"`
 }
 
 type locationalError struct {
@@ -115,32 +117,31 @@ func getUserID(name string) int {
 
 //user database functions
 //create new user given name, password, string, by inputing into database
-func newUser(fname, lname, major, email, minor string, password string) (int, error) {
+func newUser(fname, lname, email, password string) (int, error) {
 	location := "newUser"
 
 	//the user does not currently exist in the database with the same email
 	if doesUserExistWithField("email", email) {
-		return 6, errors.New("User with that email already exists in database")
+		return 13, errors.New("User with that email already exists in database")
 	}
 
 	//hash the password to store it
-	maxAttempts, numAttempts := 10, 0
-	var err error
-	for err = nil; err != nil && numAttempts <= maxAttempts; {
-		password, err = hashPassword(password)
-		numAttempts++
-	}
+	// maxAttempts, numAttempts := 10, 0
+	// var err error
+	// for err = nil; err != nil && numAttempts <= maxAttempts; {
+	// password, err = hashPassword(password)
+	// numAttempts++
+	// }
 
-	if err != nil {
-		go logError(location, "2", err)
-		return 1, err
-	}
+	// if err != nil {
+	// 	go logError(location, "2", err)
+	// 	return 1, err
+	// }
 
-	_, err = db.Exec(`
+	_, err := db.Exec(`
 		INSERT INTO users 
-		values($1,$2,$3,$4,$5)`,
-		fname, lname, major,
-		email, password,
+		(fname,lname,email,password)
+		values($1,$2,$3,$4,$5)`, fname, lname, email, password,
 	)
 
 	if err != nil {
@@ -241,20 +242,27 @@ func deleteEnrolledClass(class course) (int, error) {
 }
 
 //updates an entry in the enrolledclasses table, although we cannot allow to change the userID
-func updateEnrolledClass(class course, keyword, newValue string) (int, error) {
-	location := "updateEnrolledClass"
+func updateEnrolledClass(classKey, keyword, newValue string) (course, int, error) {
 	var err error
-	if keyword != "classID" {
-		_, err = db.Exec("UPDATE EnrolledClasses SET $1=$2 WHERE userID=$3 AND classID=$4", keyword, newValue, class.UserID, class.ClassID)
-		checkLogError(location, "Updating in EnrolledClass something that is not classID", err)
-	} else {
-		_, err = db.Exec("UPDATE EnrolledClasses SET $1=$2 WHERE userID=$3 AND className=$4", keyword, newValue, class.UserID, class.ClassName)
-		checkLogError(location, "Updating in EnrolledClass the classID", err)
+	var newClass course
+	parameter := classKey
+
+	_, err = db.Exec("UPDATE EnrolledClasses SET $1=$2 WHERE key=$3 AND classID=$4", keyword, newValue, parameter)
+
+	if err != nil {
+		return newClass, 12, err
 	}
-	if err == nil {
-		return 200, err
+
+	err = db.QueryRow("SELECT * from EnrolledClasses where keyy=$1", parameter).Scan(
+		&newClass.UserID, &newClass.ClassID, &newClass.ClassName, &newClass.Teacher, &newClass.Location, &newClass.DaysOfWeek,
+		&newClass.StartTime, &newClass.EndTime, &newClass.StartDate, &newClass.EndDate, &newClass.Credits,
+	)
+
+	if err != nil {
+		return newClass, 5, err
 	}
-	return 500, err
+
+	return newClass, 200, err
 }
 
 func getEnrolledClasses(uid int) ([]course, int, error) {
@@ -274,7 +282,7 @@ func getEnrolledClasses(uid int) ([]course, int, error) {
 		class = course{}
 
 		err = rows.Scan(
-			&tmp, &class.ClassID, &class.ClassName, &class.Teacher, &class.Location,
+			&tmp, &class.ClassID, &class.ClassName, &class.Teacher, &class.Location, &class.DaysOfWeek,
 			&class.StartTime, &class.EndTime, &class.StartDate, &class.EndDate, &class.Credits,
 		)
 
@@ -329,20 +337,27 @@ func deletePreviousClass(class course) (int, error) {
 }
 
 //updates an entry in the enrolledclasses table, although we cannot allow to change the userID
-func updatePreviousClass(class course, keyword, newValue string) (int, error) {
-	location := "updatePreviousClass"
+func updatePreviousClass(classKey, keyword, newValue string) (course, int, error) {
 	var err error
-	if keyword != "classID" {
-		_, err := db.Exec("UPDATE PreviousClasses SET $1=$2 WHERE userID=$3 AND classID=$4", keyword, newValue, class.UserID, class.ClassID)
-		checkLogError(location, "Updated something that is not classID in PreviousClasses", err)
-	} else {
-		_, err := db.Exec("UPDATE PreviousClasses SET $1=$2 WHERE userID=$3 AND className=$4", keyword, newValue, class.UserID, class.ClassName)
-		checkLogError(location, "Updated classID in PreviousClasses", err)
+	var newClass course
+	parameter := classKey
+
+	_, err = db.Exec("UPDATE PreviousClasses SET $1=$2 WHERE key=$3 AND classID=$4", keyword, newValue, parameter)
+
+	if err != nil {
+		return newClass, 12, err
 	}
-	if err == nil {
-		return 200, err
+
+	err = db.QueryRow("SELECT * from PreviousClasses where keyy=$1", parameter).Scan(
+		&newClass.UserID, &newClass.ClassID, &newClass.ClassName, &newClass.Teacher,
+		&newClass.StartTime, &newClass.EndTime, &newClass.StartDate, &newClass.EndDate, &newClass.Credits,
+	)
+
+	if err != nil {
+		return newClass, 5, err
 	}
-	return 500, err
+
+	return newClass, 200, err
 }
 
 func getPreviousClasses(uid int) ([]course, int, error) {
@@ -419,6 +434,24 @@ func main() {
 
 		users := api.Group("user")
 		{
+
+			users.POST("/newUser/", func(c *gin.Context) {
+				fname := c.PostForm("fname")
+				lname := c.PostForm("lname")
+				email := c.PostForm("email")
+				password := c.PostForm("password")
+
+				errCode, err := newUser(fname, lname, email, password)
+
+				if err != nil {
+					currentError := createErrorStruct(errCode, c.Request.URL.String(), "3", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				c.JSON(200, gin.H{"success": 1})
+
+			})
 			users.GET("/getData/:uuid", func(c *gin.Context) {
 				uuid := c.Param("uuid")
 				var userID int
@@ -593,6 +626,84 @@ func main() {
 				}
 
 				c.JSON(200, gin.H{"classes": classes})
+			})
+
+			courses.POST("/updateEnrolled/", func(c *gin.Context) {
+				uuid := c.PostForm("uuid")
+				var userID int
+				err := db.QueryRow("SELECT uid FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&userID)
+
+				if err == sql.ErrNoRows {
+					currentError := createErrorStruct(2, c.Request.URL.String(), "3", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				if err != nil {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				if userID > 3 {
+					currentError := createErrorStruct(11, c.Request.URL.String(), "4", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				classKey := c.PostForm("classKey")
+				keyword := c.PostForm("keyword")
+				newValue := c.PostForm("newValue")
+
+				var class course
+				class, errno, err := updateEnrolledClass(classKey, keyword, newValue)
+
+				if err != nil {
+					currentError := createErrorStruct(errno, c.Request.URL.String(), "2", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				c.JSON(200, gin.H{"class": class})
+			})
+
+			courses.POST("/updatePrevious/", func(c *gin.Context) {
+				uuid := c.PostForm("uuid")
+				var userID int
+				err := db.QueryRow("SELECT uid FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&userID)
+
+				if err == sql.ErrNoRows {
+					currentError := createErrorStruct(2, c.Request.URL.String(), "3", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				if err != nil {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				if userID > 3 {
+					currentError := createErrorStruct(11, c.Request.URL.String(), "4", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				classKey := c.PostForm("classKey")
+				keyword := c.PostForm("keyword")
+				newValue := c.PostForm("newValue")
+
+				var class course
+				class, errno, err := updatePreviousClass(classKey, keyword, newValue)
+
+				if err != nil {
+					currentError := createErrorStruct(errno, c.Request.URL.String(), "2", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				c.JSON(200, gin.H{"class": class})
 			})
 
 			courses.GET("/", func(c *gin.Context) {
