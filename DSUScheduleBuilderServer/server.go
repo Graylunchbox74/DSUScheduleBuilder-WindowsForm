@@ -409,6 +409,10 @@ func main() {
 
 	api := r.Group("/api")
 	{
+		api.GET("/clear", func(c *gin.Context) {
+			db.Exec("delete from user_sessions where 1=1")
+		})
+
 		api.GET("/something", func(c *gin.Context) {
 			c.JSON(200, gin.H{"msg": ""})
 		})
