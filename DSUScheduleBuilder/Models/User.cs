@@ -8,7 +8,7 @@ namespace DSUScheduleBuilder.Models
 {
     public class User
     {
-        public int Uid;
+        //public int Uid;
         public string FirstName;
         public string LastName;
         public string Majors;

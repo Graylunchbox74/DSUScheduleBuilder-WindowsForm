@@ -16,8 +16,7 @@ namespace DSUScheduleBuilder
         [STAThread]
         static void Main()
         {
-            new HttpRequester("http://localhost:4200");
-            HttpRequester.Default.Login("HalversonTom@pluto.com", "Password1!");
+            new HttpRequester("http://208.107.236.198:4200");
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

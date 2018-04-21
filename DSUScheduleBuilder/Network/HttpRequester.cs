@@ -31,7 +31,7 @@ namespace DSUScheduleBuilder.Network {
     //they are returned.
     class UserResponse : Errorable
     {
-        public int uid { get; set; }
+        //public int uid { get; set; }
         public string fname { get; set; }
         public string lname { get; set; }
         public string majors { get; set; }
@@ -42,7 +42,7 @@ namespace DSUScheduleBuilder.Network {
         {
             return new User
             {
-                Uid = this.uid,
+                //Uid = this.uid,
                 FirstName = this.fname,
                 LastName = this.lname,
                 Majors = this.majors,
@@ -54,7 +54,7 @@ namespace DSUScheduleBuilder.Network {
 
     class SingleCourseResponse : Errorable
     {
-        public string uid { get; set; }
+        //public string uid { get; set; }
         public int startTime { get; set; }
         public int endTime { get; set; }
         public int credits { get; set; }
@@ -69,7 +69,7 @@ namespace DSUScheduleBuilder.Network {
         {
             return new Course()
             {
-                Uid = this.uid,
+                //Uid = this.uid,
                 StartTime = this.startTime,
                 EndTime = this.endTime,
                 StartDate = this.startDate,
@@ -92,17 +92,16 @@ namespace DSUScheduleBuilder.Network {
             return classes.ConvertAll<Course>((course) => course.ToCourse());
         }
     }
-
-    class LoginRequest
-    {
-        public string email { get; set; }
-        public string password { get; set; }
-    }
-
+    
     class LoginResponse : Errorable
     {
         public UserResponse user { get; set; }
         public string uuid { get; set; }
+    }
+
+    class LogoutResponse : Errorable
+    {
+        public int success { get; set; }
     }
 
     class HttpRequester
@@ -122,6 +121,7 @@ namespace DSUScheduleBuilder.Network {
 
         //CLASS FIELDS
         private RestClient _client;
+        private string _session_token;
 
         public HttpRequester(string target)
         {
@@ -131,30 +131,52 @@ namespace DSUScheduleBuilder.Network {
             _client = new RestClient(target);
         }
 
-        public void Login(string email, string password)
+        public void Login(string email, string password, Func<LoginResponse, bool> callback)
         {
             Console.WriteLine("LOGGING IN");
             var postRequest = new RestRequest(Method.POST)
             {
-                RequestFormat = DataFormat.Json
+                Resource = "api/user/login"
             };
 
-            postRequest.AddBody(new LoginRequest()
-            {
-                email = email,
-                password = password
-            });
+            postRequest.AddParameter("email", email);
+            postRequest.AddParameter("password", password);
 
             var response = _client.Execute<LoginResponse>(postRequest);
-            Console.WriteLine(response.Data.uuid);
+
+            if (response.Data == null)
+            {
+                Errors.BadData("Failed to login");
+                return;
+            }
+
+            bool worked = callback(response.Data);
+
+            if (worked)
+            {
+                Console.WriteLine("Setting session token");
+                _session_token = response.Data.uuid;
+            }
         }
 
-        public User GetUser(string uuid)
+        public void Logout()
         {
-            Console.WriteLine("LOADING USER " + uuid);
+            Console.WriteLine("LOGGING OUT");
+            var postRequest = new RestRequest(Method.POST)
+            {
+                Resource = "api/user/logout"
+            };
+
+            postRequest.AddParameter("uuid", _session_token);
+            var response = _client.Execute<LogoutResponse>(postRequest);
+        }
+
+        public User GetUser()
+        {
+            Console.WriteLine("LOADING USER");
             var getRequest = new RestRequest(Method.GET)
             {
-                Resource = "api/user/getData/" + uuid
+                Resource = "api/user/getData/" + _session_token
             };
             var response = _client.Execute<UserResponse>(getRequest);
             UserResponse user = response.Data;
@@ -175,11 +197,11 @@ namespace DSUScheduleBuilder.Network {
             return user.ToUser();
         }
 
-        public List<Course> GetPreviousCourses(string uuid)
+        public List<Course> GetPreviousCourses()
         {
             var getRequest = new RestRequest(Method.GET)
             {
-                Resource = "api/courses/previous/" + uuid
+                Resource = "api/courses/previous/" + _session_token
             };
             var response = _client.Execute<CoursesResponse>(getRequest);
             CoursesResponse courses = response.Data;
@@ -187,6 +209,31 @@ namespace DSUScheduleBuilder.Network {
             if (courses == null)
             {
                 Errors.BadData("Parsing Previous Courses failed");
+                return null;
+            }
+
+            if (courses.errorCode != null)
+            {
+                Errors.Code(courses);
+                //Properly handle errors
+                return null;
+            }
+
+            return courses.ToCourses();
+        }
+
+        public List<Course> GetEnrolledCourses()
+        {
+            var getRequest = new RestRequest(Method.GET)
+            {
+                Resource = "api/courses/enrolled/" + _session_token
+            };
+            var response = _client.Execute<CoursesResponse>(getRequest);
+            CoursesResponse courses = response.Data;
+
+            if (courses == null)
+            {
+                Errors.BadData("Parsing Enrolled Courses failed");
                 return null;
             }
 
