@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace DSUScheduleBuilder.Models
 {
-    class Course
+    public class Course
     {
-        //public string Uid;
+        public int Key;
         public int StartTime;
         public int EndTime;
         public string StartDate;
@@ -18,5 +18,6 @@ namespace DSUScheduleBuilder.Models
         public string ClassName;
         public string Teacher;
         public string Location;
+        public string DaysOfWeek;
     }
 }
