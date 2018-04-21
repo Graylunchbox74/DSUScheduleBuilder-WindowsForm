@@ -26,15 +26,13 @@ namespace DSUScheduleBuilder
         {
             if (UsernameTextbox.Text != "Username" && PasswordTextbox.Text != "Password")
             {
+                bool succ = false;
                 HttpRequester.Default.Login(UsernameTextbox.Text, PasswordTextbox.Text, (LoginResponse lr) =>
                 {
                     if (lr.errorCode == null)
                     {
                         Console.WriteLine("SUCCESSFULLY LOGGED IN AS: " + lr.user.ToUser().FirstName);
-
-                        MainMenu m = new MainMenu();
-                        m.Show();
-                        this.Hide();
+                        succ = true;
                         return true;
                     }
 
@@ -48,6 +46,13 @@ namespace DSUScheduleBuilder
                             return false;
                     }
                 });
+
+                if (succ)
+                {
+                    MainMenu m = new MainMenu();
+                    m.Show();
+                    this.Hide();
+                }
             }
             else
                 MessageBox.Show("Please provide a valid username and password");

@@ -10,6 +10,7 @@ using System.Windows.Forms;
 namespace DSUScheduleBuilder
 {
     using Network;
+    using Models;
 
     public partial class MainMenu : Form
     {
@@ -23,7 +24,13 @@ namespace DSUScheduleBuilder
 
         private void MainMenu_Load(object sender, EventArgs e)
         {
-
+            List<Course> courses = HttpRequester.Default.GetEnrolledCourses();
+            foreach (Course c in courses)
+            {
+                Console.WriteLine(c.ClassID);
+                Console.WriteLine(c.ClassName);
+                Console.WriteLine(c.Teacher);
+            }
         }
 
         private void CurrentBtn_Click(object sender, EventArgs e)
@@ -68,6 +75,7 @@ namespace DSUScheduleBuilder
         }
 
         private void MainMenu_FormClosed(object sender, FormClosedEventArgs e) {
+            HttpRequester.Default.Logout();
             Application.Exit();
         }
 

@@ -154,6 +154,7 @@ namespace DSUScheduleBuilder.Network {
 
             if (worked)
             {
+                Console.WriteLine("Setting session token");
                 _session_token = response.Data.uuid;
             }
         }
@@ -170,12 +171,12 @@ namespace DSUScheduleBuilder.Network {
             var response = _client.Execute<LogoutResponse>(postRequest);
         }
 
-        public User GetUser(string uuid)
+        public User GetUser()
         {
-            Console.WriteLine("LOADING USER " + uuid);
+            Console.WriteLine("LOADING USER");
             var getRequest = new RestRequest(Method.GET)
             {
-                Resource = "api/user/getData/" + uuid
+                Resource = "api/user/getData/" + _session_token
             };
             var response = _client.Execute<UserResponse>(getRequest);
             UserResponse user = response.Data;
@@ -196,11 +197,11 @@ namespace DSUScheduleBuilder.Network {
             return user.ToUser();
         }
 
-        public List<Course> GetPreviousCourses(string uuid)
+        public List<Course> GetPreviousCourses()
         {
             var getRequest = new RestRequest(Method.GET)
             {
-                Resource = "api/courses/previous/" + uuid
+                Resource = "api/courses/previous/" + _session_token
             };
             var response = _client.Execute<CoursesResponse>(getRequest);
             CoursesResponse courses = response.Data;
@@ -208,6 +209,31 @@ namespace DSUScheduleBuilder.Network {
             if (courses == null)
             {
                 Errors.BadData("Parsing Previous Courses failed");
+                return null;
+            }
+
+            if (courses.errorCode != null)
+            {
+                Errors.Code(courses);
+                //Properly handle errors
+                return null;
+            }
+
+            return courses.ToCourses();
+        }
+
+        public List<Course> GetEnrolledCourses()
+        {
+            var getRequest = new RestRequest(Method.GET)
+            {
+                Resource = "api/courses/enrolled/" + _session_token
+            };
+            var response = _client.Execute<CoursesResponse>(getRequest);
+            CoursesResponse courses = response.Data;
+
+            if (courses == null)
+            {
+                Errors.BadData("Parsing Enrolled Courses failed");
                 return null;
             }
 
