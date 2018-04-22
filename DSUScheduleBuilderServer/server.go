@@ -361,24 +361,77 @@ func getAllAvailableCourses() ([]availableCourse, int, error) {
 }
 
 //enrolled class database functions
-func addEnrolledClass(class course) (int, error) {
-	//make sure this class does not exist for the user with this id already, else skip
-	location := "addEnrolledClass"
-	var tmp int
-	var err error
-	tmp = -1
-	err = db.QueryRow("SELECT userID FROM EnrolledClasses WHERE userID=$1 AND classID=$2", class.UserID, class.ClassID).Scan(&tmp)
-	checkLogError(location, "Selecting from database to see if it already exists", err)
-	if tmp == -1 && err == nil {
-		_, err = db.Exec("INSERT INTO EnrolledClasses (userID, classID, className, teacher, location, startTime, endTime, startDate, endDate, credits) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)", class.UserID, class.ClassID, class.ClassName, class.Teacher, class.Location, class.StartTime, class.EndTime, class.StartDate, class.EndDate, class.Credits)
-		checkLogError(location, "Insert the enrolled class in the database", err)
-		if err == nil {
+func addEnrolledClass(userID, key int) (int, error) {
+	//check if user is already enrolled for this course
+	var currentEnrolled string
+	var uidDB string
+	uidDB = "%|" + strconv.Itoa(userID) + "|%"
+	err := db.QueryRow("SELECT userID from EnrolledClasses where key=$1 and userID like $2", key, uidDB).Scan(&currentEnrolled)
+	if err == sql.ErrNoRows {
+		//check if the class is already in the db
+		err = db.QueryRow("SELECT userID from EnrolledClasses where key=$1", key).Scan(&currentEnrolled)
+		if err == sql.ErrNoRows {
+			//insert the new class
+			var class course
+			var emails string
+			err = db.QueryRow("SELECT courseID,courseName,professorEmails,location,daysOfWeek,timeStart,timeEnd,startDate,endDate,credits,key from availableCourses where key=$1", key).Scan(
+				&class.ClassID,
+				&class.ClassName,
+				&emails,
+				&class.Location,
+				&class.DaysOfWeek,
+				&class.DaysOfWeek,
+				&class.StartTime,
+				&class.EndTime,
+				&class.StartDate,
+				&class.EndDate,
+				&class.Credits,
+				&class.Key,
+			)
+			if err == sql.ErrNoRows {
+				return 5, errors.New("class with this key does not exist in availableClasses")
+			} else if err != nil {
+				return 5, err
+			}
+			class.UserID = "|" + strconv.Itoa(userID) + "|"
+			teachers, errCode, err := getTeacher(emails)
+			if err != nil {
+				return errCode, err
+			}
+			teacher := "|" + strings.Join(teachers, "||") + "|"
+			_, err = db.Exec("insert into enrolledClasses values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)",
+				class.UserID,
+				class.ClassID,
+				class.ClassName,
+				teacher,
+				class.Location,
+				class.DaysOfWeek,
+				class.StartTime,
+				class.EndTime,
+				class.StartDate,
+				class.EndDate,
+				class.Credits,
+				class.Key,
+			)
+			if err != nil {
+				return 16, err
+			}
 			return 200, err
+		} else {
+			uidDB = "|" + strconv.Itoa(userID) + "|"
+			currentEnrolled = currentEnrolled + uidDB
+			_, errCode, err := updateEnrolledClass(strconv.Itoa(key), "userID", currentEnrolled)
+			if err != nil {
+				return errCode, err
+			} else {
+				return 200, err
+			}
 		}
-	} else if tmp != -1 {
-		return 501, err
+	} else if err != nil {
+		return 5, err
+	} else {
+		return 5, errors.New("user has already enrolled in this course")
 	}
-	return 500, err
 }
 
 func deleteEnrolledClass(class course) (int, error) {
@@ -628,6 +681,33 @@ func main() {
 
 				c.JSON(200, gin.H{"success": 1})
 
+			})
+
+			users.POST("/enroll/", func(c *gin.Context) {
+				uuid := c.PostForm("uuid")
+				var userID int
+				err := db.QueryRow("SELECT uid FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&userID)
+
+				if err == sql.ErrNoRows {
+					currentError := createErrorStruct(2, c.Request.URL.String(), "3", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				if err != nil {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				//key := c.PostForm("key")
+				key, _ := strconv.Atoi(c.PostForm("key"))
+				errCode, err := addEnrolledClass(userID, key)
+				if err != nil {
+					currentError := createErrorStruct(errCode, c.Request.URL.String(), "4", err)
+					c.JSON(500, currentError)
+				}
+				c.JSON(200, gin.H{"success": 1})
 			})
 
 			users.POST("/addMajor/", func(c *gin.Context) {
@@ -1010,6 +1090,37 @@ func main() {
 					param = " courseID like \"" + param + "\""
 					commands = append(commands, param)
 				}
+
+				if len(q["startTime"]) > 0 {
+					paramNum := q["startTime"][0]
+					param := " timeStart >= " + paramNum
+					commands = append(commands, param)
+				}
+
+				if len(q["endTime"]) > 0 {
+					paramNum := q["endTime"][0]
+					param := " timeEnd <= " + paramNum
+					commands = append(commands, param)
+				}
+
+				if len(q["slotsAvailable"]) > 0 {
+					paramNum := q["slotsAvailable"][0]
+					param := " slotsAvailable >= " + paramNum
+					commands = append(commands, param)
+				}
+
+				if len(q["key"]) > 0 {
+					paramNum := q["key"][0]
+					param := " key = " + paramNum
+					commands = append(commands, param)
+				}
+
+				if len(q["open"]) > 0 {
+					paramNum := q["open"][0]
+					param := " open = " + paramNum
+					commands = append(commands, param)
+				}
+
 				parameter := strings.Join(commands, " AND ")
 
 				execute := "select * from availablecourses where " + parameter
