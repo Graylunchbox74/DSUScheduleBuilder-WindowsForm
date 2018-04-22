@@ -69,12 +69,12 @@ for collegeKey, college in data[term].items():
                     cd["SlotsWaitlist"],
                     cd["TimeStart"],
                     cd["TimeEnd"],
-                    "|".join(cd["ProfessorEmails"]),
+                    "|" + ("|".join(cd["ProfessorEmails"])) + "|",
                     cd["PrereqNonCourse"],
-                    "|".join(cd["RecConcurrentCourses"]),
-                    "|".join(cd["ReqConcurrentCourses"]),
-                    "|".join(cd["PrereqCourses"]["and"]),
-                    "|".join(cd["PrereqCourses"]["or"]),
+                    "|" + "|".join(cd["RecConcurrentCourses"]) + "|",
+                    "|" + "|".join(cd["ReqConcurrentCourses"]) + "|",
+                    "|" + "|".join(cd["PrereqCourses"]["and"]) + "|",
+                    "|" + "|".join(cd["PrereqCourses"]["or"]) + "|",
                     "",
                     term)
                 db.execute(cmd, param)
