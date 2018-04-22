@@ -40,13 +40,13 @@ namespace DSUScheduleBuilder
             this.Login_PasswordTxt = new System.Windows.Forms.TextBox();
             this.NewUserPanel = new System.Windows.Forms.Panel();
             this.MainMenuPanel = new System.Windows.Forms.Panel();
+            this.MainMenu_WeekViewBtn = new System.Windows.Forms.Button();
             this.MainMenu_SearchBtn = new System.Windows.Forms.Button();
             this.MainMenu_LogoutBtn = new System.Windows.Forms.Button();
             this.WelcomeLabel = new System.Windows.Forms.Label();
             this.Control_Search = new DSUScheduleBuilder.Main_Menu.Search();
             this.Control_WeekView = new DSUScheduleBuilder.Drawing.WeekView();
             this.NewUserControl = new DSUScheduleBuilder.Main_Menu.NewUser();
-            this.MainMenu_WeekViewBtn = new System.Windows.Forms.Button();
             this.LoginPanel.SuspendLayout();
             this.NewUserPanel.SuspendLayout();
             this.MainMenuPanel.SuspendLayout();
@@ -67,6 +67,7 @@ namespace DSUScheduleBuilder
             // 
             // Login_LoginBtn
             // 
+            this.Login_LoginBtn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.Login_LoginBtn.Location = new System.Drawing.Point(426, 331);
             this.Login_LoginBtn.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.Login_LoginBtn.Name = "Login_LoginBtn";
@@ -103,6 +104,7 @@ namespace DSUScheduleBuilder
             // 
             // Login_NewUserBtn
             // 
+            this.Login_NewUserBtn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.Login_NewUserBtn.Location = new System.Drawing.Point(516, 331);
             this.Login_NewUserBtn.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.Login_NewUserBtn.Name = "Login_NewUserBtn";
@@ -146,8 +148,20 @@ namespace DSUScheduleBuilder
             this.MainMenuPanel.Size = new System.Drawing.Size(1010, 728);
             this.MainMenuPanel.TabIndex = 7;
             // 
+            // MainMenu_WeekViewBtn
+            // 
+            this.MainMenu_WeekViewBtn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.MainMenu_WeekViewBtn.Location = new System.Drawing.Point(19, 54);
+            this.MainMenu_WeekViewBtn.Name = "MainMenu_WeekViewBtn";
+            this.MainMenu_WeekViewBtn.Size = new System.Drawing.Size(138, 46);
+            this.MainMenu_WeekViewBtn.TabIndex = 5;
+            this.MainMenu_WeekViewBtn.Text = "View Schedule";
+            this.MainMenu_WeekViewBtn.UseVisualStyleBackColor = true;
+            this.MainMenu_WeekViewBtn.Click += new System.EventHandler(this.MainMenu_WeekViewBtn_Click);
+            // 
             // MainMenu_SearchBtn
             // 
+            this.MainMenu_SearchBtn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.MainMenu_SearchBtn.Location = new System.Drawing.Point(163, 54);
             this.MainMenu_SearchBtn.Name = "MainMenu_SearchBtn";
             this.MainMenu_SearchBtn.Size = new System.Drawing.Size(138, 46);
@@ -158,6 +172,7 @@ namespace DSUScheduleBuilder
             // 
             // MainMenu_LogoutBtn
             // 
+            this.MainMenu_LogoutBtn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.MainMenu_LogoutBtn.Location = new System.Drawing.Point(922, 12);
             this.MainMenu_LogoutBtn.Name = "MainMenu_LogoutBtn";
             this.MainMenu_LogoutBtn.Size = new System.Drawing.Size(75, 23);
@@ -179,11 +194,12 @@ namespace DSUScheduleBuilder
             // Control_Search
             // 
             this.Control_Search.Location = new System.Drawing.Point(72, 174);
-            this.Control_Search.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Control_Search.Margin = new System.Windows.Forms.Padding(2);
             this.Control_Search.Name = "Control_Search";
             this.Control_Search.Size = new System.Drawing.Size(872, 513);
             this.Control_Search.TabIndex = 4;
             this.Control_Search.Visible = false;
+            this.Control_Search.Load += new System.EventHandler(this.Control_Search_Load);
             // 
             // Control_WeekView
             // 
@@ -202,24 +218,16 @@ namespace DSUScheduleBuilder
             this.NewUserControl.Size = new System.Drawing.Size(872, 513);
             this.NewUserControl.TabIndex = 0;
             // 
-            // MainMenu_WeekViewBtn
-            // 
-            this.MainMenu_WeekViewBtn.Location = new System.Drawing.Point(19, 54);
-            this.MainMenu_WeekViewBtn.Name = "MainMenu_WeekViewBtn";
-            this.MainMenu_WeekViewBtn.Size = new System.Drawing.Size(138, 46);
-            this.MainMenu_WeekViewBtn.TabIndex = 5;
-            this.MainMenu_WeekViewBtn.Text = "View Schedule";
-            this.MainMenu_WeekViewBtn.UseVisualStyleBackColor = true;
-            this.MainMenu_WeekViewBtn.Click += new System.EventHandler(this.MainMenu_WeekViewBtn_Click);
-            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ClientSize = new System.Drawing.Size(1008, 729);
             this.Controls.Add(this.MainMenuPanel);
             this.Controls.Add(this.LoginPanel);
             this.Controls.Add(this.NewUserPanel);
+            this.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.MaximumSize = new System.Drawing.Size(1024, 768);
             this.MinimumSize = new System.Drawing.Size(1024, 768);
             this.Name = "MainWindow";

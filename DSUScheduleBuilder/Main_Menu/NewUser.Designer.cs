@@ -152,6 +152,7 @@
             // 
             // newUserButton
             // 
+            this.newUserButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.newUserButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.newUserButton.Location = new System.Drawing.Point(351, 291);
             this.newUserButton.Margin = new System.Windows.Forms.Padding(2);

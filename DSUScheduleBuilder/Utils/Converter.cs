@@ -22,6 +22,8 @@ namespace DSUScheduleBuilder.Utils
         {
             string hour = (time / 100).ToString();
             string minute = (time % 100).ToString();
+            if (minute.Length == 1) minute = "0" + minute;
+            
             return hour + ":" + minute;
         }
     }

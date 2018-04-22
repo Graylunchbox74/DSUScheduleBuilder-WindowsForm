@@ -202,5 +202,10 @@ namespace DSUScheduleBuilder
         {
             ChangeActiveController(ActiveController.WeekView);
         }
+
+        private void Control_Search_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

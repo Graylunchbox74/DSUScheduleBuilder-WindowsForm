@@ -35,5 +35,25 @@ namespace DSUScheduleBuilder.Models
         public string InstructionalMethods;
         public string Term;
         public int Key;
+
+        public string DaysOfWeek
+        {
+            get
+            {
+                List<string> days = new List<string>();
+                if (MeetingInformation.Contains("Monday")) days.Add("Mon");
+                if (MeetingInformation.Contains("Tuesday")) days.Add("Tues");
+                if (MeetingInformation.Contains("Wednesday")) days.Add("Wed");
+                if (MeetingInformation.Contains("Thursday")) days.Add("Thurs");
+                if (MeetingInformation.Contains("Friday")) days.Add("Fri");
+
+                string ret = "";
+                days.ForEach((d) => ret += d + ", ");
+
+                if (ret.Length == 0) return "Online";
+
+                return ret.Substring(0, ret.Length - 2);
+            }
+        }
     }
 }

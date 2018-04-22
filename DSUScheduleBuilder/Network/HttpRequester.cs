@@ -397,9 +397,14 @@ namespace DSUScheduleBuilder.Network {
                 return null;
             }
 
-            callback(courses);
-
-            return courses?.ToCourses();
+            if (callback(courses))
+            {
+                return courses?.ToCourses();
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }
