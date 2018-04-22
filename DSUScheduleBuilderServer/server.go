@@ -163,20 +163,21 @@ func getTeacher(email string) ([]string, int, error) {
 	emails := strings.SplitAfter(email, "|")
 
 	for currentEmail := range emails {
-		email = strings.Replace(emails[currentEmail], "|", "", -1)
-		err = db.QueryRow("select name from teachers where email=$1", emails[currentEmail]).Scan(&name)
+		emails[currentEmail] = strings.Replace(emails[currentEmail], "|", "", -1)
+		if emails[currentEmail] != "" {
+			err = db.QueryRow("select name from teachers where email=$1", emails[currentEmail]).Scan(&name)
 
-		if err == sql.ErrNoRows {
-			err = errors.New("No teacher matches that email " + emails[currentEmail])
-			return teachers, 5, err
+			if err == sql.ErrNoRows {
+				err = errors.New("No teacher matches that email " + emails[currentEmail])
+				return teachers, 5, err
+			}
+
+			if err != nil {
+				return teachers, 5, err
+			}
+
+			teachers = append(teachers, name)
 		}
-
-		if err != nil {
-			return teachers, 5, err
-		}
-
-		name = "|" + name + "|"
-		teachers = append(teachers, name)
 	}
 
 	return teachers, 200, err
@@ -425,19 +426,33 @@ func getEnrolledClasses(uid int) ([]course, int, error) {
 		WHERE userID LIKE $1`, parameter,
 	)
 
+	var teacherStr string
+
 	defer rows.Close()
 	var tmp string
 	for rows.Next() {
 		class = course{}
 
 		err = rows.Scan(
-			&tmp, &class.ClassID, &class.ClassName, &class.Teacher, &class.Location, &class.DaysOfWeek,
+			&tmp, &class.ClassID, &class.ClassName, &teacherStr, &class.Location, &class.DaysOfWeek,
 			&class.StartTime, &class.EndTime, &class.StartDate, &class.EndDate, &class.Credits, &class.Key,
 		)
 
 		if err != nil {
 			go logError(location, "1", err)
 			return classes, 5, err
+		}
+
+		var teachers []string
+		teacherStr = strings.Replace(teacherStr, "|", "", 1)
+		teachers = strings.SplitAfter(teacherStr, "|")
+
+		for currentTeacher := range teachers {
+			teachers[currentTeacher] = strings.Replace(teachers[currentTeacher], "|", "", -1)
+			if teachers[currentTeacher] != "" {
+
+				class.Teacher = append(class.Teacher, teachers[currentTeacher])
+			}
 		}
 
 		classes = append(classes, class)
@@ -522,17 +537,30 @@ func getPreviousClasses(uid int) ([]course, int, error) {
 
 	defer rows.Close()
 	var tmp string
+	var teacherStr string
 	for rows.Next() {
 		class = course{}
 
 		err = rows.Scan(
-			&tmp, &class.ClassID, &class.ClassName, &class.Teacher,
+			&tmp, &class.ClassID, &class.ClassName, &teacherStr,
 			&class.StartTime, &class.EndTime, &class.StartDate, &class.EndDate, &class.Credits, &class.Key,
 		)
 
 		if err != nil {
 			go logError(location, "1", err)
 			return classes, 5, err
+		}
+
+		var teachers []string
+		teacherStr = strings.Replace(teacherStr, "|", "", 1)
+		teachers = strings.SplitAfter(teacherStr, "|")
+
+		for currentTeacher := range teachers {
+			teachers[currentTeacher] = strings.Replace(teachers[currentTeacher], "|", "", -1)
+			if teachers[currentTeacher] != "" {
+
+				class.Teacher = append(class.Teacher, teachers[currentTeacher])
+			}
 		}
 
 		classes = append(classes, class)
@@ -910,8 +938,140 @@ func main() {
 					return
 				}
 
-				c.JSON(200, allCourses)
+				c.JSON(200, gin.H{"classes": allCourses})
 				//select all courses that are available to register for
+
+			})
+			//term, prefix (CSC), number (150), instructor last nam
+			courses.GET("/search/:uuid", func(c *gin.Context) {
+				uuid := c.Param("uuid")
+				var userID int
+				err := db.QueryRow("SELECT uid FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&userID)
+
+				if err == sql.ErrNoRows {
+					currentError := createErrorStruct(2, c.Request.URL.String(), "3", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				if err != nil {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				q := c.Request.URL.Query()
+				var commands []string
+
+				if len(q["term"]) > 0 {
+					param := "%" + q["term"][0] + "%"
+					param = " term like \"" + param + "\""
+					commands = append(commands, param)
+				}
+
+				if len(q["prefix"]) > 0 {
+					param := "%" + q["prefix"][0] + "%"
+					param = " courseID like \"" + param + "\""
+					commands = append(commands, param)
+				}
+				if len(q["instructor"]) > 0 {
+					var name string
+					param := "%" + q["instructor"][0] + "%"
+					rows, err := db.Query("select email from teachers where name like $1", param)
+
+					if err != nil {
+						currentError := createErrorStruct(5, c.Request.URL.String(), "1", err)
+						c.JSON(500, currentError)
+						return
+					}
+					teacher := "( "
+					x := 0
+					for rows.Next() {
+						err = rows.Scan(&name)
+						if err != nil {
+							currentError := createErrorStruct(5, c.Request.URL.String(), "1", err)
+							c.JSON(500, currentError)
+							return
+						}
+						if x != 0 {
+							param = " OR professorEmails like \"" + "%" + name + "%" + "\" "
+						} else {
+							param = "professorEmails like \"%" + name + "%\""
+						}
+						teacher = teacher + param
+						x = x + 1
+					}
+					teacher = teacher + " )"
+					commands = append(commands, teacher)
+
+				}
+				if len(q["number"]) > 0 {
+					param := "%" + q["number"][0] + "%"
+					param = " courseID like \"" + param + "\""
+					commands = append(commands, param)
+				}
+				parameter := strings.Join(commands, " AND ")
+
+				execute := "select * from availablecourses where " + parameter
+				var allCourses []availableCourse
+				rows, err := db.Query(execute)
+
+				if err != nil {
+					currentError := createErrorStruct(16, c.Request.URL.String(), "2", errors.New(execute))
+					c.JSON(500, currentError)
+					return
+				}
+
+				for rows.Next() {
+					var class availableCourse
+					err = rows.Scan(
+						&class.SectionID,
+						&class.Open,
+						&class.AcademicLevel,
+						&class.CourseID,
+						&class.Description,
+						&class.CourseName,
+						&class.StartDate,
+						&class.EndDate,
+						&class.Location,
+						&class.MeetingInformation,
+						&class.Supplies,
+						&class.Credits,
+						&class.SlotsAvailable,
+						&class.SlotsCapacity,
+						&class.SlotsWaitlist,
+						&class.TimeStart,
+						&class.TimeEnd,
+						&class.ProfessorEmails,
+						&class.PrereqNonCourse,
+						&class.RecConcurrentCourses,
+						&class.ReqConcurrentCourses,
+						&class.PrereqCoursesAnd,
+						&class.PrereqCoursesOr,
+						&class.InstructionalMethods,
+						&class.Term,
+						&class.Key,
+					)
+
+					if err != nil {
+						currentError := createErrorStruct(5, c.Request.URL.String(), "2", err)
+						c.JSON(500, currentError)
+						return
+					}
+
+					teacher, errCode, err := getTeacher(class.ProfessorEmails)
+
+					if err != nil {
+						currentError := createErrorStruct(errCode, c.Request.URL.String(), "2", err)
+						c.JSON(500, currentError)
+						return
+					}
+
+					class.Teacher = teacher
+					allCourses = append(allCourses, class)
+				}
+
+				c.JSON(200, gin.H{"classes": allCourses})
 
 			})
 
