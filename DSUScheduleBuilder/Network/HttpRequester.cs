@@ -376,16 +376,30 @@ namespace DSUScheduleBuilder.Network {
             return courses.ToCourses();
         }
 
-        public void SearchForCourses(void callback(FullAvailableCourseResponse facr))
+        public List<AvailableCourse> SearchForCourses(string term, string prefix, string number, string ilastname, Func<FullAvailableCourseResponse, bool> callback)
         {
             var req = new RestRequest(Method.GET)
             {
                 Resource = "api/courses/search" + _session_token
             };
+
+            if (term != "") req.AddParameter("term", term);
+            if (prefix != "") req.AddParameter("prefix", prefix);
+            if (number != "") req.AddParameter("number", number);
+            if (ilastname != "") req.AddParameter("instructor", ilastname);
+
             var res = _client.Execute<FullAvailableCourseResponse>(req);
             FullAvailableCourseResponse courses = res.Data;
 
-            if (courses == )
+            if (courses == null)
+            {
+                Errors.BadData("Parsing searched courses failed");
+                return null;
+            }
+
+            callback(courses);
+
+            return courses?.ToCourses();
         }
     }
 }
