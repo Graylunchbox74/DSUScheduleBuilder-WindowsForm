@@ -113,32 +113,7 @@ namespace DSUScheduleBuilder
 
                     List<Course> courses = HttpRequester.Default.GetEnrolledCourses();
                     Control_WeekView.SetCourses(courses);
-
-                    List<AvailableCourse> foundCourses = HttpRequester.Default.SearchForCourses("", "GAME", "", "Berman", (facr) =>
-                    {
-                        if (facr.errorCode != null)
-                        {
-                            //Handle errors;
-                            return false;
-                        }
-
-                        if (facr.classes == null)
-                        {
-                            MessageBox.Show("No classes found with those parameters");
-                            return false;
-                        }
-
-                        return false;
-                    });
-
-                    if (foundCourses != null)
-                    {
-                        foreach (AvailableCourse c in foundCourses)
-                        {
-                            Console.WriteLine(c.CourseID);
-                        }
-                    }
-
+                    
                     WelcomeLabel.Text = "Welcome " + user.FirstName + "!";
                 }
             }

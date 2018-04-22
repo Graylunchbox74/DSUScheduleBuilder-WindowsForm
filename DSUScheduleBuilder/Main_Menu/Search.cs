@@ -12,6 +12,7 @@ namespace DSUScheduleBuilder.Main_Menu
 {
     using Network;
     using Models;
+    using Utils;
 
     public partial class Search : UserControl
     {
@@ -22,8 +23,21 @@ namespace DSUScheduleBuilder.Main_Menu
 
         private void searchButton_Click(object sender, EventArgs e)
         {
+            int startTime, endTime;
+
+            if (timeCheckbox.Checked)
+            {
+                startTime = startTimePicker.Value.TimeOfDay.Hours * 100 + startTimePicker.Value.TimeOfDay.Minutes;
+                endTime = endTimePicker.Value.TimeOfDay.Hours * 100 + endTimePicker.Value.TimeOfDay.Minutes;
+            }
+            else
+            {
+                startTime = -1;
+                endTime = -1;
+            }
+
             List<AvailableCourse> courses =
-                HttpRequester.Default.SearchForCourses(termComboBox.Text, PrefixTextBox.Text, CourseNumTextBox.Text, IlnTextBox.Text,
+                HttpRequester.Default.SearchForCourses(termComboBox.Text, PrefixTextBox.Text, CourseNumTextBox.Text, IlnTextBox.Text, startTime, endTime, (int)slotsUpDown.Value,
                 (FullAvailableCourseResponse res) =>
                 {
                     if (res.errorCode != null)
