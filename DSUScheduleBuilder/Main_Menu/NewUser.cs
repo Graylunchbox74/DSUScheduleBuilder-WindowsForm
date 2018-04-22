@@ -11,6 +11,8 @@ using System.Text.RegularExpressions;
 
 namespace DSUScheduleBuilder.Main_Menu
 {
+    using Network;
+
     public partial class NewUser : UserControl
     {
         public NewUser()
@@ -46,7 +48,28 @@ namespace DSUScheduleBuilder.Main_Menu
             }
             else
             {
-                // Add new user to database
+                bool successful = false;
+                HttpRequester.Default.NewUser(emailTextBox.Text, passwordTextBox.Text, firstnameTextBox.Text, lastnameTextBox.Text, (SuccessResponse s) =>
+                {
+                    if (s.errorCode != null)
+                    {
+                        switch (s.errorCode)
+                        {
+                            case 13:
+                                MessageBox.Show("Email already taken.");
+                                return false;
+                            default:
+                                break;
+                        }
+                    }
+                    successful = true;
+                    return true;
+                });
+
+                if (successful)
+                {
+                    ((MainWindow)this.Parent.Parent).ChangeState(MainWindow.States.Login);
+                }
             }
         }
     }

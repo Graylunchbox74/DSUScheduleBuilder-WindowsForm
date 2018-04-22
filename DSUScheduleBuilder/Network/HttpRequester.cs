@@ -108,6 +108,41 @@ namespace DSUScheduleBuilder.Network {
         public int success { get; set; }
     }
 
+    class AvailableCourseResponse
+    {
+        public string sectionID { get; set; }
+        public bool open { get; set; }
+        public string academicLevel { get; set; }
+        public string courseID { get; set; }
+        public string description { get; set; }
+        public string courseName { get; set; }
+        public string startDate { get; set; }
+        public string endDate { get; set; }
+        public string location { get; set; }
+        public string meetingInformation { get; set; }
+        public string supplies { get; set; }
+        public int credits { get; set; }
+        public int slotsAvailable { get; set; }
+        public int slotsCapactity { get; set; }
+        public int timeStart { get; set; }
+        public int timeEnd { get; set; }
+        public string professorEmails { get; set; }
+        public List<string> teacher { get; set; }
+        public string prereqNonCourse { get; set; }
+        public string recConcurrentCourses { get; set; }
+        public string reqConcurrentCourses { get; set; }
+        public string prereqCoursesAnd { get; set; }
+        public string prereqCoursesOr { get; set; }
+        public string instructionalMethods { get; set; }
+        public string term { get; set; }
+        public int key { get; set; }
+    }
+
+    class FullAvailableCourseResponse : Errorable
+    {
+        List<AvailableCourseResponse> classes;
+    }
+
     class HttpRequester
     {
         //STATIC FIELD

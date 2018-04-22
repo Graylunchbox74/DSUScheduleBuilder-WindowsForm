@@ -13,24 +13,27 @@ namespace DSUScheduleBuilder
     using Network;
     using Models;
     using Drawing;
+    using Main_Menu;
     
     public partial class MainWindow: Form
     {
-        private enum States
+        public enum States
         {
             Login, NewUser, MainMenu, ForgotPassword
         }
 
+        public enum ActiveController
+        {
+            WeekView, Search
+        }
+
+        private ActiveController controller;
         private States state;
         public MainWindow()
         {
             InitializeComponent();
 
-            state = States.Login;
-
-            LoginPanel.Show();
-            NewUserPanel.Hide();
-            MainMenuPanel.Hide();
+            ChangeState(States.Login);
         }
 
         #region LOGIN PANEL EVENT HANDLERS
@@ -106,14 +109,12 @@ namespace DSUScheduleBuilder
 
                 if (user != null)
                 {
-                    LoginPanel.Hide();
+                    ChangeState(States.MainMenu);
 
                     List<Course> courses = HttpRequester.Default.GetEnrolledCourses();
-                    weekView1.SetCourses(courses);
+                    Control_WeekView.SetCourses(courses);
 
                     WelcomeLabel.Text = "Welcome " + user.FirstName + "!";
-
-                    MainMenuPanel.Show();
                 }
             }
             else
@@ -129,56 +130,33 @@ namespace DSUScheduleBuilder
 
         #endregion
 
-        #region NEW USER EVENTS
-        private void NewUser_CreateUserBtn_Click(object sender, EventArgs e)
-        {
-            // Code to add user to database goes here
-            if (NewUser_PasswordTxt.Text != NewUser_ConfirmTxt.Text)
-            {
-                MessageBox.Show("Passwords do not match.");
-            }
-
-            bool successful = false;
-            HttpRequester.Default.NewUser(NewUser_NameTxt.Text, NewUser_PasswordTxt.Text, NewUser_FirstNameTxt.Text, NewUser_LastNameTxt.Text, (SuccessResponse s) =>
-            {
-                if (s.errorCode != null)
-                {
-                    switch (s.errorCode)
-                    {
-                        case 13:
-                            MessageBox.Show("Email already taken.");
-                            return false;
-                        default:
-                            break;
-                    }
-                }
-                successful = true;
-                return true;
-            });
-
-            if (successful)
-            {
-                state = States.Login;
-                NewUserPanel.Hide();
-                LoginPanel.Show();
-            }
-        }
-
-        private void NewUser_CancelBtn_Click(object sender, EventArgs e)
-        {
-            state = States.Login;
-            NewUserPanel.Hide();
-            LoginPanel.Show();
-        }
-
-        #endregion
-
         #region MAIN MENU EVENTS
         private void MainMenu_LogoutBtn_Click(object sender, EventArgs e)
         {
             HttpRequester.Default.Logout();
+            ChangeState(States.Login);
+        }
+
+        public void ChangeState(States st)
+        {
+            LoginPanel.Hide();
+            NewUserPanel.Hide();
             MainMenuPanel.Hide();
-            LoginPanel.Show();
+
+            state = st;
+            if (state == States.Login) LoginPanel.Show();
+            if (state == States.NewUser) NewUserPanel.Show();
+            if (state == States.MainMenu) MainMenuPanel.Show();
+        }
+
+        public void ChangeActiveController(ActiveController ac)
+        {
+            controller = ac;
+            Control_WeekView.Hide();
+            Control_Search.Hide();
+
+            if (controller == ActiveController.WeekView) Control_WeekView.Show();
+            if (controller == ActiveController.Search) Control_Search.Show();
         }
         #endregion
 
@@ -189,5 +167,15 @@ namespace DSUScheduleBuilder
             Application.Exit();
         }
         #endregion
+
+        private void MainMenu_SearchBtn_Click(object sender, EventArgs e)
+        {
+            ChangeActiveController(ActiveController.Search);
+        }
+
+        private void MainMenu_WeekViewBtn_Click(object sender, EventArgs e)
+        {
+            ChangeActiveController(ActiveController.WeekView);
+        }
     }
 }
