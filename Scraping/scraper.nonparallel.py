@@ -86,7 +86,7 @@ class Teacher:
 with open(glob.glob("*_config.json")[0]) as fi:
     config = json.load(fi)
 executable_path = {'executable_path': config['browser']}
-b = Browser(config['type'], headless=config['headless'], **executable_path)
+b = Browser(config['type'], headless=config['headless'], incognito=True, **executable_path)
 teachers = {}
 totalData = {"Teachers": {}}
 
@@ -120,7 +120,7 @@ def main():
                             pass
                     if b.is_element_not_present_by_id("VAR1", 5):
                         b.execute_script("window.location.reload()")
-                        sleep(2)
+                        sleep(3)
                         continue
                     selectDropdown("VAR1", semester)
                     selectDropdown("LIST_VAR1_1", subject)
@@ -144,7 +144,7 @@ def main():
                         b.find_by_css('input[value="NEXT"]').first.click()
                         if currentPage != totalPages:
                             while not b.is_text_present("Page {0} of {1}".format(int(currentPage) + 1, totalPages)):
-                                sleep(1)
+                                sleep(2)
                     subjectCourses[subject] = {}
                     for c in courses:
                         if c.CourseCode in subjectCourses[subject]:
@@ -264,6 +264,7 @@ def scrapeTable(tab):
                     course.SlotsWaitlist = int(nm.group(3))
             elif e == 9:
                 course.AcademicLevel = tab.find_by_tag("tr")[n].find_by_tag("td")[e].text
+        print(course.CourseCode)
         courses.append(course)
     sys.stdout.flush()
     return courses
@@ -303,9 +304,9 @@ def getTimes(s):
 	if r is None:
 		return (0, 0)
 	st, et = int(r.group(1).replace(":", "")), int(r.group(3).replace(":", ""))
-	if r.group(2).lower() == "pm":
+	if r.group(2).lower() == "pm" and st < 1200:
 		st += 1200
-	if r.group(4).lower() == "pm":
+	if r.group(4).lower() == "pm" and et < 1200:
 		et += 1200
 	return (st, et)
 

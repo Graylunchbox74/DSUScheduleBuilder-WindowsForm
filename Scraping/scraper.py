@@ -86,7 +86,7 @@ class Teacher:
 with open(glob.glob("*_config.json")[0]) as fi:
     config = json.load(fi)
 executable_path = {'executable_path': config['browser']}
-b = Browser(config['type'], headless=config['headless'], **executable_path)
+b = Browser(config['type'], headless=config['headless'], incognito=True, **executable_path)
 teachers = {}
 totalData = {"Teachers": {}}
 
@@ -119,12 +119,13 @@ def main():
                         pass
                 if b.is_element_not_present_by_id("VAR1", 5):
                     b.execute_script("window.location.reload()")
-                    sleep(2)
+                    sleep(5)
                     continue
                 selectDropdown("VAR1", semester)
                 selectDropdown("LIST_VAR1_1", subject)
                 selectDropdown("VAR6", "DSU")
                 b.find_by_id("WASubmit").first.click()
+                sleep(3)
                 badResult = False
                 while not badResult and b.is_element_not_present_by_text("Section Selection Results", 1):
                     badResult = b.is_text_present("No classes meeting the search criteria have been found.")
@@ -143,7 +144,7 @@ def main():
                     b.find_by_css('input[value="NEXT"]').first.click()
                     if currentPage != totalPages:
                         while not b.is_text_present("Page {0} of {1}".format(int(currentPage) + 1, totalPages)):
-                            sleep(1)
+                            sleep(3)
                 subjectCourses[subject] = {}
                 for c in courses:
                     if c.CourseCode in subjectCourses[subject]:
@@ -264,6 +265,7 @@ def scrapeTable(tab):
                     course.SlotsWaitlist = int(nm.group(3))
             elif e == 9:
                 course.AcademicLevel = tab.find_by_tag("tr")[n].find_by_tag("td")[e].text
+        print(course.CourseCode)
         courses.append(course)
     return courses
 
