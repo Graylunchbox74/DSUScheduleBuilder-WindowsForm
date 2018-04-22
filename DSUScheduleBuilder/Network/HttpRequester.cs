@@ -175,7 +175,7 @@ namespace DSUScheduleBuilder.Network {
 
     class FullAvailableCourseResponse : Errorable
     {
-        List<AvailableCourseResponse> classes;
+        public List<AvailableCourseResponse> classes { get; set; }
 
         public List<AvailableCourse> ToCourses()
         {
@@ -380,7 +380,7 @@ namespace DSUScheduleBuilder.Network {
         {
             var req = new RestRequest(Method.GET)
             {
-                Resource = "api/courses/search" + _session_token
+                Resource = "api/courses/search/" + _session_token
             };
 
             if (term != "") req.AddParameter("term", term);
