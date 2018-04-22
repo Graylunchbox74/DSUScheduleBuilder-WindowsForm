@@ -5,7 +5,7 @@ import sys
 db = sqlite3.connect("userDatabase.db")
 
 data = None
-with open("../Scraping/newTotalData.json", "r") as f:
+with open("../Scraping/2018SP.json", "r") as f:
     data = json.load(f)
 
 if len(sys.argv) < 2:
