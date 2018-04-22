@@ -125,7 +125,7 @@ def main():
                 selectDropdown("LIST_VAR1_1", subject)
                 selectDropdown("VAR6", "DSU")
                 b.find_by_id("WASubmit").first.click()
-                sleep(3)
+                sleep(7)
                 badResult = False
                 while not badResult and b.is_element_not_present_by_text("Section Selection Results", 1):
                     badResult = b.is_text_present("No classes meeting the search criteria have been found.")
