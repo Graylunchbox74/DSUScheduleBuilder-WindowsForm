@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-contrib/static"
@@ -27,45 +28,45 @@ type course struct {
 	EndTime   int    `json:"endTime"`
 	Credits   int    `json:"credits"`
 
-	ClassID    string `json:"classID"`
-	ClassName  string `json:"className"`
-	Location   string `json:"location"`
-	DaysOfWeek string `json:"daysOfWeek"`
-	Teacher    string `json:"teacher"`
-	StartDate  string `json:"startDate"`
-	EndDate    string `json:"endDate"`
+	ClassID    string   `json:"classID"`
+	ClassName  string   `json:"className"`
+	Location   string   `json:"location"`
+	DaysOfWeek string   `json:"daysOfWeek"`
+	Teacher    []string `json:"teacher"`
+	StartDate  string   `json:"startDate"`
+	EndDate    string   `json:"endDate"`
 }
 
 //(sectionID ,open, academicLevel , courseID , description , courseName , startDate, endDate , location , meetingInformation, supplies , credits , slotsAvailable , slotsCapacity,
 // slotsWaitlist, timeStart, timeEnd , professorEmails , prereqNonCourse , recConcurrentCourses, reqConcurrentCourses, prereqCoursesAnd, prereqCoursesOR,instructionalMethods,term);
 type availableCourse struct {
-	SectionID            string `json:"sectionID"`
-	Open                 bool   `json:"open"`
-	AcademicLevel        string `json:"academicLevel"`
-	CourseID             string `json:"courseID"`
-	Description          string `json:"description"`
-	CourseName           string `json:"courseName"`
-	StartDate            string `json:"startDate"`
-	EndDate              string `json:"endDate"`
-	Location             string `json:"location"`
-	MeetingInformation   string `json:"meetingInformation"`
-	Supplies             string `json:"supplies"`
-	Credits              int    `json:"credits"`
-	SlotsAvailable       int    `json:"slotsAvailable"`
-	SlotsCapacity        int    `json:"slotsCapacity"`
-	SlotsWaitlist        int    `json:"slotsWaitlist"`
-	TimeStart            int    `json:"timeStart"`
-	TimeEnd              int    `json:"timeEnd"`
-	ProfessorEmails      string `json:"professorEmails"`
-	Teacher              string `json:"teacher"`
-	PrereqNonCourse      string `json:"prereqNonCourse"`
-	RecConcurrentCourses string `json:"recConcurrentCourses"`
-	ReqConcurrentCourses string `json:"reqConcurrentCourses"`
-	PrereqCoursesAnd     string `json:"prereqCoursesAnd"`
-	PrereqCoursesOr      string `json:"prereqCoursesOr"`
-	InstructionalMethods string `json:"instructionalMethods"`
-	Term                 string `json:"term"`
-	Key                  int    `json:"key"`
+	SectionID            string   `json:"sectionID"`
+	Open                 bool     `json:"open"`
+	AcademicLevel        string   `json:"academicLevel"`
+	CourseID             string   `json:"courseID"`
+	Description          string   `json:"description"`
+	CourseName           string   `json:"courseName"`
+	StartDate            string   `json:"startDate"`
+	EndDate              string   `json:"endDate"`
+	Location             string   `json:"location"`
+	MeetingInformation   string   `json:"meetingInformation"`
+	Supplies             string   `json:"supplies"`
+	Credits              int      `json:"credits"`
+	SlotsAvailable       int      `json:"slotsAvailable"`
+	SlotsCapacity        int      `json:"slotsCapacity"`
+	SlotsWaitlist        int      `json:"slotsWaitlist"`
+	TimeStart            int      `json:"timeStart"`
+	TimeEnd              int      `json:"timeEnd"`
+	ProfessorEmails      string   `json:"professorEmails"`
+	Teacher              []string `json:"teacher"`
+	PrereqNonCourse      string   `json:"prereqNonCourse"`
+	RecConcurrentCourses string   `json:"recConcurrentCourses"`
+	ReqConcurrentCourses string   `json:"reqConcurrentCourses"`
+	PrereqCoursesAnd     string   `json:"prereqCoursesAnd"`
+	PrereqCoursesOr      string   `json:"prereqCoursesOr"`
+	InstructionalMethods string   `json:"instructionalMethods"`
+	Term                 string   `json:"term"`
+	Key                  int      `json:"key"`
 }
 
 type teacher struct {
@@ -154,19 +155,31 @@ func getUserID(name string) int {
 	return uid
 }
 
-func getTeacher(email string) (string, int, error) {
+func getTeacher(email string) ([]string, int, error) {
 	var name string
-	err := db.QueryRow("select name from teachers where email=$1", email).Scan(&name)
+	var err error
+	var teachers []string
+	email = strings.Replace(email, "|", "", 1)
+	emails := strings.SplitAfter(email, "|")
 
-	if err == sql.ErrNoRows {
-		return name, 5, err
+	for currentEmail := range emails {
+		email = strings.Replace(emails[currentEmail], "|", "", -1)
+		err = db.QueryRow("select name from teachers where email=$1", emails[currentEmail]).Scan(&name)
+
+		if err == sql.ErrNoRows {
+			err = errors.New("No teacher matches that email " + emails[currentEmail])
+			return teachers, 5, err
+		}
+
+		if err != nil {
+			return teachers, 5, err
+		}
+
+		name = "|" + name + "|"
+		teachers = append(teachers, name)
 	}
 
-	if err != nil {
-		return name, 5, err
-	}
-
-	return name, 200, err
+	return teachers, 200, err
 }
 
 //user database functions
@@ -335,6 +348,11 @@ func getAllAvailableCourses() ([]availableCourse, int, error) {
 
 		teacher, errCode, err := getTeacher(class.ProfessorEmails)
 
+		if err != nil {
+			return allCourses, errCode, err
+		}
+
+		class.Teacher = teacher
 		allCourses = append(allCourses, class)
 	}
 
