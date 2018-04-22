@@ -123,7 +123,8 @@ namespace DSUScheduleBuilder.Network {
         public string supplies { get; set; }
         public int credits { get; set; }
         public int slotsAvailable { get; set; }
-        public int slotsCapactity { get; set; }
+        public int slotsCapacity { get; set; }
+        public int slotsWaitlist { get; set; }
         public int timeStart { get; set; }
         public int timeEnd { get; set; }
         public string professorEmails { get; set; }
@@ -136,11 +137,50 @@ namespace DSUScheduleBuilder.Network {
         public string instructionalMethods { get; set; }
         public string term { get; set; }
         public int key { get; set; }
+
+        public AvailableCourse ToAvailableCourse()
+        {
+            return new AvailableCourse()
+            {
+                SectionID = sectionID,
+                Open = open,
+                AcademicLevel = academicLevel,
+                CourseID = courseID,
+                Description = description,
+                CourseName = courseName,
+                StartDate = startDate,
+                EndDate = endDate,
+                Location = location,
+                MeetingInformation = meetingInformation,
+                Supplies = supplies,
+                Credits = credits,
+                SlotsAvailable = slotsAvailable,
+                SlotsCapacity = slotsCapacity,
+                SlotsWaitlist = slotsWaitlist,
+                TimeStart = timeStart,
+                TimeEnd = timeEnd,
+                ProfessorEmails = professorEmails,
+                Teacher = teacher,
+                PrereqNonCourse = prereqNonCourse,
+                RecConcurrentCourses = recConcurrentCourses,
+                ReqConcurrentCourses = reqConcurrentCourses,
+                PrereqCoursesAnd = prereqCoursesAnd,
+                PrereqCoursesOr = prereqCoursesOr,
+                InstructionalMethods = instructionalMethods,
+                Term = term,
+                Key = key
+            };
+        }
     }
 
     class FullAvailableCourseResponse : Errorable
     {
         List<AvailableCourseResponse> classes;
+
+        public List<AvailableCourse> ToCourses()
+        {
+            return classes?.ConvertAll<AvailableCourse>((AvailableCourseResponse acr) => acr.ToAvailableCourse());
+        }
     }
 
     class HttpRequester
@@ -310,6 +350,42 @@ namespace DSUScheduleBuilder.Network {
             }
 
             return courses.ToCourses();
+        }
+
+        public List<AvailableCourse> GetAvailableCourses()
+        {
+            var req = new RestRequest(Method.GET)
+            {
+                Resource = "api/courses/available/" + _session_token
+            };
+            var res = _client.Execute<FullAvailableCourseResponse>(req);
+            FullAvailableCourseResponse courses = res.Data;
+
+            if (courses == null)
+            {
+                Errors.BadData("Parsing Available courses failed");
+                return null;
+            }
+
+            if (courses.errorCode != null)
+            {
+                Errors.Code(courses);
+                return null;
+            }
+
+            return courses.ToCourses();
+        }
+
+        public void SearchForCourses(void callback(FullAvailableCourseResponse facr))
+        {
+            var req = new RestRequest(Method.GET)
+            {
+                Resource = "api/courses/search" + _session_token
+            };
+            var res = _client.Execute<FullAvailableCourseResponse>(req);
+            FullAvailableCourseResponse courses = res.Data;
+
+            if (courses == )
         }
     }
 }

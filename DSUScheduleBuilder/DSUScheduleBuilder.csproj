@@ -80,6 +80,7 @@
     <Compile Include="Main_Menu\UpdateUser.Designer.cs">
       <DependentUpon>UpdateUser.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\AvailableCourse.cs" />
     <Compile Include="Models\Course.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Network\HttpRequester.cs" />
