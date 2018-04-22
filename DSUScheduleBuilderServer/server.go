@@ -57,6 +57,7 @@ type availableCourse struct {
 	TimeStart            int    `json:"timeStart"`
 	TimeEnd              int    `json:"timeEnd"`
 	ProfessorEmails      string `json:"professorEmails"`
+	Teacher              string `json:"teacher"`
 	PrereqNonCourse      string `json:"prereqNonCourse"`
 	RecConcurrentCourses string `json:"recConcurrentCourses"`
 	ReqConcurrentCourses string `json:"reqConcurrentCourses"`
@@ -65,6 +66,13 @@ type availableCourse struct {
 	InstructionalMethods string `json:"instructionalMethods"`
 	Term                 string `json:"term"`
 	Key                  int    `json:"key"`
+}
+
+type teacher struct {
+	name  string
+	email string
+	phone string
+	id    int
 }
 
 type locationalError struct {
@@ -144,6 +152,21 @@ func getUserID(name string) int {
 	err := db.QueryRow("SELECT id FROM user WHERE name=$1", name).Scan(&uid)
 	checkLogError("getUserID", "1", err)
 	return uid
+}
+
+func getTeacher(email string) (string, int, error) {
+	var name string
+	err := db.QueryRow("select name from teachers where email=$1", email).Scan(&name)
+
+	if err == sql.ErrNoRows {
+		return name, 5, err
+	}
+
+	if err != nil {
+		return name, 5, err
+	}
+
+	return name, 200, err
 }
 
 //user database functions
@@ -265,6 +288,57 @@ func getUser(id int) (User, int, error) {
 		return user, 200, err
 	}
 	return user, 4, err
+}
+
+func getAllAvailableCourses() ([]availableCourse, int, error) {
+	var allCourses []availableCourse
+	rows, err := db.Query("SELECT * FROM availableCourses")
+
+	if err != nil {
+		return allCourses, 5, err
+	}
+
+	for rows.Next() {
+		var class availableCourse
+		err = rows.Scan(
+			&class.SectionID,
+			&class.Open,
+			&class.AcademicLevel,
+			&class.CourseID,
+			&class.Description,
+			&class.CourseName,
+			&class.StartDate,
+			&class.EndDate,
+			&class.Location,
+			&class.MeetingInformation,
+			&class.Supplies,
+			&class.Credits,
+			&class.SlotsAvailable,
+			&class.SlotsCapacity,
+			&class.SlotsWaitlist,
+			&class.TimeStart,
+			&class.TimeEnd,
+			&class.ProfessorEmails,
+			&class.PrereqNonCourse,
+			&class.RecConcurrentCourses,
+			&class.ReqConcurrentCourses,
+			&class.PrereqCoursesAnd,
+			&class.PrereqCoursesOr,
+			&class.InstructionalMethods,
+			&class.Term,
+			&class.Key,
+		)
+
+		if err != nil {
+			return allCourses, 5, err
+		}
+
+		teacher, errCode, err := getTeacher(class.ProfessorEmails)
+
+		allCourses = append(allCourses, class)
+	}
+
+	return allCourses, 200, err
 }
 
 //enrolled class database functions
@@ -793,7 +867,7 @@ func main() {
 				c.JSON(200, gin.H{"class": class})
 			})
 
-			courses.GET("/", func(c *gin.Context) {
+			courses.GET("/available/:uuid", func(c *gin.Context) {
 				uuid := c.Param("uuid")
 				var userID int
 				err := db.QueryRow("SELECT uid FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&userID)
@@ -810,8 +884,15 @@ func main() {
 					return
 				}
 
-				//var allCources []course
+				allCourses, errCode, err := getAllAvailableCourses()
 
+				if err != nil {
+					currentError := createErrorStruct(errCode, c.Request.URL.String(), "1", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				c.JSON(200, allCourses)
 				//select all courses that are available to register for
 
 			})
