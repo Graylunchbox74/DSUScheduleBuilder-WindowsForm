@@ -13,6 +13,12 @@ namespace DSUScheduleBuilder.Drawing
     using Network;
     using Utils;
 
+    enum AvailableCourseViewState
+    {
+        ClassList,
+        SpecificClass
+    }
+
     public class AvailableCourseView : Control
     {
         private List<AvailableCourse> courses;
@@ -25,10 +31,15 @@ namespace DSUScheduleBuilder.Drawing
 
         private Rectangle backButtonRect;
         private Rectangle forwardButtonRect;
+        private Rectangle returnButtonRect;
+        private Rectangle enrollButtonRect;
 
+        private AvailableCourseViewState state;
+        private AvailableCourse selectedCourse;
 
         public AvailableCourseView()
         {
+            state = AvailableCourseViewState.ClassList;
         }
 
         public void SetCourses(List<AvailableCourse> cs)
@@ -47,7 +58,23 @@ namespace DSUScheduleBuilder.Drawing
             forwardButtonRect = new Rectangle(bx, this.Size.Height - this.bottomBarHeight, 32, 32);
         }
 
+        #region Paint Methods
         protected override void OnPaint(PaintEventArgs e)
+        {
+            switch (this.state)
+            {
+                case AvailableCourseViewState.ClassList:
+                    drawClassList(e.Graphics);
+                    break;
+                case AvailableCourseViewState.SpecificClass:
+                    drawSpecificClass(e.Graphics);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void drawClassList(Graphics g)
         {
             if (courses != null)
             {
@@ -55,14 +82,37 @@ namespace DSUScheduleBuilder.Drawing
                 int len = 5 < courses.Count ? (t < 5 ? t : 5) : courses.Count;
                 for (int i = 0; i < len; i++)
                 {
-                    drawCourse(e.Graphics, i, courses[i + currPage * 5]);
+                    drawCourse(g, i, courses[i + currPage * 5]);
                 }
             }
 
             if (totalPages > 0)
             {
-                drawBottomBar(e.Graphics);
+                drawBottomBar(g);
             }
+        }
+
+        private void drawSpecificClass(Graphics g)
+        {
+            if (selectedCourse == null)
+            {
+                state = AvailableCourseViewState.ClassList;
+                return;
+            }
+
+            g.FillRectangle(Brushes.Aqua, 0, 0, this.Size.Width, this.Size.Height);
+
+            Font font = new Font(FontFamily.GenericSansSerif, 14);
+            string text = selectedCourse.CourseID;
+            SizeF textSize = g.MeasureString(text, font);
+
+            g.DrawString(selectedCourse.CourseID, font, Brushes.Black, 4, 4 + (textSize.Height + 4) * 0);
+            g.DrawString(selectedCourse.CourseName, font, Brushes.Black, 4, 4 + (textSize.Height + 4) * 1);
+            if (selectedCourse.Teacher != null && selectedCourse.Teacher.Count > 0)
+                g.DrawString(selectedCourse.Teacher[0], font, Brushes.Black, 4, 4 + (textSize.Height + 4) * 2);
+
+            text = selectedCourse.DaysOfWeekPresent;
+            textSize = g.MeasureString(text, font);
         }
 
         private void drawCourse(Graphics g, int number, AvailableCourse course)
@@ -78,8 +128,8 @@ namespace DSUScheduleBuilder.Drawing
             g.DrawString(course.CourseName, font, Brushes.Black, 4, number * cellHeight + 4 + (textSize.Height + 4) * 1);
             if (course.Teacher != null && course.Teacher.Count > 0)
                 g.DrawString(course.Teacher[0], font, Brushes.Black, 4, number * cellHeight + 4 + (textSize.Height + 4) * 2);
-            
-            string text = course.DaysOfWeek;
+
+            string text = course.DaysOfWeekPresent;
             textSize = g.MeasureString(text, font);
             g.DrawString(text, font, Brushes.Black, cellWidth - textSize.Width - 4, number * cellHeight + 4 + (textSize.Height + 4) * 2);
 
@@ -108,7 +158,9 @@ namespace DSUScheduleBuilder.Drawing
             g.FillRectangle(Brushes.Aquamarine, forwardButtonRect);
             g.DrawString(">", font, Brushes.Black, forwardButtonRect.X, forwardButtonRect.Y);
         }
+        #endregion
 
+        #region Click Methods
         public void OnClick(EventArgs e)
         {
             int sx = PointToScreen(Point.Empty).X;
@@ -116,9 +168,24 @@ namespace DSUScheduleBuilder.Drawing
 
             int mx = MousePosition.X - sx;
             int my = MousePosition.Y - sy;
-            Console.WriteLine(mx);
-            Console.WriteLine(my);
 
+            switch(state)
+            {
+                case AvailableCourseViewState.ClassList:
+                    clickClassList(mx, my);
+                    break;
+                case AvailableCourseViewState.SpecificClass:
+                    clickSpecificClass(mx, my);
+                    break;
+                default:
+                    break;
+            }
+            
+            this.Refresh();
+        }
+
+        private void clickClassList(int mx, int my)
+        {
             if (backButtonRect.Contains(mx, my))
             {
                 this.currPage -= 1;
@@ -131,7 +198,27 @@ namespace DSUScheduleBuilder.Drawing
                 if (currPage > totalPages) currPage = totalPages;
             }
 
-            this.Refresh();
+            if (my < this.Size.Height - this.bottomBarHeight)
+            {
+                int index = (my / cellHeight) + currPage * 5;
+                selectedCourse = courses[index];
+                state = AvailableCourseViewState.SpecificClass;
+            }
         }
+
+        private void clickSpecificClass(int mx, int my)
+        {
+            if (returnButtonRect.Contains(mx, my))
+            {
+                state = AvailableCourseViewState.ClassList;
+            }
+
+            if (enrollButtonRect.Contains(mx, my))
+            {
+                //ENROLL IN COURSE HERE
+                state = AvailableCourseViewState.ClassList;
+            }
+        }
+        #endregion
     }
 }

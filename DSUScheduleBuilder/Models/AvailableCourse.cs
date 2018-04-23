@@ -34,18 +34,19 @@ namespace DSUScheduleBuilder.Models
         public string PrereqCoursesOr;
         public string InstructionalMethods;
         public string Term;
+        public string DaysOfWeek;
         public int Key;
 
-        public string DaysOfWeek
+        public string DaysOfWeekPresent
         {
             get
             {
                 List<string> days = new List<string>();
-                if (MeetingInformation.Contains("Monday")) days.Add("Mon");
-                if (MeetingInformation.Contains("Tuesday")) days.Add("Tues");
-                if (MeetingInformation.Contains("Wednesday")) days.Add("Wed");
-                if (MeetingInformation.Contains("Thursday")) days.Add("Thurs");
-                if (MeetingInformation.Contains("Friday")) days.Add("Fri");
+                if (DaysOfWeek.Contains("|mon|")) days.Add("Mon");
+                if (DaysOfWeek.Contains("|tues|")) days.Add("Tues");
+                if (DaysOfWeek.Contains("|wed|")) days.Add("Wed");
+                if (DaysOfWeek.Contains("|thur|")) days.Add("Thurs");
+                if (DaysOfWeek.Contains("|fri|")) days.Add("Fri");
 
                 string ret = "";
                 days.ForEach((d) => ret += d + ", ");

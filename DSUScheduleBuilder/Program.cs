@@ -16,7 +16,7 @@ namespace DSUScheduleBuilder
         [STAThread]
         static void Main()
         {
-            new HttpRequester("http://208.107.236.198:4200");
+            new HttpRequester("http://208.107.52.130:4200");
             //new HttpRequester("http://localhost:4200");
 
             Application.EnableVisualStyles();
