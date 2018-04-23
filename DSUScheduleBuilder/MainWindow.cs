@@ -24,7 +24,7 @@ namespace DSUScheduleBuilder
 
         public enum ActiveController
         {
-            WeekView, Search
+            WeekView, Search, AccountSettings
         }
 
         private ActiveController controller;
@@ -154,12 +154,20 @@ namespace DSUScheduleBuilder
             controller = ac;
             Control_WeekView.Hide();
             Control_Search.Hide();
+            Control_AccountSettings.Hide();
 
-            if (controller == ActiveController.WeekView) Control_WeekView.Show();
+            if (controller == ActiveController.WeekView)
+            {
+                Control_WeekView.Show();
+                List<Course> courses = HttpRequester.Default.GetEnrolledCourses();
+                Control_WeekView.SetCourses(courses);
+            }
             if (controller == ActiveController.Search) Control_Search.Show();
+            if (controller == ActiveController.AccountSettings)
+            {
+                Control_AccountSettings.Show();
+            }
 
-            List<Course> courses = HttpRequester.Default.GetEnrolledCourses();
-            Control_WeekView.SetCourses(courses);
         }
         #endregion
 

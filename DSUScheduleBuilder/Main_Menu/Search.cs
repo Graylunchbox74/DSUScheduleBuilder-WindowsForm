@@ -71,5 +71,14 @@ namespace DSUScheduleBuilder.Main_Menu
         {
             AvailableCourseView.OnClick(e);
         }
+
+        public void ClearFields()
+        {
+            termComboBox.Text = "";
+            PrefixTextBox.Text = "";
+            CourseNumTextBox.Text = "";
+            IlnTextBox.Text = "";
+            timeCheckbox.Checked = false;
+        }
     }
 }

@@ -40,6 +40,7 @@
             this.firstnameTextBox = new System.Windows.Forms.TextBox();
             this.lastnameTextBox = new System.Windows.Forms.TextBox();
             this.newUserButton = new System.Windows.Forms.Button();
+            this.backButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // newUserLabel
@@ -163,11 +164,26 @@
             this.newUserButton.UseVisualStyleBackColor = true;
             this.newUserButton.Click += new System.EventHandler(this.create_Click);
             // 
+            // backButton
+            // 
+            this.backButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.backButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.backButton.Location = new System.Drawing.Point(351, 359);
+            this.backButton.Margin = new System.Windows.Forms.Padding(2);
+            this.backButton.Name = "backButton";
+            this.backButton.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.backButton.Size = new System.Drawing.Size(174, 55);
+            this.backButton.TabIndex = 12;
+            this.backButton.Text = "Back";
+            this.backButton.UseVisualStyleBackColor = true;
+            this.backButton.Click += new System.EventHandler(this.backButton_Click);
+            // 
             // NewUser
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
+            this.Controls.Add(this.backButton);
             this.Controls.Add(this.newUserButton);
             this.Controls.Add(this.lastnameTextBox);
             this.Controls.Add(this.firstnameTextBox);
@@ -202,5 +218,6 @@
         private System.Windows.Forms.TextBox firstnameTextBox;
         private System.Windows.Forms.TextBox lastnameTextBox;
         private System.Windows.Forms.Button newUserButton;
+        private System.Windows.Forms.Button backButton;
     }
 }

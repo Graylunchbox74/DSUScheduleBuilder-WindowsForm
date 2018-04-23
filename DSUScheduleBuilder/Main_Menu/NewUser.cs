@@ -72,5 +72,10 @@ namespace DSUScheduleBuilder.Main_Menu
                 }
             }
         }
+
+        private void backButton_Click(object sender, EventArgs e)
+        {
+            ((MainWindow)this.Parent.Parent).ChangeState(MainWindow.States.Login);
+        }
     }
 }
