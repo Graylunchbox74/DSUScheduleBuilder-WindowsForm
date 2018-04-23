@@ -404,6 +404,21 @@ func addEnrolledClass(userID, key int) (int, error) {
 			} else if err != nil {
 				return 5, err
 			}
+			var timeStart int
+			var timeEnd int
+			err = db.QueryRow("SELECT startTime,endTime from enrolledClasses where key=$1 AND userID like $2", key, uidDB).Scan(&timeStart, &timeEnd)
+			if err != nil {
+				return 5, err
+			}
+			var classID string
+			err = db.QueryRow("SELECT classID from enrolledClasses where ((startTime <= $1 AND endTime >= $2) OR (startTime >= $2 AND startTime <= endTime) OR (endTime <= $1 AND endTime >= $2)) and userID like $3", timeStart, timeEnd, uidDB).Scan(&classID)
+			if err != sql.ErrNoRows {
+				if err != nil {
+					return 5, err
+				} else {
+					return 5, errors.New("class conflicts with " + classID)
+				}
+			}
 			class.UserID = "|" + strconv.Itoa(userID) + "|"
 			teachers, errCode, err := getTeacher(emails)
 			if err != nil {
@@ -429,17 +444,27 @@ func addEnrolledClass(userID, key int) (int, error) {
 			}
 			return 200, err
 		}
-
-		uidDB = "|" + strconv.Itoa(userID) + "|"
-		currentEnrolled = currentEnrolled + uidDB
-		errCode, err := updateEnrolledClass(strconv.Itoa(key), "userID", currentEnrolled)
-
+		var timeStart int
+		var timeEnd int
+		err = db.QueryRow("SELECT startTime,endTime from enrolledClasses where key=$1 AND userID like $2", key, uidDB).Scan(&timeStart, &timeEnd)
 		if err != nil {
-			return errCode, err
+			return 5, err
 		}
-
-		return 200, err
-
+		var classID string
+		err = db.QueryRow("SELECT classID from enrolledClasses where ((startTime <= $1 AND endTime >= $2) OR (startTime >= $2 AND startTime <= endTime) OR (endTime <= $1 AND endTime >= $2)) and userID like $3", timeStart, timeEnd, uidDB).Scan(&classID)
+		if err == sql.ErrNoRows {
+			uidDB = "|" + strconv.Itoa(userID) + "|"
+			currentEnrolled = currentEnrolled + uidDB
+			errCode, err := updateEnrolledClass(strconv.Itoa(key), "userID", currentEnrolled)
+			if err != nil {
+				return errCode, err
+			}
+			return 200, err
+		} else if err == nil {
+			return 5, errors.New("class conflicts with " + classID)
+		} else {
+			return 5, err
+		}
 	} else if err != nil {
 		return 5, err
 	} else {
@@ -695,8 +720,8 @@ func main() {
 
 			})
 
-			users.GET("/enroll/:uuid/:key", func(c *gin.Context) {
-				uuid := c.Param("uuid")
+			users.POST("/enroll/", func(c *gin.Context) {
+				uuid := c.PostForm("uuid")
 				var userID int
 				err := db.QueryRow("SELECT uid FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&userID)
 
@@ -713,7 +738,7 @@ func main() {
 				}
 
 				//key := c.PostForm("key")
-				key, _ := strconv.Atoi(c.Param("key"))
+				key, _ := strconv.Atoi(c.PostForm("key"))
 				errCode, err := addEnrolledClass(userID, key)
 
 				if err != nil {

@@ -28,3 +28,9 @@
 /api/user/logout/, 3, {sql: no rows in result set /api/user/logout/ 3}
 2018-04-22 22:12:23 - /api/user/enroll/testing/2, 4: user has already enrolled in this course
 2018-04-22 22:12:39 - /api/user/enroll/testing/2, 4: user has already enrolled in this course
+2018-04-22 22:17:51 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-22 22:24:34 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-22 22:26:32 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-22 22:28:10 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-22 22:29:06 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-22 22:39:40 - /api/user/logout/, 3: sql: no rows in result set
