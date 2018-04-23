@@ -38,6 +38,12 @@ type course struct {
 	EndDate    string   `json:"endDate"`
 }
 
+type majorID struct {
+	Id        int    `json:"majorID"`
+	Name      string `json:"majorName"`
+	MajorType string `json:"majorType"`
+}
+
 //(sectionID ,open, academicLevel , courseID , description , courseName , startDate, endDate , location , meetingInformation, supplies , credits , slotsAvailable , slotsCapacity,
 // slotsWaitlist, timeStart, timeEnd , professorEmails , prereqNonCourse , recConcurrentCourses, reqConcurrentCourses, prereqCoursesAnd, prereqCoursesOR,instructionalMethods,term);
 type availableCourse struct {
@@ -236,7 +242,7 @@ func addMajor(userID int, major string) (int, error) {
 	majors := "%|" + major + "|%"
 	var currentMajors string
 	//check if major already exits
-	err := db.QueryRow("select majors from users where majors like $1", majors).Scan(&currentMajors)
+	err := db.QueryRow("select majors from users where majors like $1 and uid=$2", majors, userID).Scan(&currentMajors)
 
 	if err != sql.ErrNoRows {
 		return 14, errors.New("major already exists for that user")
@@ -254,6 +260,23 @@ func addMajor(userID int, major string) (int, error) {
 		return 15, err
 	}
 
+	return 200, err
+}
+
+func deleteMajor(userID int, major string) (int, error) {
+	majors := "%|" + major + "|%"
+	var usersMajors string
+	err := db.QueryRow("SELECT majors from users where uid=$1 AND majors like $2", userID, majors).Scan(&usersMajors)
+	if err == sql.ErrNoRows {
+		return 25, errors.New("User does not have this major to delete")
+	} else if err != nil {
+		return 5, err
+	}
+	usersMajors = strings.Replace(usersMajors, "|"+major+"|", "", 1)
+	_, err = db.Exec("UPDATE users SET majors=$1 where uid=$2", usersMajors, userID)
+	if err != nil {
+		return 15, err
+	}
 	return 200, err
 }
 
@@ -681,8 +704,38 @@ func main() {
 			db.Exec("delete from user_sessions where 1=1")
 		})
 
-		api.GET("/something", func(c *gin.Context) {
-			c.JSON(200, gin.H{"msg": ""})
+		api.GET("/majors/:uuid", func(c *gin.Context) {
+			uuid := c.Param("uuid")
+			var userID int
+			err := db.QueryRow("SELECT uid FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&userID)
+
+			if err == sql.ErrNoRows {
+				currentError := createErrorStruct(2, c.Request.URL.String(), "3", err)
+				c.JSON(500, currentError)
+				return
+			}
+
+			if err != nil {
+				currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
+				c.JSON(500, currentError)
+				return
+			}
+			rows, err := db.Query("SELECT * from Majors")
+			var majorsList []majorID
+
+			if err != nil {
+				currentError := createErrorStruct(5, c.Request.URL.String(), "1", err)
+				c.JSON(500, currentError)
+				return
+			}
+
+			for rows.Next() {
+				var major majorID
+				rows.Scan(&major.Id, &major.Name, &major.MajorType)
+				majorsList = append(majorsList, major)
+			}
+
+			c.JSON(200, gin.H{"majors": majorsList})
 		})
 
 		users := api.Group("user")
@@ -779,14 +832,6 @@ func main() {
 					newUserID = strings.Replace(newUserID, "|"+strconv.Itoa(userID)+"|", "", -1)
 					previousUpdateKey = append(previousUpdateKey, key)
 					previousUpdateID = append(previousUpdateID, newUserID)
-					//					execute := "UPDATE PreviousClasses SET userID=\"" + newUserID + "\" WHERE key=" + strconv.Itoa(key)
-					// _, err = db.Exec(execute)
-					// if err != nil {
-					// 	currentError := createErrorStruct(21, c.Request.URL.String(), "7", err)
-					// 	c.JSON(500, currentError)
-					// 	return
-					// }
-
 				}
 				for x := range previousUpdateID {
 					execute := "UPDATE PreviousClasses SET userID=\"" + previousUpdateID[x] + "\" WHERE key=" + strconv.Itoa(previousUpdateKey[x])
@@ -819,14 +864,6 @@ func main() {
 					newUserID = strings.Replace(newUserID, "|"+strconv.Itoa(userID)+"|", "", -1)
 					enrolledUpdateKey = append(enrolledUpdateKey, key)
 					enrolledUpdateID = append(enrolledUpdateID, newUserID)
-					println(strconv.Itoa(key) + " " + newUserID)
-					// execute := "UPDATE EnrolledClasses SET userID=\"" + newUserID + "\" WHERE key=" + strconv.Itoa(key)
-					// _, err = db.Exec(execute)
-					// if err != nil {
-					// 	currentError := createErrorStruct(23, c.Request.URL.String(), "7", err)
-					// 	c.JSON(500, currentError)
-					// 	return
-					// }
 				}
 				for x := range enrolledUpdateID {
 					execute := "UPDATE EnrolledClasses SET userID=\"" + enrolledUpdateID[x] + "\" WHERE key=" + strconv.Itoa(enrolledUpdateKey[x])
@@ -902,6 +939,33 @@ func main() {
 					return
 				}
 
+				c.JSON(200, gin.H{"success": 1})
+			})
+
+			users.POST("/deleteMajor/", func(c *gin.Context) {
+				uuid := c.PostForm("uuid")
+				var userID int
+				err := db.QueryRow("SELECT uid FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&userID)
+
+				if err == sql.ErrNoRows {
+					currentError := createErrorStruct(2, c.Request.URL.String(), "3", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				if err != nil {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
+					c.JSON(500, currentError)
+					return
+				}
+				major := c.PostForm("major")
+				errCode, err := deleteMajor(userID, major)
+
+				if err != nil {
+					currentError := createErrorStruct(errCode, c.Request.URL.String(), "1", err)
+					c.JSON(500, currentError)
+					return
+				}
 				c.JSON(200, gin.H{"success": 1})
 			})
 
