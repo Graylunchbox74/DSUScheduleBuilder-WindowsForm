@@ -414,5 +414,24 @@ namespace DSUScheduleBuilder.Network {
                 return null;
             }
         }
+
+        public void EnrollInCourse(int courseKey, Func<SuccessResponse, bool> callback)
+        {
+            var req = new RestRequest(Method.GET)
+            {
+                Resource = "api/enroll/" + _session_token
+            };
+            req.AddParameter("key", courseKey);
+            var res = _client.Execute<SuccessResponse>(req);
+            SuccessResponse succ = res.Data;
+
+            if (succ == null)
+            {
+                Errors.BadData("Parsing enrolled class failed");
+                return;
+            }
+
+            callback(succ);
+        }
     }
 }

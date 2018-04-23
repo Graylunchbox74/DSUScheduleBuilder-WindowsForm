@@ -127,8 +127,7 @@ namespace DSUScheduleBuilder.Drawing
                 g.DrawString(text, font, Brushes.Black, cellWidth - textSize.Width - 4, 4 + (textSize.Height + 4) * 0);
             }
 
-            text = selectedCourse.Description;
-            textSize = g.MeasureString(text, font);
+            text = Converter.IntersperseNewLines(selectedCourse.Description);
             g.DrawString(text, font, Brushes.Black, 4, 4 + (textSize.Height + 4) * 4);
 
             //Draw back button
@@ -246,8 +245,32 @@ namespace DSUScheduleBuilder.Drawing
 
             if (enrollButtonRect.Contains(mx, my))
             {
-                //ENROLL IN COURSE HERE
-                state = AvailableCourseViewState.ClassList;
+                HttpRequester.Default.EnrollInCourse(selectedCourse.Key, (succ) =>
+                {
+                    if (succ.errorCode != null)
+                    {
+                        switch (succ.errorCode)
+                        {
+                            default:
+                                MessageBox.Show("Error " + succ.errorCode + " : " + succ.errorMessage);
+                                break;
+                        }
+                        return false;
+                    }
+
+                    if (succ.success != 1)
+                    {
+                        MessageBox.Show("Enrolling in class failed.");
+                        return false;
+                    }
+
+                    if (succ.success == 1)
+                    {
+                        MessageBox.Show("Successfully enrolled in class.");
+                    }
+
+                    return true;
+                });
             }
         }
         #endregion
