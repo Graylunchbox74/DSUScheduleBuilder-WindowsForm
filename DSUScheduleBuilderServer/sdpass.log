@@ -6,3 +6,20 @@
 /api/user/enroll/test3/2, 4, {near "$1": syntax error /api/user/enroll/test3/2 4}
 /api/user/enroll/test3/2, 4, {near "$1": syntax error /api/user/enroll/test3/2 4}
 /api/user/enroll/test3/2, 4, {near "$1": syntax error /api/user/enroll/test3/2 4}
+/api/user/enroll/test3/2, 4, {near "$1": syntax error /api/user/enroll/test3/2 4}
+/api/user/logout/, 3, {sql: no rows in result set /api/user/logout/ 3}
+/api/user/logout/, 3, {sql: no rows in result set /api/user/logout/ 3}
+/api/user/enroll/test3/2, 4, {sql: no rows in result set /api/user/enroll/test3/2 4}
+/api/user/enroll/test3/2, 4, {user has already enrolled in this course /api/user/enroll/test3/2 4}
+/api/user/logout/, 3, {sql: no rows in result set /api/user/logout/ 3}
+/api/user/enroll/testing/2, 4, {sql: no rows in result set /api/user/enroll/testing/2 4}
+/api/user/enroll/testing/2, 4, {user has already enrolled in this course /api/user/enroll/testing/2 4}
+/api/user/enroll/testing/2, 4, {sql: no rows in result set /api/user/enroll/testing/2 4}
+/api/user/enroll/testing/2, 4, {sql: no rows in result set /api/user/enroll/testing/2 4}
+/api/user/enroll/testing/2, 4, {sql: Scan error on column index 3: unsupported Scan, storing driver.Value type []uint8 into type *[]string /api/user/enroll/testing/2 4}
+/api/user/logout/, 3, {sql: no rows in result set /api/user/logout/ 3}
+/api/user/logout/, 3, {sql: no rows in result set /api/user/logout/ 3}
+/api/user/logout/, 3, {sql: no rows in result set /api/user/logout/ 3}
+/api/user/logout/, 3, {sql: no rows in result set /api/user/logout/ 3}
+/api/user/login/, 2, {Password does not match /api/user/login/ 2}
+/api/user/logout/, 3, {sql: no rows in result set /api/user/logout/ 3}
