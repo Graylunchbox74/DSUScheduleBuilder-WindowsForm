@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -119,11 +120,19 @@ func logError(location, sublocation string, err error) {
 
 func errorDrain() {
 	var lErr locationalError
+	f, err := os.OpenFile("sdpass.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
+
+	if err != nil {
+		panic(err)
+	}
+
+	defer f.Close()
+
 	for {
 		select {
 		case lErr = <-errorChannel:
-			fmt.Println(lErr.Location, lErr.Sublocation, lErr.Error)
-			//Handle Error Logging Here
+			fmt.Println(lErr.Location, lErr.Sublocation, lErr)
+			f.WriteString(fmt.Sprintf("%s, %s, %s\n", lErr.Location, lErr.Sublocation, lErr))
 		}
 	}
 }
@@ -456,7 +465,7 @@ func updateEnrolledClass(classKey, keyword, newValue string) (course, int, error
 		return newClass, 12, err
 	}
 
-	err = db.QueryRow("SELECT * from EnrolledClasses where keyy=$1", parameter).Scan(
+	err = db.QueryRow("SELECT * from EnrolledClasses where key=$1", parameter).Scan(
 		&newClass.UserID, &newClass.ClassID, &newClass.ClassName, &newClass.Teacher, &newClass.Location, &newClass.DaysOfWeek,
 		&newClass.StartTime, &newClass.EndTime, &newClass.StartDate, &newClass.EndDate, &newClass.Credits, &newClass.Key,
 	)
