@@ -432,7 +432,7 @@ func addEnrolledClass(userID, key int) (int, error) {
 
 		uidDB = "|" + strconv.Itoa(userID) + "|"
 		currentEnrolled = currentEnrolled + uidDB
-		_, errCode, err := updateEnrolledClass(strconv.Itoa(key), "userID", currentEnrolled)
+		errCode, err := updateEnrolledClass(strconv.Itoa(key), "userID", currentEnrolled)
 
 		if err != nil {
 			return errCode, err
@@ -468,42 +468,16 @@ func deleteEnrolledClass(class course) (int, error) {
 }
 
 //updates an entry in the enrolledclasses table, although we cannot allow to change the userID
-func updateEnrolledClass(classKey, keyword, newValue string) (course, int, error) {
+func updateEnrolledClass(classKey, keyword, newValue string) (int, error) {
 	var err error
-	var newClass course
 	var parameter string
 	parameter = "UPDATE EnrolledClasses SET " + keyword + "=\"" + newValue + "\" WHERE key=" + classKey
 	_, err = db.Exec(parameter)
 	if err != nil {
-		return newClass, 12, err
+		return 12, err
 	}
 
-	//CREATE TABLE EnrolledClasses (userID text,classID VARCHAR[20], className VARCHAR[50], teacher VARCHAR[50], location VARCHAR[50],daysOfWeek text, startTime INT, endTime INT, startDate VARCHAR[30],
-	//endDate VARCHAR[30], credits INT, key integer primary key autoincrement);
-	/*
-		UserID    string `json:"uid"`
-		Key       int    `json:"key"`
-		StartTime int    `json:"startTime"`
-		EndTime   int    `json:"endTime"`
-		Credits   int    `json:"credits"`
-
-		ClassID    string   `json:"classID"`
-		ClassName  string   `json:"className"`
-		Location   string   `json:"location"`
-		DaysOfWeek string   `json:"daysOfWeek"`
-		Teacher    []string `json:"teacher"`
-		StartDate  string   `json:"startDate"`
-		EndDate    string   `json:"endDate"` */
-	err = db.QueryRow("SELECT * from EnrolledClasses where key=$1", classKey).Scan(
-		&newClass.UserID, &newClass.ClassID, &newClass.ClassName, &newClass.Teacher, &newClass.Location, &newClass.DaysOfWeek,
-		&newClass.StartTime, &newClass.EndTime, &newClass.StartDate, &newClass.EndDate, &newClass.Credits, &newClass.Key,
-	)
-
-	if err != nil {
-		return newClass, 5, err
-	}
-
-	return newClass, 200, err
+	return 200, err
 }
 
 func getEnrolledClasses(uid int) ([]course, int, error) {
@@ -982,8 +956,7 @@ func main() {
 				keyword := c.PostForm("keyword")
 				newValue := c.PostForm("newValue")
 
-				var class course
-				class, errno, err := updateEnrolledClass(classKey, keyword, newValue)
+				errno, err := updateEnrolledClass(classKey, keyword, newValue)
 
 				if err != nil {
 					currentError := createErrorStruct(errno, c.Request.URL.String(), "2", err)
@@ -991,7 +964,7 @@ func main() {
 					return
 				}
 
-				c.JSON(200, gin.H{"class": class})
+				c.JSON(200, gin.H{"success": 1})
 			})
 
 			courses.POST("/updatePrevious/", func(c *gin.Context) {

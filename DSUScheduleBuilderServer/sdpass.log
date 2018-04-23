@@ -23,3 +23,8 @@
 /api/user/logout/, 3, {sql: no rows in result set /api/user/logout/ 3}
 /api/user/login/, 2, {Password does not match /api/user/login/ 2}
 /api/user/logout/, 3, {sql: no rows in result set /api/user/logout/ 3}
+/api/user/logout/, 3, {sql: no rows in result set /api/user/logout/ 3}
+/api/user/logout/, 3, {sql: no rows in result set /api/user/logout/ 3}
+/api/user/logout/, 3, {sql: no rows in result set /api/user/logout/ 3}
+2018-04-22 22:12:23 - /api/user/enroll/testing/2, 4: user has already enrolled in this course
+2018-04-22 22:12:39 - /api/user/enroll/testing/2, 4: user has already enrolled in this course
