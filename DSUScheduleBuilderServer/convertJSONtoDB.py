@@ -48,9 +48,23 @@ for collegeKey, college in data[term].items():
                 , prereqCoursesAnd
                 , prereqCoursesOR
                 , instructionalMethods
+                , daysOfWeek
                 , term)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 '''
+
+                daysOfWeek = []
+                daysConvert = {
+                    "Monday": "mon",
+                    "Tuesday": "tues",
+                    "Wednesday": "wed",
+                    "Thursday": "thur",
+                    "Friday": "fri"
+                }
+                for day, shortName in daysConvert.items():
+                    if day in cd["MeetingInformation"]:
+                        daysOfWeek.append(shortName)
+                
 
                 param = (sectionID,
                     cd["Open"],
@@ -76,6 +90,7 @@ for collegeKey, college in data[term].items():
                     "|" + "|".join(cd["PrereqCourses"]["and"]) + "|",
                     "|" + "|".join(cd["PrereqCourses"]["or"]) + "|",
                     "",
+                    "|" + "|".join(daysOfWeek) + "|",
                     term)
                 db.execute(cmd, param)
 
