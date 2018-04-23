@@ -1,0 +1,8 @@
+/api/user/enroll/test2/2, 4, {near "$1": syntax error /api/user/enroll/test2/2 4}
+/api/user/logout/, 3, {sql: no rows in result set /api/user/logout/ 3}
+/api/user/enroll/test3/2, 4, {near "$1": syntax error /api/user/enroll/test3/2 4}
+/api/user/enroll/test3/2, 4, {near "$1": syntax error /api/user/enroll/test3/2 4}
+/api/user/logout/, 3, {sql: no rows in result set /api/user/logout/ 3}
+/api/user/enroll/test3/2, 4, {near "$1": syntax error /api/user/enroll/test3/2 4}
+/api/user/enroll/test3/2, 4, {near "$1": syntax error /api/user/enroll/test3/2 4}
+/api/user/enroll/test3/2, 4, {near "$1": syntax error /api/user/enroll/test3/2 4}

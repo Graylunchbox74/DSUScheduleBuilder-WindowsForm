@@ -67,6 +67,7 @@ type availableCourse struct {
 	PrereqCoursesOr      string   `json:"prereqCoursesOr"`
 	InstructionalMethods string   `json:"instructionalMethods"`
 	Term                 string   `json:"term"`
+	DaysOfWeek           string   `json:"daysOfWeek"`
 	Key                  int      `json:"key"`
 }
 
@@ -349,6 +350,7 @@ func getAllAvailableCourses() ([]availableCourse, int, error) {
 			&class.PrereqCoursesOr,
 			&class.InstructionalMethods,
 			&class.Term,
+			&class.DaysOfWeek,
 			&class.Key,
 		)
 
@@ -388,7 +390,6 @@ func addEnrolledClass(userID, key int) (int, error) {
 				&class.ClassName,
 				&emails,
 				&class.Location,
-				&class.DaysOfWeek,
 				&class.DaysOfWeek,
 				&class.StartTime,
 				&class.EndTime,
@@ -459,12 +460,12 @@ func updateEnrolledClass(classKey, keyword, newValue string) (course, int, error
 	var newClass course
 	parameter := classKey
 
-	_, err = db.Exec("UPDATE EnrolledClasses SET $1=$2 WHERE key=$3 AND classID=$4", keyword, newValue, parameter)
+	_, err = db.Exec("UPDATE EnrolledClasses SET $1=$2 WHERE key=$3", keyword, newValue, parameter)
 
+	//println("UPDATE EnrolledClasses SET $1=$2 WHERE key=$3", keyword, newValue, parameter)
 	if err != nil {
 		return newClass, 12, err
 	}
-
 	err = db.QueryRow("SELECT * from EnrolledClasses where key=$1", parameter).Scan(
 		&newClass.UserID, &newClass.ClassID, &newClass.ClassName, &newClass.Teacher, &newClass.Location, &newClass.DaysOfWeek,
 		&newClass.StartTime, &newClass.EndTime, &newClass.StartDate, &newClass.EndDate, &newClass.Credits, &newClass.Key,
@@ -692,8 +693,8 @@ func main() {
 
 			})
 
-			users.POST("/enroll/", func(c *gin.Context) {
-				uuid := c.PostForm("uuid")
+			users.GET("/enroll/:uuid/:key", func(c *gin.Context) {
+				uuid := c.Param("uuid")
 				var userID int
 				err := db.QueryRow("SELECT uid FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&userID)
 
@@ -710,12 +711,13 @@ func main() {
 				}
 
 				//key := c.PostForm("key")
-				key, _ := strconv.Atoi(c.PostForm("key"))
+				key, _ := strconv.Atoi(c.Param("key"))
 				errCode, err := addEnrolledClass(userID, key)
 
 				if err != nil {
 					currentError := createErrorStruct(errCode, c.Request.URL.String(), "4", err)
 					c.JSON(500, currentError)
+					return
 				}
 				c.JSON(200, gin.H{"success": 1})
 			})
@@ -1171,6 +1173,7 @@ func main() {
 						&class.PrereqCoursesOr,
 						&class.InstructionalMethods,
 						&class.Term,
+						&class.DaysOfWeek,
 						&class.Key,
 					)
 
