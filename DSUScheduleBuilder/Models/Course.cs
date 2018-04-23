@@ -14,10 +14,30 @@ namespace DSUScheduleBuilder.Models
         public string StartDate;
         public string EndDate;
         public int Credits;
-        public string ClassID; //CSC-150
-        public string ClassName;
+        public string CourseID; //CSC-150
+        public string CourseName;
         public string Teacher;
         public string Location;
         public string DaysOfWeek;
+        
+        public string DaysOfWeekPresent
+        {
+            get
+            {
+                List<string> days = new List<string>();
+                if (DaysOfWeek.Contains("|mon|")) days.Add("Mon");
+                if (DaysOfWeek.Contains("|tues|")) days.Add("Tues");
+                if (DaysOfWeek.Contains("|wed|")) days.Add("Wed");
+                if (DaysOfWeek.Contains("|thur|")) days.Add("Thurs");
+                if (DaysOfWeek.Contains("|fri|")) days.Add("Fri");
+
+                string ret = "";
+                days.ForEach((d) => ret += d + ", ");
+
+                if (ret.Length == 0) return "Online";
+
+                return ret.Substring(0, ret.Length - 2);
+            }
+        }
     }
 }

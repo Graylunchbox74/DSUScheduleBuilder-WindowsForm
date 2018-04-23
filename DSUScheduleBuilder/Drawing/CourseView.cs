@@ -59,7 +59,7 @@ namespace DSUScheduleBuilder.Drawing
                 w = weekView.CellWidth;
                 h = (int)(weekView.TimeSlotHeight * (duration / 60.0));
 
-                text = _course.ClassID + " : " + Converter.TimeIntToString(_course.StartTime) + " - " + Converter.TimeIntToString(_course.EndTime);
+                text = _course.CourseID + " : " + Converter.TimeIntToString(_course.StartTime) + " - " + Converter.TimeIntToString(_course.EndTime);
             }
         }
 
