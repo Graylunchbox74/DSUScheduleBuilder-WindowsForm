@@ -126,10 +126,10 @@ def main():
                 selectDropdown("VAR6", "DSU")
                 b.find_by_id("WASubmit").first.click()
                 sleep(7)
-                badResult = False
-                while not badResult and b.is_element_not_present_by_text("Section Selection Results", 1):
-                    badResult = b.is_text_present("No classes meeting the search criteria have been found.")
-                if badResult:
+                attempts, maximumAttempts = 0, 7
+                while b.is_element_not_present_by_text("Section Selection Results", 1) and attempts < maximumAttempts:
+                    attempts += 1
+                if b.is_text_present("No classes meeting the search criteria have been found."):
                     unsuccessfulRun = False
                     continue
                 currentPage, totalPages = "0", "1"
