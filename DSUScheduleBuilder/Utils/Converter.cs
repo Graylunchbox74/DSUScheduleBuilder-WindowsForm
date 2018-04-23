@@ -26,5 +26,10 @@ namespace DSUScheduleBuilder.Utils
             
             return hour + ":" + minute;
         }
+
+        public static int IntTimeFromString(string s)
+        {
+            return 0;
+        }
     }
 }

@@ -376,7 +376,7 @@ namespace DSUScheduleBuilder.Network {
             return courses.ToCourses();
         }
 
-        public List<AvailableCourse> SearchForCourses(string term, string prefix, string number, string ilastname, Func<FullAvailableCourseResponse, bool> callback)
+        public List<AvailableCourse> SearchForCourses(string term, string prefix, string number, string ilastname, int startTime, int endTime, int slots, Func<FullAvailableCourseResponse, bool> callback)
         {
             var req = new RestRequest(Method.GET)
             {
@@ -387,6 +387,13 @@ namespace DSUScheduleBuilder.Network {
             if (prefix != "") req.AddParameter("prefix", prefix);
             if (number != "") req.AddParameter("number", number);
             if (ilastname != "") req.AddParameter("instructor", ilastname);
+            if (startTime != -1 && endTime != -1) {
+                if (startTime < endTime) {
+                    req.AddParameter("startTime", startTime);
+                    req.AddParameter("endTime", endTime);
+                }
+            }
+            if (slots >= 0) req.AddParameter("slotsAvailable", slots);
 
             var res = _client.Execute<FullAvailableCourseResponse>(req);
             FullAvailableCourseResponse courses = res.Data;
