@@ -56,6 +56,11 @@ namespace DSUScheduleBuilder.Drawing
             backButtonRect = new Rectangle(bx, this.Size.Height - this.bottomBarHeight, 32, 32);
             bx += this.Size.Width / 2;
             forwardButtonRect = new Rectangle(bx, this.Size.Height - this.bottomBarHeight, 32, 32);
+
+            bx = (this.Size.Width / 2 - 96) / 2;
+            returnButtonRect = new Rectangle(bx, this.Size.Height - this.bottomBarHeight - 48, 96, 48);
+            bx += this.Size.Width / 2;
+            enrollButtonRect = new Rectangle(bx, this.Size.Height - this.bottomBarHeight - 48, 96, 48);
         }
 
         #region Paint Methods
@@ -113,6 +118,32 @@ namespace DSUScheduleBuilder.Drawing
 
             text = selectedCourse.DaysOfWeekPresent;
             textSize = g.MeasureString(text, font);
+            g.DrawString(text, font, Brushes.Black, cellWidth - textSize.Width - 4, 4 + (textSize.Height + 4) * 2);
+
+            if (text != "Online")
+            {
+                text = Converter.TimeIntToString(selectedCourse.TimeStart) + " - " + Converter.TimeIntToString(selectedCourse.TimeEnd);
+                textSize = g.MeasureString(text, font);
+                g.DrawString(text, font, Brushes.Black, cellWidth - textSize.Width - 4, 4 + (textSize.Height + 4) * 0);
+            }
+
+            text = selectedCourse.Description;
+            textSize = g.MeasureString(text, font);
+            g.DrawString(text, font, Brushes.Black, 4, 4 + (textSize.Height + 4) * 4);
+
+            //Draw back button
+            g.FillRectangle(Brushes.DarkSlateGray, returnButtonRect);
+            g.FillRectangle(Brushes.DarkSlateGray, enrollButtonRect);
+
+            textSize = g.MeasureString("Back", font);
+            g.DrawString("Back", font, Brushes.White
+                , returnButtonRect.X + (returnButtonRect.Width - textSize.Width) / 2
+                , returnButtonRect.Y + (returnButtonRect.Height - textSize.Height) / 2);
+            
+            textSize = g.MeasureString("Enroll", font);
+            g.DrawString("Enroll", font, Brushes.White
+                , enrollButtonRect.X + (enrollButtonRect.Width - textSize.Width) / 2
+                , enrollButtonRect.Y + (enrollButtonRect.Height - textSize.Height) / 2);
         }
 
         private void drawCourse(Graphics g, int number, AvailableCourse course)
