@@ -712,6 +712,7 @@ func main() {
 				//key := c.PostForm("key")
 				key, _ := strconv.Atoi(c.PostForm("key"))
 				errCode, err := addEnrolledClass(userID, key)
+
 				if err != nil {
 					currentError := createErrorStruct(errCode, c.Request.URL.String(), "4", err)
 					c.JSON(500, currentError)
