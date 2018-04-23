@@ -417,10 +417,11 @@ namespace DSUScheduleBuilder.Network {
 
         public void EnrollInCourse(int courseKey, Func<SuccessResponse, bool> callback)
         {
-            var req = new RestRequest(Method.GET)
+            var req = new RestRequest(Method.POST)
             {
-                Resource = "api/enroll/" + _session_token
+                Resource = "api/user/enroll/"
             };
+            req.AddParameter("uuid", _session_token);
             req.AddParameter("key", courseKey);
             var res = _client.Execute<SuccessResponse>(req);
             SuccessResponse succ = res.Data;

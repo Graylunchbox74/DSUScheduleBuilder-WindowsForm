@@ -157,6 +157,9 @@ namespace DSUScheduleBuilder
 
             if (controller == ActiveController.WeekView) Control_WeekView.Show();
             if (controller == ActiveController.Search) Control_Search.Show();
+
+            List<Course> courses = HttpRequester.Default.GetEnrolledCourses();
+            Control_WeekView.SetCourses(courses);
         }
         #endregion
 
