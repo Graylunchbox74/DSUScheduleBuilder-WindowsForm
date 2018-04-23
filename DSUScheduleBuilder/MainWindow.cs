@@ -34,6 +34,7 @@ namespace DSUScheduleBuilder
             InitializeComponent();
 
             ChangeState(States.Login);
+            ChangeActiveController(ActiveController.WeekView);
         }
 
         #region LOGIN PANEL EVENT HANDLERS
@@ -163,11 +164,8 @@ namespace DSUScheduleBuilder
                 Control_WeekView.SetCourses(courses);
             }
             if (controller == ActiveController.Search) Control_Search.Show();
-            if (controller == ActiveController.AccountSettings)
-            {
-                Control_AccountSettings.Show();
-            }
-
+            if (controller == ActiveController.AccountSettings) Control_AccountSettings.Show();
+        
         }
         #endregion
 
@@ -192,6 +190,11 @@ namespace DSUScheduleBuilder
         private void Control_Search_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void AccountSettingsBtn_Click(object sender, EventArgs e)
+        {
+            ChangeActiveController(ActiveController.AccountSettings);
         }
     }
 }

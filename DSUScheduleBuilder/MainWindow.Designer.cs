@@ -204,6 +204,7 @@ namespace DSUScheduleBuilder
             this.AccountSettingsBtn.TabIndex = 6;
             this.AccountSettingsBtn.Text = "Account Settings";
             this.AccountSettingsBtn.UseVisualStyleBackColor = true;
+            this.AccountSettingsBtn.Click += new System.EventHandler(this.AccountSettingsBtn_Click);
             // 
             // Control_AccountSettings
             // 
@@ -212,6 +213,7 @@ namespace DSUScheduleBuilder
             this.Control_AccountSettings.Name = "Control_AccountSettings";
             this.Control_AccountSettings.Size = new System.Drawing.Size(872, 513);
             this.Control_AccountSettings.TabIndex = 7;
+            this.Control_AccountSettings.Visible = false;
             // 
             // Control_Search
             // 
@@ -246,8 +248,8 @@ namespace DSUScheduleBuilder
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ClientSize = new System.Drawing.Size(1007, 727);
-            this.Controls.Add(this.NewUserPanel);
             this.Controls.Add(this.MainMenuPanel);
+            this.Controls.Add(this.NewUserPanel);
             this.Controls.Add(this.LoginPanel);
             this.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.MaximumSize = new System.Drawing.Size(1023, 766);

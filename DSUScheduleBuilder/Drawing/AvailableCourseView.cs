@@ -26,7 +26,7 @@ namespace DSUScheduleBuilder.Drawing
         private int currPage;
 
         private int cellWidth;
-        private int cellHeight;
+        private int cellHeight = 1;
         private int bottomBarHeight;
 
         private Rectangle backButtonRect;
@@ -51,6 +51,7 @@ namespace DSUScheduleBuilder.Drawing
             this.bottomBarHeight = 32;
             this.cellWidth = this.Size.Width;
             this.cellHeight = (this.Size.Height - bottomBarHeight) / 5;
+            if (cellHeight == 0) cellHeight = 1;
 
             int bx = (this.Size.Width / 2 - 32) / 2;
             backButtonRect = new Rectangle(bx, this.Size.Height - this.bottomBarHeight, 32, 32);
@@ -216,6 +217,7 @@ namespace DSUScheduleBuilder.Drawing
 
         private void clickClassList(int mx, int my)
         {
+            if (courses == null) return;
             if (backButtonRect.Contains(mx, my))
             {
                 this.currPage -= 1;
