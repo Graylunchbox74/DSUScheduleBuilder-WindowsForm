@@ -239,7 +239,7 @@ func addMajor(userID int, major string) (int, error) {
 	err := db.QueryRow("select majors from users where majors like $1", majors).Scan(&currentMajors)
 
 	if err != sql.ErrNoRows {
-		return 14, errors.New("major alread exists for that user")
+		return 14, errors.New("major already exists for that user")
 	}
 	//get the current list of majors
 	err = db.QueryRow("select majors from users where uid=$1", userID).Scan(&currentMajors)
@@ -452,9 +452,19 @@ func deleteEnrolledClass(class course) (int, error) {
 	_, err := db.Exec("DELETE FROM EnrolledClasses WHERE userID=$1 AND classID=$2", class.UserID, class.ClassID)
 	checkLogError(location, "Delete enrolled class from database", err)
 	if err == nil {
-		return 200, err
+		return 200, nil //Delete was successful
 	}
-	return 500, err
+
+	perr := err
+
+	err = db.QueryRow("SELECT userID from EnrolledClasses where userID=$1 AND classID=$2", class.UserID, class.ClassID).Scan(&class.UserID)
+
+	if err == sql.ErrNoRows { //Error happened, but the deletion was successful, back-end will handle logging the error, as far as front-end is concerned, everything went fine
+		logError(location, "Delete enrolled class from database, successful delete", perr)
+		return 200, nil
+	}
+
+	return 18, perr
 }
 
 //updates an entry in the enrolledclasses table, although we cannot allow to change the userID
