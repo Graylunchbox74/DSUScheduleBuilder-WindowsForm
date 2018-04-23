@@ -471,15 +471,30 @@ func deleteEnrolledClass(class course) (int, error) {
 func updateEnrolledClass(classKey, keyword, newValue string) (course, int, error) {
 	var err error
 	var newClass course
-	parameter := classKey
-
-	_, err = db.Exec("UPDATE EnrolledClasses SET $1=$2 WHERE key=$3", keyword, newValue, parameter)
-
-	//println("UPDATE EnrolledClasses SET $1=$2 WHERE key=$3", keyword, newValue, parameter)
+	var parameter string
+	parameter = "UPDATE EnrolledClasses SET " + keyword + "=\"" + newValue + "\" WHERE key=" + classKey
+	_, err = db.Exec(parameter)
 	if err != nil {
 		return newClass, 12, err
 	}
-	err = db.QueryRow("SELECT * from EnrolledClasses where key=$1", parameter).Scan(
+
+	//CREATE TABLE EnrolledClasses (userID text,classID VARCHAR[20], className VARCHAR[50], teacher VARCHAR[50], location VARCHAR[50],daysOfWeek text, startTime INT, endTime INT, startDate VARCHAR[30],
+	//endDate VARCHAR[30], credits INT, key integer primary key autoincrement);
+	/*
+		UserID    string `json:"uid"`
+		Key       int    `json:"key"`
+		StartTime int    `json:"startTime"`
+		EndTime   int    `json:"endTime"`
+		Credits   int    `json:"credits"`
+
+		ClassID    string   `json:"classID"`
+		ClassName  string   `json:"className"`
+		Location   string   `json:"location"`
+		DaysOfWeek string   `json:"daysOfWeek"`
+		Teacher    []string `json:"teacher"`
+		StartDate  string   `json:"startDate"`
+		EndDate    string   `json:"endDate"` */
+	err = db.QueryRow("SELECT * from EnrolledClasses where key=$1", classKey).Scan(
 		&newClass.UserID, &newClass.ClassID, &newClass.ClassName, &newClass.Teacher, &newClass.Location, &newClass.DaysOfWeek,
 		&newClass.StartTime, &newClass.EndTime, &newClass.StartDate, &newClass.EndDate, &newClass.Credits, &newClass.Key,
 	)

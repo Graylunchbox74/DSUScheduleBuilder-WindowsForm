@@ -31,5 +31,18 @@ namespace DSUScheduleBuilder.Utils
         {
             return 0;
         }
+
+        public static string IntersperseNewLines(string s)
+        {
+            StringBuilder sb = new StringBuilder();
+            string[] words = s.Split(' ');
+            for (int i = 0; i < words.Length; i++)
+            {
+                if (i != 0 && i % 7 == 0) sb.Append("\n");
+                sb.Append(words[i]);
+                sb.Append(" ");
+            }
+            return sb.ToString();
+        }
     }
 }
