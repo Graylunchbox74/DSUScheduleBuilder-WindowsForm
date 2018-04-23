@@ -34,3 +34,32 @@
 2018-04-22 22:28:10 - /api/user/logout/, 3: sql: no rows in result set
 2018-04-22 22:29:06 - /api/user/logout/, 3: sql: no rows in result set
 2018-04-22 22:39:40 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-23 09:00:29 - /api/courses/previous/test, 3: sql: no rows in result set
+2018-04-23 10:20:13 - /api/user/enroll/, 4: sql: no rows in result set
+2018-04-23 10:21:01 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-23 10:22:41 - /api/user/enroll/, 4: sql: no rows in result set
+2018-04-23 10:22:50 - /api/user/enroll/, 4: sql: no rows in result set
+2018-04-23 10:23:03 - /api/user/enroll/, 4: sql: no rows in result set
+2018-04-23 10:23:30 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-23 10:24:59 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-23 10:33:22 - /api/user/login/, 4: User already has a uuid
+2018-04-23 10:33:45 - /api/courses/enrolled/RtUWNgS5cnJswaDW8S1DvB7vKAIyCrOvEfpK5ev3OfiFakTq9h, 3: sql: no rows in result set
+2018-04-23 10:33:47 - /api/courses/enrolled/RtUWNgS5cnJswaDW8S1DvB7vKAIyCrOvEfpK5ev3OfiFakTq9h, 3: sql: no rows in result set
+2018-04-23 10:33:51 - /api/courses/enrolled/RtUWNgS5cnJswaDW8S1DvB7vKAIyCrOvEfpK5ev3OfiFakTq9h, 3: sql: no rows in result set
+2018-04-23 10:34:15 - /api/user/enroll/, 4: sql: no rows in result set
+2018-04-23 10:35:18 - /api/user/enroll/, 4: sql: no rows in result set
+2018-04-23 10:38:23 - /api/user/enroll/, 4: sql: no rows in result set
+2018-04-23 10:38:58 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-23 10:41:04 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-23 10:41:43 - /api/user/enroll/, 4: sql: no rows in result set
+2018-04-23 10:42:07 - /api/user/enroll/, 4: sql: no rows in result set
+2018-04-23 10:42:25 - /api/user/enroll/, 4: sql: no rows in result set
+2018-04-23 10:42:40 - /api/user/enroll/, 4: sql: no rows in result set
+2018-04-23 10:43:31 - /api/user/enroll/, 4: sql: no rows in result set
+2018-04-23 10:44:54 - /api/user/enroll/, 4: no such table: availableClasses
+2018-04-23 10:45:10 - /api/user/enroll/, 4: no such column: userID
+2018-04-23 10:46:05 - /api/user/enroll/, 4: no such column: userID
+2018-04-23 10:47:04 - /api/user/enroll/, 4: no such column: userID
+2018-04-23 10:47:40 - /api/user/enroll/, 4: class conflicts with CSC-461
+2018-04-23 10:49:04 - /api/user/enroll/, 4: Class conflicts with CSC-461
+2018-04-23 10:49:39 - /api/user/logout/, 3: sql: no rows in result set

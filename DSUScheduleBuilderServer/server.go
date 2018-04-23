@@ -400,24 +400,23 @@ func addEnrolledClass(userID, key int) (int, error) {
 				&class.Key,
 			)
 			if err == sql.ErrNoRows {
-				return 5, errors.New("class with this key does not exist in availableClasses")
+				return 5, errors.New("Class with this key does not exist in availableClasses")
 			} else if err != nil {
 				return 5, err
 			}
 			var timeStart int
 			var timeEnd int
-			err = db.QueryRow("SELECT startTime,endTime from enrolledClasses where key=$1 AND userID like $2", key, uidDB).Scan(&timeStart, &timeEnd)
+			err = db.QueryRow("SELECT timeStart,timeEnd from availableCourses where key=$1", key).Scan(&timeStart, &timeEnd)
 			if err != nil {
 				return 5, err
 			}
 			var classID string
-			err = db.QueryRow("SELECT classID from enrolledClasses where ((startTime <= $1 AND endTime >= $2) OR (startTime >= $2 AND startTime <= endTime) OR (endTime <= $1 AND endTime >= $2)) and userID like $3", timeStart, timeEnd, uidDB).Scan(&classID)
+			err = db.QueryRow("SELECT classID from enrolledClasses where ((startTime >= $1 AND endTime <= $2) OR (startTime >= $1 AND startTime <= $2) OR (endTime >= $1 AND endTime <= $2)) and userID like $3", timeStart, timeEnd, uidDB).Scan(&classID)
 			if err != sql.ErrNoRows {
 				if err != nil {
 					return 5, err
-				} else {
-					return 5, errors.New("class conflicts with " + classID)
 				}
+				return 19, errors.New("Class conflicts with " + classID)
 			}
 			class.UserID = "|" + strconv.Itoa(userID) + "|"
 			teachers, errCode, err := getTeacher(emails)
@@ -451,7 +450,7 @@ func addEnrolledClass(userID, key int) (int, error) {
 			return 5, err
 		}
 		var classID string
-		err = db.QueryRow("SELECT classID from enrolledClasses where ((startTime <= $1 AND endTime >= $2) OR (startTime >= $2 AND startTime <= endTime) OR (endTime <= $1 AND endTime >= $2)) and userID like $3", timeStart, timeEnd, uidDB).Scan(&classID)
+		err = db.QueryRow("SELECT classID from enrolledClasses where ((startTime >= $1 AND endTime <= $2) OR (startTime >= $1 AND startTime <= $2) OR (endTime >= $1 AND endTime <= $2)) and userID like $3", timeStart, timeEnd, uidDB).Scan(&classID)
 		if err == sql.ErrNoRows {
 			uidDB = "|" + strconv.Itoa(userID) + "|"
 			currentEnrolled = currentEnrolled + uidDB
@@ -461,7 +460,7 @@ func addEnrolledClass(userID, key int) (int, error) {
 			}
 			return 200, err
 		} else if err == nil {
-			return 5, errors.New("class conflicts with " + classID)
+			return 19, errors.New("Class conflicts with " + classID)
 		} else {
 			return 5, err
 		}
@@ -718,6 +717,61 @@ func main() {
 
 				c.JSON(200, gin.H{"success": 1})
 
+			})
+			users.POST("/changePassword/", func(c *gin.Context) {
+				uuid := c.PostForm("uuid")
+				var userID int
+				err := db.QueryRow("SELECT uid FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&userID)
+
+				if err == sql.ErrNoRows {
+					currentError := createErrorStruct(2, c.Request.URL.String(), "3", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				if err != nil {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
+					c.JSON(500, currentError)
+					return
+				}
+				newPassword := c.PostForm("password")
+				_, err = db.Exec("UPDATE users SET password=$1 where uid=$2", newPassword, userID)
+				if err != nil {
+					currentError := createErrorStruct(20, c.Request.URL.String(), "1", err)
+					c.JSON(500, currentError)
+					return
+				}
+				c.JSON(200, gin.H{"success": 1})
+			})
+
+			users.POST("/delete/", func(c *gin.Context) {
+				uuid := c.PostForm("uuid")
+				var userID int
+				err := db.QueryRow("SELECT uid FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&userID)
+
+				if err == sql.ErrNoRows {
+					currentError := createErrorStruct(2, c.Request.URL.String(), "3", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				if err != nil {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
+					c.JSON(500, currentError)
+					return
+				}
+				//log the user out
+				_, err = db.Exec("DELETE FROM USER_SESSIONS WHERE uuid=$1", uuid)
+
+				if err != nil {
+					currentError := createErrorStruct(10, c.Request.URL.String(), "2", err)
+					c.JSON(500, currentError)
+					return
+				}
+				//delete from enrolledClasses
+				err = db.Query("SELECT userID from ")
+				//delete from previousClasses
+				//delete from users
 			})
 
 			users.POST("/enroll/", func(c *gin.Context) {
