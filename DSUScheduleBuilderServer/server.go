@@ -132,8 +132,9 @@ func errorDrain() {
 	for {
 		select {
 		case lErr = <-errorChannel:
-			fmt.Println(lErr.Location, lErr.Sublocation, lErr)
-			f.WriteString(fmt.Sprintf("%s, %s, %s\n", lErr.Location, lErr.Sublocation, lErr))
+			errString := fmt.Sprintf("%s - %s, %s: %s\n", time.Now().Format("2006-01-02 15:04:05"), lErr.Location, lErr.Sublocation, lErr.Error)
+			fmt.Println(errString)
+			f.WriteString(errString)
 		}
 	}
 }
@@ -428,13 +429,17 @@ func addEnrolledClass(userID, key int) (int, error) {
 			}
 			return 200, err
 		}
+
 		uidDB = "|" + strconv.Itoa(userID) + "|"
 		currentEnrolled = currentEnrolled + uidDB
 		_, errCode, err := updateEnrolledClass(strconv.Itoa(key), "userID", currentEnrolled)
+
 		if err != nil {
 			return errCode, err
 		}
+
 		return 200, err
+
 	} else if err != nil {
 		return 5, err
 	} else {
@@ -495,7 +500,7 @@ func getEnrolledClasses(uid int) ([]course, int, error) {
 	location := "getEnrolledClasses"
 	var classes []course
 	var class course
-	parameter := "|%" + strconv.Itoa(uid) + "%|"
+	parameter := "%|" + strconv.Itoa(uid) + "|%"
 	rows, err := db.Query(`
 		SELECT *
 		FROM EnrolledClasses 
@@ -604,7 +609,7 @@ func getPreviousClasses(uid int) ([]course, int, error) {
 	location := "getPreviousClasses"
 	var classes []course
 	var class course
-	parameter := "|%" + strconv.Itoa(uid) + "%|"
+	parameter := "%|" + strconv.Itoa(uid) + "|%"
 	rows, err := db.Query(`
 		SELECT *
 		FROM PreviousClasses 

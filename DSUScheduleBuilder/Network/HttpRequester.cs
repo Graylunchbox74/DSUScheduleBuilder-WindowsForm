@@ -135,13 +135,13 @@ namespace DSUScheduleBuilder.Network {
         public string prereqCoursesAnd { get; set; }
         public string prereqCoursesOr { get; set; }
         public string instructionalMethods { get; set; }
+        public string daysOfWeek { get; set; }
         public string term { get; set; }
         public int key { get; set; }
 
         public AvailableCourse ToAvailableCourse()
         {
-            return new AvailableCourse()
-            {
+            return new AvailableCourse() {
                 SectionID = sectionID,
                 Open = open,
                 AcademicLevel = academicLevel,
@@ -167,6 +167,7 @@ namespace DSUScheduleBuilder.Network {
                 PrereqCoursesAnd = prereqCoursesAnd,
                 PrereqCoursesOr = prereqCoursesOr,
                 InstructionalMethods = instructionalMethods,
+                DaysOfWeek = daysOfWeek,
                 Term = term,
                 Key = key
             };
