@@ -471,24 +471,13 @@ func addEnrolledClass(userID, key int) (int, error) {
 	}
 }
 
-func deleteEnrolledClass(class course) (int, error) {
-	location := "deleteEnrolledClass"
-	_, err := db.Exec("DELETE FROM EnrolledClasses WHERE userID=$1 AND classID=$2", class.UserID, class.ClassID)
-	checkLogError(location, "Delete enrolled class from database", err)
+func deleteEnrolledClass(key int) (int, error) {
+	var err error
+	_, err = db.Exec("DELETE FROM EnrolledClasses WHERE key=$1", key)
 	if err == nil {
-		return 200, nil //Delete was successful
+		return 200, err
 	}
-
-	perr := err
-
-	err = db.QueryRow("SELECT userID from EnrolledClasses where userID=$1 AND classID=$2", class.UserID, class.ClassID).Scan(&class.UserID)
-
-	if err == sql.ErrNoRows { //Error happened, but the deletion was successful, back-end will handle logging the error, as far as front-end is concerned, everything went fine
-		logError(location, "Delete enrolled class from database, successful delete", perr)
-		return 200, nil
-	}
-
-	return 18, perr
+	return 22, err
 }
 
 //updates an entry in the enrolledclasses table, although we cannot allow to change the userID
@@ -578,15 +567,13 @@ func addPreviousClass(class course) (int, error) {
 	return 500, err
 }
 
-func deletePreviousClass(class course) (int, error) {
-	location := "deletePreviousClass"
+func deletePreviousClass(key int) (int, error) {
 	var err error
-	_, err = db.Exec("DELETE FROM PreviousClasses WHERE userID=$1 AND classID=$2", class.UserID, class.ClassID)
-	checkLogError(location, "Deleted class from database", err)
+	_, err = db.Exec("DELETE FROM PreviousClasses WHERE key=", key)
 	if err == nil {
 		return 200, err
 	}
-	return 500, err
+	return 20, err
 }
 
 //updates an entry in the enrolledclasses table, although we cannot allow to change the userID
@@ -768,10 +755,96 @@ func main() {
 					c.JSON(500, currentError)
 					return
 				}
+				param := "%|" + strconv.Itoa(userID) + "|%"
+
+				//delete from previousCllasses
+				_, err = db.Exec("DELETE from PreviousClasses where userID=$1", "|"+strconv.Itoa(userID)+"|")
+				if err != nil {
+					currentError := createErrorStruct(22, c.Request.URL.String(), "5", err)
+					c.JSON(500, currentError)
+					return
+				}
+				rows, err := db.Query("SELECT userID,key from PreviousClasses where userID like $1", param)
+				if err != sql.ErrNoRows && err != nil {
+					currentError := createErrorStruct(5, c.Request.URL.String(), "5", err)
+					c.JSON(500, currentError)
+					return
+				}
+				var previousUpdateKey []int
+				var previousUpdateID []string
+				for rows.Next() {
+					var newUserID string
+					var key int
+					rows.Scan(&newUserID, &key)
+					newUserID = strings.Replace(newUserID, "|"+strconv.Itoa(userID)+"|", "", -1)
+					previousUpdateKey = append(previousUpdateKey, key)
+					previousUpdateID = append(previousUpdateID, newUserID)
+					//					execute := "UPDATE PreviousClasses SET userID=\"" + newUserID + "\" WHERE key=" + strconv.Itoa(key)
+					// _, err = db.Exec(execute)
+					// if err != nil {
+					// 	currentError := createErrorStruct(21, c.Request.URL.String(), "7", err)
+					// 	c.JSON(500, currentError)
+					// 	return
+					// }
+
+				}
+				for x := range previousUpdateID {
+					execute := "UPDATE PreviousClasses SET userID=\"" + previousUpdateID[x] + "\" WHERE key=" + strconv.Itoa(previousUpdateKey[x])
+					_, err = db.Exec(execute)
+					if err != nil {
+						currentError := createErrorStruct(21, c.Request.URL.String(), "7", err)
+						c.JSON(500, currentError)
+						return
+					}
+				}
 				//delete from enrolledClasses
-				err = db.Query("SELECT userID from ")
-				//delete from previousClasses
+				_, err = db.Exec("DELETE from EnrolledClasses where userID=$1", "|"+strconv.Itoa(userID)+"|")
+				if err != nil {
+					currentError := createErrorStruct(24, c.Request.URL.String(), "5", err)
+					c.JSON(500, currentError)
+					return
+				}
+				rows, err = db.Query("SELECT userID,key from EnrolledClasses where userID like $1", param)
+				if err != sql.ErrNoRows && err != nil {
+					currentError := createErrorStruct(5, c.Request.URL.String(), "5", err)
+					c.JSON(500, currentError)
+					return
+				}
+				var enrolledUpdateKey []int
+				var enrolledUpdateID []string
+				for rows.Next() {
+					var newUserID string
+					var key int
+					rows.Scan(&newUserID, &key)
+					newUserID = strings.Replace(newUserID, "|"+strconv.Itoa(userID)+"|", "", -1)
+					enrolledUpdateKey = append(enrolledUpdateKey, key)
+					enrolledUpdateID = append(enrolledUpdateID, newUserID)
+					println(strconv.Itoa(key) + " " + newUserID)
+					// execute := "UPDATE EnrolledClasses SET userID=\"" + newUserID + "\" WHERE key=" + strconv.Itoa(key)
+					// _, err = db.Exec(execute)
+					// if err != nil {
+					// 	currentError := createErrorStruct(23, c.Request.URL.String(), "7", err)
+					// 	c.JSON(500, currentError)
+					// 	return
+					// }
+				}
+				for x := range enrolledUpdateID {
+					execute := "UPDATE EnrolledClasses SET userID=\"" + enrolledUpdateID[x] + "\" WHERE key=" + strconv.Itoa(enrolledUpdateKey[x])
+					_, err = db.Exec(execute)
+					if err != nil {
+						currentError := createErrorStruct(21, c.Request.URL.String(), "7", err)
+						c.JSON(500, currentError)
+						return
+					}
+				}
 				//delete from users
+				_, err = db.Exec("DELETE from users where uid=$1", userID)
+				if err != nil {
+					currentError := createErrorStruct(24, c.Request.URL.String(), "7", err)
+					c.JSON(500, currentError)
+					return
+				}
+				c.JSON(200, gin.H{"success": 1})
 			})
 
 			users.POST("/enroll/", func(c *gin.Context) {

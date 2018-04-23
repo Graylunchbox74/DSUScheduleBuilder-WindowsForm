@@ -63,3 +63,37 @@
 2018-04-23 10:47:40 - /api/user/enroll/, 4: class conflicts with CSC-461
 2018-04-23 10:49:04 - /api/user/enroll/, 4: Class conflicts with CSC-461
 2018-04-23 10:49:39 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-23 13:39:50 - /api/user/enroll/, 4: Class conflicts with CSC-461
+2018-04-23 13:40:09 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-23 13:56:12 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-23 13:56:16 - /api/courses/previous/test, 3: sql: no rows in result set
+2018-04-23 13:57:49 - /api/user/delete/testing2, 6: incomplete input
+2018-04-23 13:58:07 - /api/user/login/, 5: database is locked
+2018-04-23 13:58:43 - /api/user/delete/testing2, 3: sql: no rows in result set
+2018-04-23 14:01:09 - /api/user/delete/testing2, 3: sql: no rows in result set
+2018-04-23 14:01:20 - /api/user/login/, 4: User already has a uuid
+2018-04-23 14:01:31 - /api/user/login/, 4: User already has a uuid
+2018-04-23 14:02:24 - /api/user/delete/testing2, 3: sql: no rows in result set
+2018-04-23 14:03:09 - /api/user/delete/testing2, 3: sql: no rows in result set
+2018-04-23 14:03:10 - /api/user/login/, 2: Password does not match
+2018-04-23 14:03:18 - /api/user/login/, 4: User already has a uuid
+2018-04-23 14:03:31 - /api/user/enroll/, 4: sql: no rows in result set
+2018-04-23 14:03:34 - /api/user/enroll/, 4: sql: no rows in result set
+2018-04-23 14:03:42 - /api/user/delete/testing2, 6: database is locked
+2018-04-23 14:03:42 - /api/user/enroll/, 4: sql: no rows in result set
+2018-04-23 14:04:00 - /api/user/logout/, 2: database is locked
+2018-04-23 14:04:20 - /api/user/delete/testing2, 6: database is locked
+2018-04-23 14:06:07 - /api/user/delete/testing2, 6: database is locked
+2018-04-23 14:06:07 - /api/user/delete/testing2, 3: sql: no rows in result set
+2018-04-23 14:07:25 - /api/user/delete/testing2, 6: database is locked
+2018-04-23 14:07:53 - /api/user/delete/testing2, 6: database is locked
+2018-04-23 14:08:02 - /api/user/delete/testing2, 3: sql: no rows in result set
+2018-04-23 14:08:15 - /api/user/delete/testing2, 6: database is locked
+2018-04-23 14:08:37 - /api/user/delete/testing2, 3: sql: no rows in result set
+2018-04-23 14:09:01 - /api/user/delete/testing2, 6: database is locked
+2018-04-23 14:09:29 - /api/user/delete/testing2, 6: database is locked
+2018-04-23 14:11:10 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-23 14:12:31 - /api/user/delete/testing2, 6: database is locked
+2018-04-23 14:26:11 - /api/user/delete/test, 7: database is locked
+2018-04-23 14:34:44 - /api/user/delete/test, 3: sql: no rows in result set
+2018-04-23 14:35:53 - /api/user/delete/test, 3: sql: no rows in result set
