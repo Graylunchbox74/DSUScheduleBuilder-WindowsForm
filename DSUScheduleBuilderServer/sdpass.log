@@ -97,3 +97,34 @@
 2018-04-23 14:26:11 - /api/user/delete/test, 7: database is locked
 2018-04-23 14:34:44 - /api/user/delete/test, 3: sql: no rows in result set
 2018-04-23 14:35:53 - /api/user/delete/test, 3: sql: no rows in result set
+2018-04-23 23:32:17 - /api/majors/test2222, 3: sql: no rows in result set
+2018-04-23 23:35:41 - /api/majors/josharegay, 3: sql: no rows in result set
+2018-04-23 23:42:56 - /api/user/enroll/tesdddt/3, 3: sql: no rows in result set
+2018-04-23 23:47:42 - /api/user/enroll/test/3, 4: user has already enrolled in this course
+2018-04-24 00:08:17 - /api/user/login/, 4: User already has a uuid
+2018-04-24 00:08:28 - /api/user/login/, 2: Password does not match
+2018-04-24 00:12:07 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-24 00:14:40 - /api/user/dropEnrolledCourse, 1: near "from": syntax error
+2018-04-24 00:14:47 - /api/user/dropEnrolledCourse, 1: near "from": syntax error
+2018-04-24 00:15:54 - /api/user/dropEnrolledCourse, 20: near "from": syntax error
+2018-04-24 00:16:13 - /api/user/dropEnrolledCourse, 20: incomplete input
+2018-04-24 00:16:33 - /api/user/dropEnrolledCourse, 6: User in not enrolled in this class
+2018-04-24 00:16:50 - /api/user/dropEnrolledCourse, 6: User in not enrolled in this class
+2018-04-24 00:16:54 - /api/user/dropEnrolledCourse, 6: User in not enrolled in this class
+2018-04-24 00:17:54 - /api/user/dropEnrolledCourse, 6: User in not enrolled in this class
+2018-04-24 00:17:58 - /api/user/dropEnrolledCourse, 6: User in not enrolled in this class
+2018-04-24 00:18:54 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-24 00:19:46 - /api/user/dropEnrolledCourse, 6: User in not enrolled in this class
+2018-04-24 00:21:48 - /api/user/enroll/, 4: Class conflicts with CSC-150
+2018-04-24 00:22:44 - /api/user/enroll/, 4: Class conflicts with ACCT-310
+2018-04-24 00:22:52 - /api/user/enroll/, 4: Class conflicts with BADM-101
+2018-04-24 00:23:39 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-24 00:30:03 - /api/user/login/, 2: Password does not match
+2018-04-24 00:30:32 - /api/user/enroll/, 4: user has already enrolled in this course
+2018-04-24 00:30:35 - /api/user/enroll/, 4: user has already enrolled in this course
+2018-04-24 00:35:49 - /api/user/login/, 4: User already has a uuid
+2018-04-24 00:36:30 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-24 00:46:04 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-24 00:47:48 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-24 00:48:01 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-24 00:50:40 - /api/user/logout/, 3: sql: no rows in result set
