@@ -39,16 +39,16 @@ namespace DSUScheduleBuilder
             this.Login_NewUserBtn = new System.Windows.Forms.Button();
             this.Login_PasswordTxt = new System.Windows.Forms.TextBox();
             this.NewUserPanel = new System.Windows.Forms.Panel();
+            this.NewUserControl = new DSUScheduleBuilder.Main_Menu.NewUser();
             this.MainMenuPanel = new System.Windows.Forms.Panel();
+            this.AccountSettingsBtn = new System.Windows.Forms.Button();
             this.MainMenu_WeekViewBtn = new System.Windows.Forms.Button();
+            this.Control_Search = new DSUScheduleBuilder.Main_Menu.Search();
             this.MainMenu_SearchBtn = new System.Windows.Forms.Button();
             this.MainMenu_LogoutBtn = new System.Windows.Forms.Button();
             this.WelcomeLabel = new System.Windows.Forms.Label();
-            this.AccountSettingsBtn = new System.Windows.Forms.Button();
-            this.Control_AccountSettings = new DSUScheduleBuilder.Main_Menu.UpdateUser();
-            this.Control_Search = new DSUScheduleBuilder.Main_Menu.Search();
             this.Control_WeekView = new DSUScheduleBuilder.Drawing.WeekView();
-            this.NewUserControl = new DSUScheduleBuilder.Main_Menu.NewUser();
+            this.Control_AccountSettings = new DSUScheduleBuilder.Main_Menu.UpdateUser();
             this.LoginPanel.SuspendLayout();
             this.NewUserPanel.SuspendLayout();
             this.MainMenuPanel.SuspendLayout();
@@ -62,7 +62,7 @@ namespace DSUScheduleBuilder
             this.LoginPanel.Controls.Add(this.Login_NewUserBtn);
             this.LoginPanel.Controls.Add(this.Login_PasswordTxt);
             this.LoginPanel.Location = new System.Drawing.Point(0, 2);
-            this.LoginPanel.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.LoginPanel.Margin = new System.Windows.Forms.Padding(2);
             this.LoginPanel.Name = "LoginPanel";
             this.LoginPanel.Size = new System.Drawing.Size(1007, 724);
             this.LoginPanel.TabIndex = 6;
@@ -137,6 +137,15 @@ namespace DSUScheduleBuilder
             this.NewUserPanel.Size = new System.Drawing.Size(1010, 728);
             this.NewUserPanel.TabIndex = 2;
             // 
+            // NewUserControl
+            // 
+            this.NewUserControl.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.NewUserControl.Location = new System.Drawing.Point(72, 40);
+            this.NewUserControl.Margin = new System.Windows.Forms.Padding(2);
+            this.NewUserControl.Name = "NewUserControl";
+            this.NewUserControl.Size = new System.Drawing.Size(872, 513);
+            this.NewUserControl.TabIndex = 0;
+            // 
             // MainMenuPanel
             // 
             this.MainMenuPanel.Controls.Add(this.Control_AccountSettings);
@@ -152,6 +161,17 @@ namespace DSUScheduleBuilder
             this.MainMenuPanel.Size = new System.Drawing.Size(1010, 728);
             this.MainMenuPanel.TabIndex = 7;
             // 
+            // AccountSettingsBtn
+            // 
+            this.AccountSettingsBtn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.AccountSettingsBtn.Location = new System.Drawing.Point(715, 54);
+            this.AccountSettingsBtn.Name = "AccountSettingsBtn";
+            this.AccountSettingsBtn.Size = new System.Drawing.Size(138, 46);
+            this.AccountSettingsBtn.TabIndex = 6;
+            this.AccountSettingsBtn.Text = "Account Settings";
+            this.AccountSettingsBtn.UseVisualStyleBackColor = true;
+            this.AccountSettingsBtn.Click += new System.EventHandler(this.AccountSettingsBtn_Click);
+            // 
             // MainMenu_WeekViewBtn
             // 
             this.MainMenu_WeekViewBtn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -162,6 +182,16 @@ namespace DSUScheduleBuilder
             this.MainMenu_WeekViewBtn.Text = "View Schedule";
             this.MainMenu_WeekViewBtn.UseVisualStyleBackColor = true;
             this.MainMenu_WeekViewBtn.Click += new System.EventHandler(this.MainMenu_WeekViewBtn_Click);
+            // 
+            // Control_Search
+            // 
+            this.Control_Search.Location = new System.Drawing.Point(72, 174);
+            this.Control_Search.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Control_Search.Name = "Control_Search";
+            this.Control_Search.Size = new System.Drawing.Size(872, 513);
+            this.Control_Search.TabIndex = 4;
+            this.Control_Search.Visible = false;
+            this.Control_Search.Load += new System.EventHandler(this.Control_Search_Load);
             // 
             // MainMenu_SearchBtn
             // 
@@ -195,36 +225,6 @@ namespace DSUScheduleBuilder
             this.WelcomeLabel.TabIndex = 1;
             this.WelcomeLabel.Text = "welcome text";
             // 
-            // AccountSettingsBtn
-            // 
-            this.AccountSettingsBtn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.AccountSettingsBtn.Location = new System.Drawing.Point(715, 54);
-            this.AccountSettingsBtn.Name = "AccountSettingsBtn";
-            this.AccountSettingsBtn.Size = new System.Drawing.Size(138, 46);
-            this.AccountSettingsBtn.TabIndex = 6;
-            this.AccountSettingsBtn.Text = "Account Settings";
-            this.AccountSettingsBtn.UseVisualStyleBackColor = true;
-            this.AccountSettingsBtn.Click += new System.EventHandler(this.AccountSettingsBtn_Click);
-            // 
-            // Control_AccountSettings
-            // 
-            this.Control_AccountSettings.Location = new System.Drawing.Point(72, 174);
-            this.Control_AccountSettings.Margin = new System.Windows.Forms.Padding(2);
-            this.Control_AccountSettings.Name = "Control_AccountSettings";
-            this.Control_AccountSettings.Size = new System.Drawing.Size(872, 513);
-            this.Control_AccountSettings.TabIndex = 7;
-            this.Control_AccountSettings.Visible = false;
-            // 
-            // Control_Search
-            // 
-            this.Control_Search.Location = new System.Drawing.Point(72, 174);
-            this.Control_Search.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.Control_Search.Name = "Control_Search";
-            this.Control_Search.Size = new System.Drawing.Size(872, 513);
-            this.Control_Search.TabIndex = 4;
-            this.Control_Search.Visible = false;
-            this.Control_Search.Load += new System.EventHandler(this.Control_Search_Load);
-            // 
             // Control_WeekView
             // 
             this.Control_WeekView.Location = new System.Drawing.Point(4, 212);
@@ -233,14 +233,13 @@ namespace DSUScheduleBuilder
             this.Control_WeekView.TabIndex = 0;
             this.Control_WeekView.Text = "weekView1";
             // 
-            // NewUserControl
+            // Control_AccountSettings
             // 
-            this.NewUserControl.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.NewUserControl.Location = new System.Drawing.Point(72, 40);
-            this.NewUserControl.Margin = new System.Windows.Forms.Padding(2);
-            this.NewUserControl.Name = "NewUserControl";
-            this.NewUserControl.Size = new System.Drawing.Size(872, 513);
-            this.NewUserControl.TabIndex = 0;
+            this.Control_AccountSettings.Location = new System.Drawing.Point(72, 118);
+            this.Control_AccountSettings.Margin = new System.Windows.Forms.Padding(2);
+            this.Control_AccountSettings.Name = "Control_AccountSettings";
+            this.Control_AccountSettings.Size = new System.Drawing.Size(872, 606);
+            this.Control_AccountSettings.TabIndex = 7;
             // 
             // MainWindow
             // 

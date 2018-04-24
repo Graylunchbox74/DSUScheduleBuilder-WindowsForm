@@ -68,7 +68,7 @@ namespace DSUScheduleBuilder.Drawing
             Font drawFont = SystemFonts.DefaultFont;
             SizeF stringSize = graphics.MeasureString(text, drawFont);
 
-            float textY = (weekView.TimeSlotHeight - stringSize.Height) / 2.0f + y;
+            float textY = (h - stringSize.Height) / 2.0f + y;
             foreach (int d in days)
             {
                 graphics.FillRectangle(color, x + weekView.CellWidth * d, y, w, h);

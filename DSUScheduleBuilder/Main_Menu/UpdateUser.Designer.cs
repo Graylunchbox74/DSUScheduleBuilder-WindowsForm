@@ -37,7 +37,7 @@
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
+            this.EnrolledCourseView = new DSUScheduleBuilder.Drawing.EnrolledCouresView();
             this.SuspendLayout();
             // 
             // acctOptionsLabel
@@ -113,7 +113,7 @@
             // button1
             // 
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.button1.Location = new System.Drawing.Point(398, 416);
+            this.button1.Location = new System.Drawing.Point(470, 546);
             this.button1.Margin = new System.Windows.Forms.Padding(2);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(149, 52);
@@ -124,7 +124,7 @@
             // button2
             // 
             this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.button2.Location = new System.Drawing.Point(551, 416);
+            this.button2.Location = new System.Drawing.Point(666, 546);
             this.button2.Margin = new System.Windows.Forms.Padding(2);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(149, 52);
@@ -132,22 +132,20 @@
             this.button2.Text = "View Taken";
             this.button2.UseVisualStyleBackColor = true;
             // 
-            // button4
+            // EnrolledCourseView
             // 
-            this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.button4.Location = new System.Drawing.Point(704, 416);
-            this.button4.Margin = new System.Windows.Forms.Padding(2);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(149, 52);
-            this.button4.TabIndex = 10;
-            this.button4.Text = "Drop Selected Course";
-            this.button4.UseVisualStyleBackColor = true;
+            this.EnrolledCourseView.Location = new System.Drawing.Point(414, 63);
+            this.EnrolledCourseView.Name = "EnrolledCourseView";
+            this.EnrolledCourseView.Size = new System.Drawing.Size(455, 457);
+            this.EnrolledCourseView.TabIndex = 11;
+            this.EnrolledCourseView.Text = "EnrolledCourseView";
+            this.EnrolledCourseView.Click += new System.EventHandler(this.EnrolledCourseView_Click);
             // 
             // UpdateUser
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.button4);
+            this.Controls.Add(this.EnrolledCourseView);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.textBox3);
@@ -159,7 +157,7 @@
             this.Controls.Add(this.acctOptionsLabel);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "UpdateUser";
-            this.Size = new System.Drawing.Size(872, 513);
+            this.Size = new System.Drawing.Size(872, 606);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -176,6 +174,6 @@
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button4;
+        public Drawing.EnrolledCouresView EnrolledCourseView;
     }
 }

@@ -69,7 +69,7 @@ namespace DSUScheduleBuilder.Main_Menu
 
         private void AvailableCourseView_Click(object sender, EventArgs e)
         {
-            AvailableCourseView.OnClick(e);
+            AvailableCourseView.OnClickEvent(e);
         }
 
         public void ClearFields()

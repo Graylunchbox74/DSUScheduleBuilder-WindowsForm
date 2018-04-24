@@ -25,6 +25,5 @@ namespace DSUScheduleBuilder.Models
         public string PrereqCoursesOr;
         public string InstructionalMethods;
         public string Term;
-
     }
 }

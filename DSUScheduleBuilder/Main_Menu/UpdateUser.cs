@@ -16,5 +16,10 @@ namespace DSUScheduleBuilder.Main_Menu
         {
             InitializeComponent();
         }
+
+        private void EnrolledCourseView_Click(object sender, EventArgs e)
+        {
+            EnrolledCourseView.OnClickEvent(e);
+        }
     }
 }

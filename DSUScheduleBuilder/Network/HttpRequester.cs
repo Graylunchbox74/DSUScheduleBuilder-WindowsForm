@@ -60,7 +60,7 @@ namespace DSUScheduleBuilder.Network {
         public int credits { get; set; }
         public string classID { get; set; }
         public string className { get; set; }
-        public string teacher { get; set; }
+        public List<string> teacher { get; set; }
         public string location { get; set; }
         public string startDate { get; set; }
         public string endDate { get; set; }
@@ -78,7 +78,7 @@ namespace DSUScheduleBuilder.Network {
                 Credits = this.credits,
                 CourseID = this.classID,
                 CourseName = this.className,
-                Teacher = this.teacher,
+                Teacher = this.teacher?[0],
                 Location = this.location,
                 DaysOfWeek = this.daysOfWeek
             };
@@ -429,6 +429,27 @@ namespace DSUScheduleBuilder.Network {
             if (succ == null)
             {
                 Errors.BadData("Parsing enrolled class failed");
+                return;
+            }
+
+            callback(succ);
+        }
+
+        public void DropCourse(int courseKey, Func<SuccessResponse, bool> callback)
+        {
+            var req = new RestRequest(Method.POST)
+            {
+                Resource = "" // PUT SOMETHING HERE
+            };
+            req.AddParameter("uuid", _session_token);
+            req.AddParameter("key", courseKey);
+
+            var res = _client.Execute<SuccessResponse>(req);
+            SuccessResponse succ = res.Data;
+
+            if (succ == null)
+            {
+                Errors.BadData("Parsing drop course failed");
                 return;
             }
 

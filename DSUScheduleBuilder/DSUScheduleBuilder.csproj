@@ -62,6 +62,9 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Drawing\CourseView.cs" />
+    <Compile Include="Drawing\EnrolledCouresView.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -3,26 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Drawing;
 using System.Windows.Forms;
 
 namespace DSUScheduleBuilder.Drawing
 {
-    using Main_Menu;
+    using System.Drawing;
     using Models;
     using Network;
-    using Utils;
 
-    public class AvailableCourseView : CourseList<AvailableCourse>
+    public class EnrolledCouresView : CourseList<Course>
     {
         private Rectangle returnButtonRect;
-        private Rectangle enrollButtonRect;
+        private Rectangle dropButtonRect;
 
-        public AvailableCourseView()
+        public EnrolledCouresView() : base()
         {
         }
 
-        public override void SetCourses(List<AvailableCourse> cs)
+        public override void SetCourses(List<Course> cs)
         {
             base.SetCourses(cs);
 
@@ -30,86 +28,72 @@ namespace DSUScheduleBuilder.Drawing
             bx = (this.Size.Width / 2 - 96) / 2;
             returnButtonRect = new Rectangle(bx, this.Size.Height - this.bottomBarHeight - 48, 96, 48);
             bx += this.Size.Width / 2;
-            enrollButtonRect = new Rectangle(bx, this.Size.Height - this.bottomBarHeight - 48, 96, 48);
+            dropButtonRect = new Rectangle(bx, this.Size.Height - this.bottomBarHeight - 48, 96, 48);
         }
 
         protected override void drawSelectedCourseExtra(Graphics g)
         {
-            string text = selectedCourse.Description;
             Font font = new Font(FontFamily.GenericSansSerif, 14);
-            SizeF textSize = g.MeasureString(text, font);
+            SizeF textSize;
 
-            text = Converter.IntersperseNewLines(selectedCourse.Description);
-            g.DrawString(text, font, Brushes.Black, 4, 4 + (textSize.Height + 4) * 4);
-
-            //Draw other buttons
             g.FillRectangle(Brushes.DarkSlateGray, returnButtonRect);
-            g.FillRectangle(Brushes.DarkSlateGray, enrollButtonRect);
+            g.FillRectangle(Brushes.DarkSlateGray, dropButtonRect);
 
             textSize = g.MeasureString("Back", font);
             g.DrawString("Back", font, Brushes.White
                 , returnButtonRect.X + (returnButtonRect.Width - textSize.Width) / 2
                 , returnButtonRect.Y + (returnButtonRect.Height - textSize.Height) / 2);
-
-            textSize = g.MeasureString("Enroll", font);
-            g.DrawString("Enroll", font, Brushes.White
-                , enrollButtonRect.X + (enrollButtonRect.Width - textSize.Width) / 2
-                , enrollButtonRect.Y + (enrollButtonRect.Height - textSize.Height) / 2);
+            
+            textSize = g.MeasureString("Drop", font);
+            g.DrawString("Drop", font, Brushes.White
+                , dropButtonRect.X + (dropButtonRect.Width - textSize.Width) / 2
+                , dropButtonRect.Y + (dropButtonRect.Height - textSize.Height) / 2);
         }
 
-        #region Click Methods
         protected override void HandleClick(int mx, int my)
         {
-            switch(state)
+            switch (state)
             {
                 case CourseListState.ClassList:
                     ClickClassList(mx, my);
                     break;
                 case CourseListState.SpecificClass:
-                    clickSpecificClass(mx, my);
-                    break;
-                default:
+                    ClickSpecificClass(mx, my);
                     break;
             }
         }
 
-        private void clickSpecificClass(int mx, int my)
+        private void ClickSpecificClass(int mx, int my)
         {
             if (returnButtonRect.Contains(mx, my))
             {
                 state = CourseListState.ClassList;
             }
 
-            if (enrollButtonRect.Contains(mx, my))
+            if (dropButtonRect.Contains(mx, my))
             {
-                HttpRequester.Default.EnrollInCourse(selectedCourse.Key, (succ) =>
+                HttpRequester.Default.DropCourse(selectedCourse.Key, (succ) =>
                 {
                     if (succ.errorCode != null)
                     {
-                        switch (succ.errorCode)
+                        switch(succ.errorCode)
                         {
                             default:
                                 MessageBox.Show("Error " + succ.errorCode + " : " + succ.errorMessage);
                                 break;
                         }
+
                         return false;
                     }
 
-                    if (succ.success != 1)
+                    if (succ?.success == 1)
                     {
-                        MessageBox.Show("Enrolling in class failed.");
-                        return false;
-                    }
-
-                    if (succ.success == 1)
-                    {
-                        MessageBox.Show("Successfully enrolled in class.");
+                        MessageBox.Show("Successfully dropped course");
                     }
 
                     return true;
                 });
             }
         }
-        #endregion
     }
 }
