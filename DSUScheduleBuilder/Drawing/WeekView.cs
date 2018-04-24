@@ -73,7 +73,7 @@ namespace DSUScheduleBuilder.Drawing {
 
                 float fx = (TimeSlotWidth - stringSize.Width) / 2.0f;
                 float fy = (TimeSlotHeight - stringSize.Height) / 2.0f;
-                e.Graphics.DrawString(msg, SystemFonts.DefaultFont, Brushes.Black, fx, fy + i * TimeSlotHeight + DayOfWeekHeight);
+                e.Graphics.DrawString(msg, SystemFonts.DefaultFont, Brushes.White, fx, fy + i * TimeSlotHeight + DayOfWeekHeight);
             }
 
             if (courses != null)

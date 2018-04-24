@@ -26,7 +26,7 @@ namespace DSUScheduleBuilder.Drawing
 
         protected int cellWidth;
         protected int cellHeight = 1;
-        protected int bottomBarHeight;
+        protected int bottomBarHeight = 32;
 
         private Rectangle backButtonRect;
         private Rectangle forwardButtonRect;
@@ -36,7 +36,6 @@ namespace DSUScheduleBuilder.Drawing
 
         public CourseList()
         {
-
         }
 
         public virtual void SetCourses(List<T> cs)
@@ -168,27 +167,9 @@ namespace DSUScheduleBuilder.Drawing
             g.DrawString(">", font, Brushes.Black, forwardButtonRect.X, forwardButtonRect.Y);
         }
 
-        protected bool CheckBottomBarClick(int mx, int my)
-        {
-            if (courses == null) return true;
-            if (backButtonRect.Contains(mx, my))
-            {
-                this.currPage -= 1;
-                if (currPage < 0) currPage = 0;
-                return true;
-            }
-
-            if (forwardButtonRect.Contains(mx, my))
-            {
-                this.currPage += 1;
-                if (currPage > totalPages) currPage = totalPages;
-                return true;
-            }
-            return false;
-        }
 
         protected abstract void HandleClick(int mx, int my);
-        public void OnClick(EventArgs e)
+        public void OnClickEvent(EventArgs e)
         {
             int sx = PointToScreen(Point.Empty).X;
             int sy = PointToScreen(Point.Empty).Y;
@@ -196,6 +177,40 @@ namespace DSUScheduleBuilder.Drawing
             int mx = MousePosition.X - sx;
             int my = MousePosition.Y - sy;
             HandleClick(mx, my);
+            this.Refresh();
+        }
+
+        protected bool CheckBottomBarClick(int mx, int my)
+        {
+            if (courses == null) return true;
+            if (backButtonRect.Contains(mx, my))
+            {
+                currPage -= 1;
+                if (currPage < 0) currPage = 0;
+                return true;
+            }
+
+            if (forwardButtonRect.Contains(mx, my))
+            {
+                currPage += 1;
+                if (currPage > totalPages) currPage = totalPages;
+                return true;
+            }
+            return false;
+        }
+
+        protected void ClickClassList(int mx, int my)
+        {
+            if (!CheckBottomBarClick(mx, my))
+            {
+                if (my < this.Size.Height - this.bottomBarHeight)
+                {
+                    int index = (my / cellHeight) + currPage * 5;
+                    selectedCourse = courses?[index];
+                    if (selectedCourse != null)
+                        state = CourseListState.SpecificClass;
+                }
+            }
         }
     }
 

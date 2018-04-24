@@ -164,7 +164,12 @@ namespace DSUScheduleBuilder
                 Control_WeekView.SetCourses(courses);
             }
             if (controller == ActiveController.Search) Control_Search.Show();
-            if (controller == ActiveController.AccountSettings) Control_AccountSettings.Show();
+            if (controller == ActiveController.AccountSettings)
+            {
+                Control_AccountSettings.Show();
+                List<Course> courses = HttpRequester.Default.GetEnrolledCourses();
+                Control_AccountSettings.EnrolledCourseView.SetCourses(courses);
+            }
         
         }
         #endregion

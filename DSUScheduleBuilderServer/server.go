@@ -39,7 +39,7 @@ type course struct {
 }
 
 type majorID struct {
-	Id        int    `json:"majorID"`
+	ID        int    `json:"majorID"`
 	Name      string `json:"majorName"`
 	MajorType string `json:"majorType"`
 }
@@ -433,13 +433,31 @@ func addEnrolledClass(userID, key int) (int, error) {
 			if err != nil {
 				return 5, err
 			}
-			var classID string
-			err = db.QueryRow("SELECT classID from enrolledClasses where ((startTime >= $1 AND endTime <= $2) OR (startTime >= $1 AND startTime <= $2) OR (endTime >= $1 AND endTime <= $2)) and userID like $3", timeStart, timeEnd, uidDB).Scan(&classID)
-			if err != sql.ErrNoRows {
-				if err != nil {
-					return 5, err
+			//skip if online class
+			if timeStart != 0 && timeEnd != 0 {
+				//find what days the new class is
+				days := strings.Split(class.DaysOfWeek, "|")
+				var daysOfWeek []string
+				for x := range days {
+					days[x] = strings.Replace(days[x], "|", "", -1)
+					if days[x] != "" {
+						daysOfWeek = append(daysOfWeek, "%"+days[x]+"%")
+					}
 				}
-				return 19, errors.New("Class conflicts with " + classID)
+				for x := 0; x < 6; x = x + 1 {
+					if x >= len(daysOfWeek) {
+						daysOfWeek = append(daysOfWeek, "ZZZZ")
+					}
+				}
+				var classID string
+				err = db.QueryRow("SELECT classID from enrolledClasses where ((startTime >= $1 AND endTime <= $2) OR (startTime >= $1 AND startTime <= $2) OR (endTime >= $1 AND endTime <= $2)) and ((daysOfWeek like $3) or (daysOfWeek like $4) or (daysOfWeek like $5) or (daysOfWeek like $6) or (daysOfWeek like $7)) and userID like $8",
+					timeStart, timeEnd, daysOfWeek[0], daysOfWeek[1], daysOfWeek[2], daysOfWeek[3], daysOfWeek[4], uidDB).Scan(&classID)
+				if err != sql.ErrNoRows {
+					if err != nil {
+						return 5, err
+					}
+					return 19, errors.New("Class conflicts with " + classID)
+				}
 			}
 			class.UserID = "|" + strconv.Itoa(userID) + "|"
 			teachers, errCode, err := getTeacher(emails)
@@ -468,25 +486,40 @@ func addEnrolledClass(userID, key int) (int, error) {
 		}
 		var timeStart int
 		var timeEnd int
-		err = db.QueryRow("SELECT startTime,endTime from enrolledClasses where key=$1 AND userID like $2", key, uidDB).Scan(&timeStart, &timeEnd)
-		if err != nil {
-			return 5, err
-		}
-		var classID string
-		err = db.QueryRow("SELECT classID from enrolledClasses where ((startTime >= $1 AND endTime <= $2) OR (startTime >= $1 AND startTime <= $2) OR (endTime >= $1 AND endTime <= $2)) and userID like $3", timeStart, timeEnd, uidDB).Scan(&classID)
-		if err == sql.ErrNoRows {
-			uidDB = "|" + strconv.Itoa(userID) + "|"
-			currentEnrolled = currentEnrolled + uidDB
-			errCode, err := updateEnrolledClass(strconv.Itoa(key), "userID", currentEnrolled)
-			if err != nil {
-				return errCode, err
+		var days string
+		err = db.QueryRow("SELECT startTime,endTime,daysOfWeek from enrolledClasses where key=$1 AND userID like $2", key, uidDB).Scan(&timeStart, &timeEnd, &days)
+		if timeStart != 0 && timeEnd != 0 {
+			//find what days the new class is
+			days := strings.Split(days, "|")
+			var daysOfWeek []string
+			for x := range days {
+				days[x] = strings.Replace(days[x], "|", "", -1)
+				if days[x] != "" {
+					daysOfWeek = append(daysOfWeek, "%"+days[x]+"%")
+				}
 			}
-			return 200, err
-		} else if err == nil {
-			return 19, errors.New("Class conflicts with " + classID)
-		} else {
-			return 5, err
+			for x := 0; x < 6; x = x + 1 {
+				if x >= len(daysOfWeek) {
+					daysOfWeek = append(daysOfWeek, "ZZZZ")
+				}
+			}
+			var classID string
+			err = db.QueryRow("SELECT classID from enrolledClasses where ((startTime >= $1 AND endTime <= $2) OR (startTime >= $1 AND startTime <= $2) OR (endTime >= $1 AND endTime <= $2)) AND ((daysOfWeek like $3) or (daysOfWeek like $4) or (daysOfWeek like $5) or (daysOfWeek like $6) or (daysOfWeek like $7)) and userID like $8",
+				timeStart, timeEnd, daysOfWeek[0], daysOfWeek[1], daysOfWeek[2], daysOfWeek[3], daysOfWeek[4], uidDB).Scan(&classID)
+			if err != sql.ErrNoRows {
+				if err != nil {
+					return 5, err
+				}
+				return 19, errors.New("Class conflicts with " + classID)
+			}
 		}
+		uidDB = "|" + strconv.Itoa(userID) + "|"
+		currentEnrolled = currentEnrolled + uidDB
+		errCode, err := updateEnrolledClass(strconv.Itoa(key), "userID", currentEnrolled)
+		if err != nil {
+			return errCode, err
+		}
+		return 200, err
 	} else if err != nil {
 		return 5, err
 	} else {
@@ -731,7 +764,7 @@ func main() {
 
 			for rows.Next() {
 				var major majorID
-				rows.Scan(&major.Id, &major.Name, &major.MajorType)
+				rows.Scan(&major.ID, &major.Name, &major.MajorType)
 				majorsList = append(majorsList, major)
 			}
 
@@ -883,7 +916,54 @@ func main() {
 				}
 				c.JSON(200, gin.H{"success": 1})
 			})
+			users.POST("/dropEnrolledCourse", func(c *gin.Context) {
+				uuid := c.PostForm("uuid")
+				var userID int
+				err := db.QueryRow("SELECT uid FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&userID)
 
+				if err == sql.ErrNoRows {
+					currentError := createErrorStruct(2, c.Request.URL.String(), "3", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				if err != nil {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
+					c.JSON(500, currentError)
+					return
+				}
+				courseID := c.PostForm("courseID")
+				param := "%|" + strconv.Itoa(userID) + "|%"
+				var currentCourseID string
+				//check to make sure user is enrolled in the course
+				err = db.QueryRow("SELECT userID from EnrolledClasses where userID like $1 and key=$2", param, courseID).Scan(&currentCourseID)
+				if err == sql.ErrNoRows {
+					currentError := createErrorStruct(26, c.Request.URL.String(), "6", errors.New("User in not enrolled in this class"))
+					c.JSON(500, currentError)
+					return
+				} else if err != nil {
+					currentError := createErrorStruct(5, c.Request.URL.String(), "20", err)
+					c.JSON(500, currentError)
+					return
+				}
+				newUserID := strings.Replace(currentCourseID, "|"+strconv.Itoa(userID)+"|", "", -1)
+				if newUserID == "" {
+					_, err = db.Exec("DELETE from EnrolledClasses where key=$1", courseID)
+					if err != nil {
+						currentError := createErrorStruct(22, c.Request.URL.String(), "8", err)
+						c.JSON(500, currentError)
+						return
+					}
+				} else {
+					_, err = db.Exec("UPDATE EnrolledClasses SET userID=$1 where key=$2", newUserID, courseID)
+					if err != nil {
+						currentError := createErrorStruct(23, c.Request.URL.String(), "8", err)
+						c.JSON(500, currentError)
+						return
+					}
+				}
+				c.JSON(200, gin.H{"success": 1})
+			})
 			users.POST("/enroll/", func(c *gin.Context) {
 				uuid := c.PostForm("uuid")
 				var userID int
