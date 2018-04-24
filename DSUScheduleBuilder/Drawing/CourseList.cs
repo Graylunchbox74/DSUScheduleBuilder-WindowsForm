@@ -41,6 +41,12 @@ namespace DSUScheduleBuilder.Drawing
         public virtual void SetCourses(List<T> cs)
         {
             this.courses = cs;
+            if (courses == null)
+            {
+                this.totalPages = 0;
+                this.currPage = 0;
+                return;
+            }
             this.totalPages = (this.courses.Count - 1) / 5;
             this.currPage = 0;
 
