@@ -439,10 +439,10 @@ namespace DSUScheduleBuilder.Network {
         {
             var req = new RestRequest(Method.POST)
             {
-                Resource = "" // PUT SOMETHING HERE
+                Resource = "api/user/dropEnrolledCourse"
             };
             req.AddParameter("uuid", _session_token);
-            req.AddParameter("key", courseKey);
+            req.AddParameter("courseID", courseKey);
 
             var res = _client.Execute<SuccessResponse>(req);
             SuccessResponse succ = res.Data;

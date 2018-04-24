@@ -182,22 +182,18 @@ namespace DSUScheduleBuilder.Drawing
 
         protected bool CheckBottomBarClick(int mx, int my)
         {
-            Console.WriteLine(mx);
-            Console.WriteLine(my);
             if (courses == null) return true;
             if (backButtonRect.Contains(mx, my))
             {
-                this.currPage -= 1;
+                currPage -= 1;
                 if (currPage < 0) currPage = 0;
-                Console.WriteLine("BACK PRESSED");
                 return true;
             }
 
             if (forwardButtonRect.Contains(mx, my))
             {
-                this.currPage += 1;
+                currPage += 1;
                 if (currPage > totalPages) currPage = totalPages;
-                Console.WriteLine("FORWARD PRESSED");
                 return true;
             }
             return false;
@@ -210,8 +206,9 @@ namespace DSUScheduleBuilder.Drawing
                 if (my < this.Size.Height - this.bottomBarHeight)
                 {
                     int index = (my / cellHeight) + currPage * 5;
-                    selectedCourse = courses[index];
-                    state = CourseListState.SpecificClass;
+                    selectedCourse = courses?[index];
+                    if (selectedCourse != null)
+                        state = CourseListState.SpecificClass;
                 }
             }
         }

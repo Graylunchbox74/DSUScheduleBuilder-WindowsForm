@@ -93,6 +93,10 @@ namespace DSUScheduleBuilder.Drawing
 
                     return true;
                 });
+
+                List<Course> courses = HttpRequester.Default.GetEnrolledCourses();
+                SetCourses(courses);
+                state = CourseListState.ClassList;
             }
         }
     }

@@ -12,6 +12,7 @@ namespace DSUScheduleBuilder.Drawing
 
     class CourseView
     {
+        private static Random r = new Random(0xB00B5);
         private WeekView weekView;
 
         private int x, y, w, h;
@@ -24,8 +25,6 @@ namespace DSUScheduleBuilder.Drawing
         {
             this.weekView = wv;
             days = new List<int>();
-
-            Random r = new Random();
             color = new SolidBrush(Color.FromArgb(255, 150 + (int)(r.NextDouble() * 100)
                                                      , 150 + (int)(r.NextDouble() * 100)
                                                      , 150 + (int)(r.NextDouble() * 100)));
