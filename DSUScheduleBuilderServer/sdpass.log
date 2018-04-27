@@ -128,3 +128,20 @@
 2018-04-24 00:47:48 - /api/user/logout/, 3: sql: no rows in result set
 2018-04-24 00:48:01 - /api/user/logout/, 3: sql: no rows in result set
 2018-04-24 00:50:40 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-24 13:03:57 - /api/user/login/, 3: sql: no rows in result set
+2018-04-24 13:04:31 - /api/user/login/, 3: sql: no rows in result set
+2018-04-24 13:04:37 - /api/user/login/, 3: sql: no rows in result set
+2018-04-24 13:04:42 - /api/user/login/, 3: sql: no rows in result set
+2018-04-24 14:14:02 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-24 16:43:30 - /api/user/login/, 3: sql: no rows in result set
+2018-04-24 16:43:38 - /api/user/login/, 3: sql: no rows in result set
+2018-04-24 16:44:27 - /api/user/login/, 4: User already has a uuid
+2018-04-24 16:44:40 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-24 16:50:32 - /api/user/login/, 3: sql: no rows in result set
+2018-04-24 16:50:38 - /api/user/login/, 3: sql: no rows in result set
+2018-04-24 16:50:48 - /api/user/login/, 3: sql: no rows in result set
+2018-04-24 16:50:53 - /api/user/login/, 3: sql: no rows in result set
+2018-04-24 16:50:57 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-25 22:48:53 - /api/user/enroll/, 4: Class conflicts with CSC-314
+2018-04-25 22:52:29 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-26 00:36:24 - /api/courses/previous/test, 3: sql: no rows in result set
