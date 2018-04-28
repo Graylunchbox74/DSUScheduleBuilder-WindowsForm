@@ -895,10 +895,23 @@ func main() {
 					c.JSON(500, currentError)
 					return
 				}
-				//currentPassword := c.PostForm("currentPassword")
-				//select current password and make sure they match
-
+				currentPassword := c.PostForm("currentPassword")
 				newPassword := c.PostForm("newPassword")
+
+				//select current password and make sure they match
+				var userPassword string
+				err = db.QueryRow("select password from users where uid=$1", userID).Scan(&userPassword)
+				if err != nil {
+					currentError := createErrorStruct(20, c.Request.URL.String(), "1", err)
+					c.JSON(500, currentError)
+					return
+				}
+				if userPassword != currentPassword {
+					currentError := createErrorStruct(20, c.Request.URL.String(), "1", errors.New("Password does match users current password"))
+					c.JSON(500, currentError)
+					return
+				}
+
 				_, err = db.Exec("UPDATE users SET password=$1 where uid=$2", newPassword, userID)
 				if err != nil {
 					currentError := createErrorStruct(20, c.Request.URL.String(), "1", err)

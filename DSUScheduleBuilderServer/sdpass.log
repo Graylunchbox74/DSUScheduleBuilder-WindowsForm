@@ -224,3 +224,6 @@
 2018-04-28 02:37:05 - /api/user/logout/, 3: sql: no rows in result set
 2018-04-28 02:39:08 - /api/user/logout/, 3: sql: no rows in result set
 2018-04-28 02:41:04 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-28 02:49:13 - /api/user/login/, 4: User already has a uuid
+2018-04-28 02:49:32 - /api/user/login/, 2: Password does not match
+2018-04-28 02:49:39 - /api/user/logout/, 3: sql: no rows in result set
