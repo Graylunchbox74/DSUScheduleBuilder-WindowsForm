@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Text.RegularExpressions;
 
 namespace DSUScheduleBuilder.Main_Menu
 {
@@ -79,6 +80,19 @@ namespace DSUScheduleBuilder.Main_Menu
             CourseNumTextBox.Text = "";
             IlnTextBox.Text = "";
             timeCheckbox.Checked = false;
+        }
+
+        private void CourseNumTextBox_TextChanged(object sender, EventArgs e)
+        {
+            //if (!Regex.IsMatch(CourseNumTextBox.Text, @"[0-9]+"))
+            //{
+            //    CourseNumTextBox.Text.Remove(CourseNumTextBox.Text.Length - 1);
+            //}
+        }
+
+        private void PrefixTextBox_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

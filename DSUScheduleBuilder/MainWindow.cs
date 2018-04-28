@@ -169,6 +169,9 @@ namespace DSUScheduleBuilder
                 Control_AccountSettings.Show();
                 List<Course> courses = HttpRequester.Default.GetEnrolledCourses();
                 Control_AccountSettings.EnrolledCourseView.SetCourses(courses);
+
+                List<PreviousCourse> pCourses = HttpRequester.Default.GetPreviousCourses();
+                Control_AccountSettings.PreviousCourseView.SetCourses(pCourses);
             }
         
         }

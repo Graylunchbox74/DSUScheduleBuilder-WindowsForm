@@ -14,8 +14,8 @@ namespace DSUScheduleBuilder.Models
         public string StartDate;
         public string EndDate;
         public int Credits;
-        public string CourseID; //CSC-150
         public string CourseName;
+        public string CourseID;
         public string Teacher;
         public string Location;
         public string DaysOfWeek;

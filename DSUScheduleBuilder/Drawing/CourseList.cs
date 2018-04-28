@@ -21,6 +21,7 @@ namespace DSUScheduleBuilder.Drawing
     public abstract class CourseList<T> : Control where T : Course
     {
         protected List<T> courses;
+        protected int numbersPerPage;
         protected int totalPages;
         protected int currPage;
 
@@ -36,6 +37,7 @@ namespace DSUScheduleBuilder.Drawing
 
         public CourseList()
         {
+            numbersPerPage = 5;
         }
 
         public virtual void SetCourses(List<T> cs)
@@ -47,18 +49,19 @@ namespace DSUScheduleBuilder.Drawing
                 this.currPage = 0;
                 return;
             }
-            this.totalPages = (this.courses.Count - 1) / 5;
+            this.totalPages = (this.courses.Count - 1) / numbersPerPage;
             this.currPage = 0;
 
             this.bottomBarHeight = 32;
             this.cellWidth = this.Size.Width;
-            this.cellHeight = (this.Size.Height - bottomBarHeight) / 5;
+            this.cellHeight = (this.Size.Height - bottomBarHeight) / numbersPerPage;
             if (cellHeight == 0) cellHeight = 1;
 
             int bx = (this.Size.Width / 2 - 32) / 2;
             backButtonRect = new Rectangle(bx, this.Size.Height - this.bottomBarHeight, 32, 32);
             bx += this.Size.Width / 2;
             forwardButtonRect = new Rectangle(bx, this.Size.Height - this.bottomBarHeight, 32, 32);
+            this.Refresh();
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -115,11 +118,11 @@ namespace DSUScheduleBuilder.Drawing
         {
             if (courses != null)
             {
-                int t = courses.Count - currPage * 5;
-                int len = 5 < courses.Count ? (t < 5 ? t : 5) : courses.Count;
+                int t = courses.Count - currPage * numbersPerPage;
+                int len = 5 < courses.Count ? (t < numbersPerPage ? t : numbersPerPage) : courses.Count;
                 for (int i = 0; i < len; i++)
                 {
-                    drawCourse(g, i, courses[i + currPage * 5]);
+                    drawCourse(g, i, courses[i + currPage * numbersPerPage]);
                 }
             }
 
@@ -129,9 +132,9 @@ namespace DSUScheduleBuilder.Drawing
             }
         }
 
-        private void drawCourse(Graphics g, int number, T course)
+        protected virtual void drawCourse(Graphics g, int number, T course)
         {
-            g.FillRectangle(number % 2 == 0 ? Brushes.Aqua : Brushes.Aquamarine, 0, number * cellHeight, Size.Width, cellHeight);
+            g.FillRectangle(number % 2 == 0 ? Brushes.Blue : Brushes.Gold, 0, number * cellHeight, Size.Width, cellHeight);
 
             Font font = new Font(FontFamily.GenericSansSerif, 14);
             SizeF textSize;
@@ -211,7 +214,9 @@ namespace DSUScheduleBuilder.Drawing
             {
                 if (my < this.Size.Height - this.bottomBarHeight)
                 {
-                    int index = (my / cellHeight) + currPage * 5;
+                    int index = (my / cellHeight) + currPage * numbersPerPage;
+                    if (index >= courses.Count) return;
+
                     selectedCourse = courses?[index];
                     if (selectedCourse != null)
                         state = CourseListState.SpecificClass;

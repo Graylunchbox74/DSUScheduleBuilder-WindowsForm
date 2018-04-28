@@ -6,9 +6,11 @@ using System.Drawing;
 using System.Windows.Forms;
 using DSUScheduleBuilder.Models;
 
-namespace DSUScheduleBuilder.Drawing {
+namespace DSUScheduleBuilder.Drawing
+{
 
-    public class WeekView : Control {
+    public class WeekView : Control
+    {
         private List<CourseView> courses;
 
         public readonly int DayOfWeekHeight = 32;
@@ -28,7 +30,8 @@ namespace DSUScheduleBuilder.Drawing {
         {
         }
 
-        public void SetCourses(List<Course> courses) {
+        public void SetCourses(List<Course> courses)
+        {
             if (courses != null)
             {
                 this.courses = courses.ConvertAll<CourseView>((Course c) =>
@@ -40,10 +43,12 @@ namespace DSUScheduleBuilder.Drawing {
             }
         }
 
-        protected override void OnPaint(PaintEventArgs e) {
+        protected override void OnPaint(PaintEventArgs e)
+        {
 
             //Draw the days of the week at the top
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 5; i++)
+            {
                 _drawEmptyCell(e.Graphics, new Rectangle(i * CellWidth + TimeSlotWidth, 0, CellWidth, DayOfWeekHeight), 2.0f);
 
                 Font drawFont = SystemFonts.DefaultFont;
@@ -57,14 +62,16 @@ namespace DSUScheduleBuilder.Drawing {
 
             //Draw the lines between times (horizontal)
             Pen linePen;
-            for (int i = 0; i <= 15; i++) {
+            for (int i = 0; i <= 15; i++)
+            {
                 linePen = new Pen(Brushes.Black, 1);
 
                 float y = i * TimeSlotHeight + DayOfWeekHeight;
                 e.Graphics.DrawLine(linePen, 0, y, this.Size.Width - 2, y);
             }
 
-            for (int i = 0; i <= 14; i++) {
+            for (int i = 0; i <= 14; i++)
+            {
                 string msg = (i + 8).ToString() + ":00";
 
                 Font drawFont = SystemFonts.DefaultFont;
@@ -95,7 +102,8 @@ namespace DSUScheduleBuilder.Drawing {
             }
         }
 
-        private void _drawEmptyCell(Graphics g, Rectangle r, float padding = 1.0f) {
+        private void _drawEmptyCell(Graphics g, Rectangle r, float padding = 1.0f)
+        {
             g.FillRectangle(Brushes.Black, r);
             g.FillRectangle(Brushes.Aqua, r.X + padding, r.Y + padding, r.Width - 2 * padding, r.Height - 2 * padding);
         }

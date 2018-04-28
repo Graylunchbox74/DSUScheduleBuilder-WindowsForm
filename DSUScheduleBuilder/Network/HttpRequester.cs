@@ -52,7 +52,7 @@ namespace DSUScheduleBuilder.Network {
         }
     }
 
-    class SingleCourseResponse : Errorable
+    class CourseResponse : Errorable
     {
         public int key { get; set; }
         public int startTime { get; set; }
@@ -85,9 +85,9 @@ namespace DSUScheduleBuilder.Network {
         }
     }
 
-    class CoursesResponse : Errorable
+    class FullCourseResponse : Errorable
     {
-        public List<SingleCourseResponse> classes { get; set; }
+        public List<CourseResponse> classes { get; set; }
 
         public List<Course> ToCourses()
         {
@@ -181,6 +181,20 @@ namespace DSUScheduleBuilder.Network {
         public List<AvailableCourse> ToCourses()
         {
             return classes?.ConvertAll<AvailableCourse>((AvailableCourseResponse acr) => acr.ToAvailableCourse());
+        }
+    }
+    
+
+    class FullPreviousCourseResponse : Errorable
+    {
+        public List<string> classes { get; set; }
+
+        public List<PreviousCourse> ToCourses()
+        {
+            return classes?.ConvertAll<PreviousCourse>((string cid) => new PreviousCourse()
+            {
+                CourseID = cid
+            });
         }
     }
 
@@ -303,14 +317,14 @@ namespace DSUScheduleBuilder.Network {
             return user.ToUser();
         }
         
-        public List<Course> GetPreviousCourses()
+        public List<PreviousCourse> GetPreviousCourses()
         {
             var getRequest = new RestRequest(Method.GET)
             {
                 Resource = "api/courses/previous/" + _session_token
             };
-            var response = _client.Execute<CoursesResponse>(getRequest);
-            CoursesResponse courses = response.Data;
+            var response = _client.Execute<FullPreviousCourseResponse>(getRequest);
+            FullPreviousCourseResponse courses = response.Data;
 
             if (courses == null)
             {
@@ -321,11 +335,10 @@ namespace DSUScheduleBuilder.Network {
             if (courses.errorCode != null)
             {
                 Errors.Code(courses);
-                //Properly handle errors
                 return null;
             }
 
-            return courses.ToCourses();
+            return courses?.ToCourses();
         }
 
         public List<Course> GetEnrolledCourses()
@@ -334,8 +347,8 @@ namespace DSUScheduleBuilder.Network {
             {
                 Resource = "api/courses/enrolled/" + _session_token
             };
-            var response = _client.Execute<CoursesResponse>(getRequest);
-            CoursesResponse courses = response.Data;
+            var response = _client.Execute<FullCourseResponse>(getRequest);
+            FullCourseResponse courses = response.Data;
 
             if (courses == null)
             {
@@ -450,6 +463,46 @@ namespace DSUScheduleBuilder.Network {
             if (succ == null)
             {
                 Errors.BadData("Parsing drop course failed");
+                return;
+            }
+
+            callback(succ);
+        }
+
+        public void AddPreviousCourse(string courseID, Func<SuccessResponse, bool> callback)
+        {
+            var req = new RestRequest(Method.POST)
+            {
+                Resource = "api/user/addPrevious"
+            };
+            req.AddParameter("uuid", _session_token);
+            req.AddParameter("courseID", courseID);
+            var res = _client.Execute<SuccessResponse>(req);
+            SuccessResponse succ = res.Data;
+
+            if (succ == null)
+            {
+                Errors.BadData("Parsing add previous class failed");
+                return;
+            }
+
+            callback(succ);
+        }
+
+        public void DeletePreviousCourse(string courseID, Func<SuccessResponse, bool> callback)
+        {
+            var req = new RestRequest(Method.POST)
+            {
+                Resource = "api/user/deletePrevious"
+            };
+            req.AddParameter("uuid", _session_token);
+            req.AddParameter("courseID", courseID);
+            var res = _client.Execute<SuccessResponse>(req);
+            SuccessResponse succ = res.Data;
+
+            if (succ == null)
+            {
+                Errors.BadData("Parsing delete previous class failed");
                 return;
             }
 

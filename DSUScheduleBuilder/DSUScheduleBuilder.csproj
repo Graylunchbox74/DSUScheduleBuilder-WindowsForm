@@ -65,6 +65,9 @@
     <Compile Include="Drawing\EnrolledCouresView.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Drawing\PreviousCourseView.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -91,6 +94,7 @@
     </Compile>
     <Compile Include="Models\AvailableCourse.cs" />
     <Compile Include="Models\Course.cs" />
+    <Compile Include="Models\PreviousCourse.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Network\HttpRequester.cs" />
     <Compile Include="Program.cs" />
