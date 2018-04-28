@@ -24,7 +24,8 @@ var errorChannel chan locationalError
 //holds the information for a single course being/has been offered
 type course struct {
 	UserID    string `json:"uid"`
-	Key       int    `json:"key"`
+	Key       int    `json:"key"`var errorChannel chan locationalError
+
 	StartTime int    `json:"startTime"`
 	EndTime   int    `json:"endTime"`
 	Credits   int    `json:"credits"`
