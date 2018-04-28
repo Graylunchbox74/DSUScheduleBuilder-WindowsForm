@@ -174,7 +174,7 @@ func getUserID(name string) int {
 
 func isAdmin(uid int) (bool, int, error) {
 	var grouping string
-	err := db.QueryRow("SELECT group from users where uid=$1", uid).Scan(&grouping)
+	err := db.QueryRow("SELECT grouping from users where uid=$1", uid).Scan(&grouping)
 	if err == sql.ErrNoRows {
 		return false, 5, errors.New("Error user with this id does not exist")
 	}
@@ -241,7 +241,7 @@ func newUser(fname, lname, email, password string) (int, error) {
 
 	_, err = db.Exec(`
 		INSERT INTO users 
-		(fname,lname,email,password,majors,minors, group)
+		(fname,lname,email,password,majors,minors, grouping)
 		values($1,$2,$3,$4,$5,$6,$7)`, fname, lname, email, password, "", "", "user",
 	)
 
