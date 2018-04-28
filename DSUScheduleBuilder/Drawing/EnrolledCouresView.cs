@@ -88,7 +88,7 @@ namespace DSUScheduleBuilder.Drawing
 
                     if (succ?.success == 1)
                     {
-                        MessageBox.Show("Successfully dropped course");
+                        MessageBox.Show("Successfully dropped course.");
                     }
 
                     return true;

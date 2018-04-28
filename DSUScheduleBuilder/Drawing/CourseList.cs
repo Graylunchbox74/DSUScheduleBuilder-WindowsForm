@@ -79,7 +79,7 @@ namespace DSUScheduleBuilder.Drawing
             }
         }
 
-        private void drawSpecificClass(Graphics g)
+        protected virtual void drawSpecificClass(Graphics g)
         {
             if (selectedCourse == null)
             {
@@ -87,7 +87,7 @@ namespace DSUScheduleBuilder.Drawing
                 return;
             }
 
-            g.FillRectangle(Brushes.Aqua, 0, 0, this.Size.Width, this.Size.Height);
+            g.FillRectangle(Brushes.Gold, 0, 0, this.Size.Width, this.Size.Height);
 
             Font font = new Font(FontFamily.GenericSansSerif, 14);
             string text = selectedCourse.CourseID;

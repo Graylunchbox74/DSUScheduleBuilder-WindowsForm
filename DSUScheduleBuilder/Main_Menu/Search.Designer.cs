@@ -124,7 +124,7 @@
             // 
             // searchButton
             // 
-            this.searchButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.searchButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.searchButton.Location = new System.Drawing.Point(30, 422);
             this.searchButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.searchButton.Name = "searchButton";

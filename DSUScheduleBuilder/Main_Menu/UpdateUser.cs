@@ -68,5 +68,33 @@ namespace DSUScheduleBuilder.Main_Menu
             EnrolledCourseView.Refresh();
             PreviousCourseView.Refresh();
         }
+
+        private void PreviousCourseView_Click(object sender, EventArgs e)
+        {
+            PreviousCourseView.OnClickEvent(e);
+        }
+
+        private void UpdatePasswordBtn_Click(object sender, EventArgs e)
+        {
+            if (PasswordTxt.Text != CurrPasswordTxt.Text)
+            {
+                MessageBox.Show("Passwords must match.", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
+            HttpRequester.Default.ChangePassword(CurrPasswordTxt.Text, PasswordTxt.Text, (SuccessResponse succ) =>
+            {
+                if (succ.errorCode != null)
+                {
+                    MessageBox.Show("Error " + succ.errorCode + " : " + succ.errorMessage);
+                }
+
+                if (succ.success == 1)
+                {
+                    MessageBox.Show("Succesfully changed password.");
+                }
+
+                return true;
+            });
+        }
     }
 }

@@ -153,7 +153,7 @@
             // 
             // newUserButton
             // 
-            this.newUserButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.newUserButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.newUserButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.newUserButton.Location = new System.Drawing.Point(351, 291);
             this.newUserButton.Margin = new System.Windows.Forms.Padding(2);
@@ -166,7 +166,7 @@
             // 
             // backButton
             // 
-            this.backButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.backButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.backButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.backButton.Location = new System.Drawing.Point(351, 359);
             this.backButton.Margin = new System.Windows.Forms.Padding(2);

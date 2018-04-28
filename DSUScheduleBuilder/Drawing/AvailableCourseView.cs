@@ -82,32 +82,35 @@ namespace DSUScheduleBuilder.Drawing
 
             if (enrollButtonRect.Contains(mx, my))
             {
-                HttpRequester.Default.EnrollInCourse(selectedCourse.Key, (succ) =>
+                HttpRequester.Default.EnrollInCourse(selectedCourse.Key, (enr) =>
                 {
-                    if (succ.errorCode != null)
+                    if (enr.errorCode != null)
                     {
-                        switch (succ.errorCode)
+                        switch (enr.errorCode)
                         {
                             default:
-                                MessageBox.Show("Error " + succ.errorCode + " : " + succ.errorMessage);
+                                MessageBox.Show("Error " + enr.errorCode + " : " + enr.errorMessage);
                                 break;
                         }
                         return false;
                     }
-
-                    if (succ.success != 1)
-                    {
-                        MessageBox.Show("Enrolling in class failed.");
-                        return false;
-                    }
-
-                    if (succ.success == 1)
+                    else
                     {
                         MessageBox.Show("Successfully enrolled in class.");
+
+                        if (enr.classes?[0]?.required?.Count > 0)
+                        {
+                            DialogResult ans = MessageBox.Show("There are required courses that must be taken concurrently with this course: " + enr.classes?[0]?.required?.Aggregate<string>((a,b) => a + ", " + b));
+                        }
+                        else if (enr.classes?[0]?.recommended?.Count > 0)
+                        {
+                            DialogResult ans = MessageBox.Show("There are recommended courses that should be taken concurrently with this course: " + enr.classes?[0]?.recommended?.Aggregate<string>((a, b) => a + ", " + b));
+                        }
                     }
 
                     return true;
                 });
+                state = CourseListState.ClassList;
             }
         }
         #endregion

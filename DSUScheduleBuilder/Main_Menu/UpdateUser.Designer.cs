@@ -29,18 +29,19 @@
         private void InitializeComponent()
         {
             this.acctOptionsLabel = new System.Windows.Forms.Label();
-            this.userNameLabel = new System.Windows.Forms.Label();
+            this.currPasswordLabel = new System.Windows.Forms.Label();
             this.passwordLabel = new System.Windows.Forms.Label();
             this.ConfirmLabel = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.CurrPasswordTxt = new System.Windows.Forms.TextBox();
+            this.PasswordTxt = new System.Windows.Forms.TextBox();
+            this.ConfirmPasswordTxt = new System.Windows.Forms.TextBox();
             this.ViewEnrolledBtn = new System.Windows.Forms.Button();
             this.ViewPreviousBtn = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.AddPreviousCourseBtn = new System.Windows.Forms.Button();
             this.PreviousCourseIdTxt = new System.Windows.Forms.TextBox();
+            this.UpdatePasswordBtn = new System.Windows.Forms.Button();
             this.PreviousCourseView = new DSUScheduleBuilder.Drawing.PreviousCourseView();
             this.EnrolledCourseView = new DSUScheduleBuilder.Drawing.EnrolledCouresView();
             this.SuspendLayout();
@@ -56,22 +57,22 @@
             this.acctOptionsLabel.TabIndex = 0;
             this.acctOptionsLabel.Text = "Account Settings";
             // 
-            // userNameLabel
+            // currPasswordLabel
             // 
-            this.userNameLabel.AutoSize = true;
-            this.userNameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.userNameLabel.Location = new System.Drawing.Point(24, 63);
-            this.userNameLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.userNameLabel.Name = "userNameLabel";
-            this.userNameLabel.Size = new System.Drawing.Size(81, 18);
-            this.userNameLabel.TabIndex = 1;
-            this.userNameLabel.Text = "Username:";
+            this.currPasswordLabel.AutoSize = true;
+            this.currPasswordLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.currPasswordLabel.Location = new System.Drawing.Point(24, 63);
+            this.currPasswordLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.currPasswordLabel.Name = "currPasswordLabel";
+            this.currPasswordLabel.Size = new System.Drawing.Size(132, 18);
+            this.currPasswordLabel.TabIndex = 1;
+            this.currPasswordLabel.Text = "Current Password:";
             // 
             // passwordLabel
             // 
             this.passwordLabel.AutoSize = true;
             this.passwordLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.passwordLabel.Location = new System.Drawing.Point(24, 95);
+            this.passwordLabel.Location = new System.Drawing.Point(77, 94);
             this.passwordLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.passwordLabel.Name = "passwordLabel";
             this.passwordLabel.Size = new System.Drawing.Size(79, 18);
@@ -82,42 +83,41 @@
             // 
             this.ConfirmLabel.AutoSize = true;
             this.ConfirmLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ConfirmLabel.Location = new System.Drawing.Point(24, 120);
+            this.ConfirmLabel.Location = new System.Drawing.Point(24, 131);
             this.ConfirmLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.ConfirmLabel.Name = "ConfirmLabel";
-            this.ConfirmLabel.Size = new System.Drawing.Size(132, 18);
+            this.ConfirmLabel.Size = new System.Drawing.Size(136, 18);
             this.ConfirmLabel.TabIndex = 3;
-            this.ConfirmLabel.Text = "Confirm Password";
+            this.ConfirmLabel.Text = "Confirm Password:";
             // 
-            // textBox1
+            // CurrPasswordTxt
             // 
-            this.textBox1.Location = new System.Drawing.Point(161, 63);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(2);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ReadOnly = true;
-            this.textBox1.ShortcutsEnabled = false;
-            this.textBox1.Size = new System.Drawing.Size(150, 20);
-            this.textBox1.TabIndex = 4;
+            this.CurrPasswordTxt.Location = new System.Drawing.Point(161, 61);
+            this.CurrPasswordTxt.Margin = new System.Windows.Forms.Padding(2);
+            this.CurrPasswordTxt.Name = "CurrPasswordTxt";
+            this.CurrPasswordTxt.ShortcutsEnabled = false;
+            this.CurrPasswordTxt.Size = new System.Drawing.Size(150, 20);
+            this.CurrPasswordTxt.TabIndex = 4;
             // 
-            // textBox2
+            // PasswordTxt
             // 
-            this.textBox2.Location = new System.Drawing.Point(161, 95);
-            this.textBox2.Margin = new System.Windows.Forms.Padding(2);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(150, 20);
-            this.textBox2.TabIndex = 5;
+            this.PasswordTxt.Location = new System.Drawing.Point(161, 95);
+            this.PasswordTxt.Margin = new System.Windows.Forms.Padding(2);
+            this.PasswordTxt.Name = "PasswordTxt";
+            this.PasswordTxt.Size = new System.Drawing.Size(150, 20);
+            this.PasswordTxt.TabIndex = 5;
             // 
-            // textBox3
+            // ConfirmPasswordTxt
             // 
-            this.textBox3.Location = new System.Drawing.Point(161, 122);
-            this.textBox3.Margin = new System.Windows.Forms.Padding(2);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(150, 20);
-            this.textBox3.TabIndex = 6;
+            this.ConfirmPasswordTxt.Location = new System.Drawing.Point(161, 132);
+            this.ConfirmPasswordTxt.Margin = new System.Windows.Forms.Padding(2);
+            this.ConfirmPasswordTxt.Name = "ConfirmPasswordTxt";
+            this.ConfirmPasswordTxt.Size = new System.Drawing.Size(150, 20);
+            this.ConfirmPasswordTxt.TabIndex = 6;
             // 
             // ViewEnrolledBtn
             // 
-            this.ViewEnrolledBtn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.ViewEnrolledBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ViewEnrolledBtn.Location = new System.Drawing.Point(470, 546);
             this.ViewEnrolledBtn.Margin = new System.Windows.Forms.Padding(2);
             this.ViewEnrolledBtn.Name = "ViewEnrolledBtn";
@@ -129,7 +129,7 @@
             // 
             // ViewPreviousBtn
             // 
-            this.ViewPreviousBtn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.ViewPreviousBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ViewPreviousBtn.Location = new System.Drawing.Point(666, 546);
             this.ViewPreviousBtn.Margin = new System.Windows.Forms.Padding(2);
             this.ViewPreviousBtn.Name = "ViewPreviousBtn";
@@ -157,11 +157,12 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(216, 18);
             this.label2.TabIndex = 14;
-            this.label2.Text = "Previous Course ID (CSC-150):";
+            this.label2.Text = "Previous Course ID (CSC-105):";
             // 
             // AddPreviousCourseBtn
             // 
-            this.AddPreviousCourseBtn.Location = new System.Drawing.Point(24, 485);
+            this.AddPreviousCourseBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.AddPreviousCourseBtn.Location = new System.Drawing.Point(66, 485);
             this.AddPreviousCourseBtn.Name = "AddPreviousCourseBtn";
             this.AddPreviousCourseBtn.Size = new System.Drawing.Size(216, 35);
             this.AddPreviousCourseBtn.TabIndex = 15;
@@ -176,6 +177,17 @@
             this.PreviousCourseIdTxt.Size = new System.Drawing.Size(64, 20);
             this.PreviousCourseIdTxt.TabIndex = 16;
             // 
+            // UpdatePasswordBtn
+            // 
+            this.UpdatePasswordBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.UpdatePasswordBtn.Location = new System.Drawing.Point(66, 171);
+            this.UpdatePasswordBtn.Name = "UpdatePasswordBtn";
+            this.UpdatePasswordBtn.Size = new System.Drawing.Size(216, 35);
+            this.UpdatePasswordBtn.TabIndex = 18;
+            this.UpdatePasswordBtn.Text = "Update Password";
+            this.UpdatePasswordBtn.UseVisualStyleBackColor = true;
+            this.UpdatePasswordBtn.Click += new System.EventHandler(this.UpdatePasswordBtn_Click);
+            // 
             // PreviousCourseView
             // 
             this.PreviousCourseView.Location = new System.Drawing.Point(414, 63);
@@ -184,6 +196,7 @@
             this.PreviousCourseView.TabIndex = 17;
             this.PreviousCourseView.Text = "previousCourseView1";
             this.PreviousCourseView.Visible = false;
+            this.PreviousCourseView.Click += new System.EventHandler(this.PreviousCourseView_Click);
             // 
             // EnrolledCourseView
             // 
@@ -198,6 +211,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.UpdatePasswordBtn);
             this.Controls.Add(this.PreviousCourseView);
             this.Controls.Add(this.PreviousCourseIdTxt);
             this.Controls.Add(this.AddPreviousCourseBtn);
@@ -206,12 +220,12 @@
             this.Controls.Add(this.EnrolledCourseView);
             this.Controls.Add(this.ViewPreviousBtn);
             this.Controls.Add(this.ViewEnrolledBtn);
-            this.Controls.Add(this.textBox3);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.ConfirmPasswordTxt);
+            this.Controls.Add(this.PasswordTxt);
+            this.Controls.Add(this.CurrPasswordTxt);
             this.Controls.Add(this.ConfirmLabel);
             this.Controls.Add(this.passwordLabel);
-            this.Controls.Add(this.userNameLabel);
+            this.Controls.Add(this.currPasswordLabel);
             this.Controls.Add(this.acctOptionsLabel);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "UpdateUser";
@@ -224,12 +238,12 @@
         #endregion
 
         private System.Windows.Forms.Label acctOptionsLabel;
-        private System.Windows.Forms.Label userNameLabel;
+        private System.Windows.Forms.Label currPasswordLabel;
         private System.Windows.Forms.Label passwordLabel;
         private System.Windows.Forms.Label ConfirmLabel;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.TextBox CurrPasswordTxt;
+        private System.Windows.Forms.TextBox PasswordTxt;
+        private System.Windows.Forms.TextBox ConfirmPasswordTxt;
         private System.Windows.Forms.Button ViewEnrolledBtn;
         private System.Windows.Forms.Button ViewPreviousBtn;
         public Drawing.EnrolledCouresView EnrolledCourseView;
@@ -238,5 +252,6 @@
         private System.Windows.Forms.Button AddPreviousCourseBtn;
         private System.Windows.Forms.TextBox PreviousCourseIdTxt;
         public Drawing.PreviousCourseView PreviousCourseView;
+        private System.Windows.Forms.Button UpdatePasswordBtn;
     }
 }

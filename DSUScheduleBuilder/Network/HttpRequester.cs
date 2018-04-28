@@ -108,6 +108,17 @@ namespace DSUScheduleBuilder.Network {
         public int success { get; set; }
     }
 
+    class EnrollResponse
+    {
+        public List<string> recommended { get; set; }
+        public List<string> required { get; set; }
+    }
+
+    class FullEnrollResponse : Errorable
+    {
+        public List<EnrollResponse> classes { get; set; }
+    }
+
     class AvailableCourseResponse
     {
         public string sectionID { get; set; }
@@ -291,6 +302,27 @@ namespace DSUScheduleBuilder.Network {
             callback(res.Data);
         }
 
+        public void ChangePassword(string oldPass, string newPass, Func<SuccessResponse, bool> callback)
+        {
+            var req = new RestRequest(Method.POST)
+            {
+                Resource = "api/user/changePassword"
+            };
+            req.AddParameter("uuid", _session_token);
+            req.AddParameter("oldPassword", oldPass);
+            req.AddParameter("newPassword", newPass);
+            var res = _client.Execute<SuccessResponse>(req);
+            SuccessResponse succ = res.Data;
+
+            if (succ == null)
+            {
+                Errors.BadData("Parsing change password failed");
+                return;
+            }
+
+            callback(succ);
+        }
+
         public User GetUser()
         {
             Console.WriteLine("LOADING USER");
@@ -428,7 +460,7 @@ namespace DSUScheduleBuilder.Network {
             }
         }
 
-        public void EnrollInCourse(int courseKey, Func<SuccessResponse, bool> callback)
+        public void EnrollInCourse(int courseKey, Func<FullEnrollResponse, bool> callback)
         {
             var req = new RestRequest(Method.POST)
             {
@@ -436,8 +468,8 @@ namespace DSUScheduleBuilder.Network {
             };
             req.AddParameter("uuid", _session_token);
             req.AddParameter("key", courseKey);
-            var res = _client.Execute<SuccessResponse>(req);
-            SuccessResponse succ = res.Data;
+            var res = _client.Execute<FullEnrollResponse>(req);
+            FullEnrollResponse succ = res.Data;
 
             if (succ == null)
             {
