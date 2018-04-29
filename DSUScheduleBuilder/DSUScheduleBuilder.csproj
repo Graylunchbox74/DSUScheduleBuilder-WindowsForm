@@ -74,23 +74,30 @@
     <Compile Include="MainWindow.Designer.cs">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="Main_Menu\ManageCourses.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Main_Menu\ManageCourses.Designer.cs">
+      <DependentUpon>ManageCourses.cs</DependentUpon>
+    </Compile>
     <Compile Include="Main_Menu\NewUser.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Main_Menu\NewUser.Designer.cs">
       <DependentUpon>NewUser.cs</DependentUpon>
     </Compile>
+    <Compile Include="Main_Menu\IResetable.cs" />
     <Compile Include="Main_Menu\Search.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Main_Menu\Search.Designer.cs">
       <DependentUpon>Search.cs</DependentUpon>
     </Compile>
-    <Compile Include="Main_Menu\UpdateUser.cs">
+    <Compile Include="Main_Menu\UserSettings.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Main_Menu\UpdateUser.Designer.cs">
-      <DependentUpon>UpdateUser.cs</DependentUpon>
+    <Compile Include="Main_Menu\UserSettings.Designer.cs">
+      <DependentUpon>UserSettings.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\AvailableCourse.cs" />
     <Compile Include="Models\Course.cs" />
@@ -106,14 +113,17 @@
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Main_Menu\ManageCourses.resx">
+      <DependentUpon>ManageCourses.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Main_Menu\NewUser.resx">
       <DependentUpon>NewUser.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Main_Menu\Search.resx">
       <DependentUpon>Search.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Main_Menu\UpdateUser.resx">
-      <DependentUpon>UpdateUser.cs</DependentUpon>
+    <EmbeddedResource Include="Main_Menu\UserSettings.resx">
+      <DependentUpon>UserSettings.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

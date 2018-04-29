@@ -34,14 +34,18 @@ namespace DSUScheduleBuilder.Drawing
 
         protected override void drawCourse(Graphics g, int number, PreviousCourse course)
         {
-            g.FillRectangle(number % 2 == 0 ? Brushes.Blue : Brushes.Gold, 0, number * cellHeight, Size.Width, cellHeight);
+            g.FillRectangle(number % 2 == 0 ? courseColor1 : courseColor2, 2, number * cellHeight + 2, Size.Width - 4, cellHeight - 4);
 
             Font font = new Font(FontFamily.GenericSansSerif, 14);
             SizeF textSize;
 
             textSize = g.MeasureString(course.CourseID, font);
-
             g.DrawString(course.CourseID, font, Brushes.Black, 4, number * cellHeight + 4 + (textSize.Height + 4) * 0);
+
+            string s = "Credits : " + course.Credits; 
+            textSize = g.MeasureString(s, font);
+            g.DrawString(s, font, Brushes.Black, Size.Width - 6 - textSize.Width, number * cellHeight + 4);
+
         }
 
         protected override void drawSpecificClass(Graphics g)
@@ -52,13 +56,17 @@ namespace DSUScheduleBuilder.Drawing
                 return;
             }
 
-            g.FillRectangle(Brushes.Gold, 0, 0, this.Size.Width, this.Size.Height);
+            g.FillRectangle(courseColor2, 0, 0, this.Size.Width, this.Size.Height);
 
             Font font = new Font(FontFamily.GenericSansSerif, 14);
             string text = selectedCourse.CourseID;
             SizeF textSize = g.MeasureString(text, font);
 
-            g.DrawString(selectedCourse.CourseID, font, Brushes.Black, (this.Size.Width - textSize.Width) / 2, 4 + (textSize.Height + 4) * 1);
+            g.DrawString(text, font, Brushes.Black, (this.Size.Width - textSize.Width) / 2, 4 + (textSize.Height + 4) * 1);
+
+            text = selectedCourse.CourseName;
+            textSize = g.MeasureString(text, font);
+            g.DrawString(text, font, Brushes.Black, (this.Size.Width - textSize.Width) / 2, 4 + (textSize.Height + 4) * 3);
 
             drawSelectedCourseExtra(g);
         }

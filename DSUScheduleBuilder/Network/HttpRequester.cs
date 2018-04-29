@@ -195,16 +195,24 @@ namespace DSUScheduleBuilder.Network {
         }
     }
     
+    class PreviousCourseResponse
+    {
+        public string courseID { get; set; }
+        public string courseName { get; set; }
+        public int credits { get; set; }
+    }
 
     class FullPreviousCourseResponse : Errorable
     {
-        public List<string> classes { get; set; }
+        public List<PreviousCourseResponse> classes { get; set; }
 
         public List<PreviousCourse> ToCourses()
         {
-            return classes?.ConvertAll<PreviousCourse>((string cid) => new PreviousCourse()
+            return classes?.ConvertAll<PreviousCourse>((PreviousCourseResponse pcr) => new PreviousCourse()
             {
-                CourseID = cid
+                CourseID = pcr.courseID,
+                CourseName = pcr.courseName,
+                Credits = pcr.credits,
             });
         }
     }
@@ -501,7 +509,7 @@ namespace DSUScheduleBuilder.Network {
             callback(succ);
         }
 
-        public void AddPreviousCourse(string courseID, Func<SuccessResponse, bool> callback)
+        public void AddPreviousCourse(string courseID, string courseName, int credits, Func<SuccessResponse, bool> callback)
         {
             var req = new RestRequest(Method.POST)
             {
@@ -509,6 +517,8 @@ namespace DSUScheduleBuilder.Network {
             };
             req.AddParameter("uuid", _session_token);
             req.AddParameter("courseID", courseID);
+            req.AddParameter("courseName", courseName);
+            req.AddParameter("credits", credits);
             var res = _client.Execute<SuccessResponse>(req);
             SuccessResponse succ = res.Data;
 

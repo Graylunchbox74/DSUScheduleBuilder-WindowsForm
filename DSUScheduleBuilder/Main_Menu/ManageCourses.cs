@@ -7,23 +7,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Text.RegularExpressions;
 
 namespace DSUScheduleBuilder.Main_Menu
 {
-    using Network;
+    using Drawing;
     using Models;
+    using Network;
+    using System.Text.RegularExpressions;
 
-    public partial class UpdateUser : UserControl
+    public partial class ManageCourses : UserControl, IResetable
     {
-        public UpdateUser()
+        public ManageCourses()
         {
             InitializeComponent();
-        }
-
-        private void EnrolledCourseView_Click(object sender, EventArgs e)
-        {
-            EnrolledCourseView.OnClickEvent(e);
         }
 
         private void AddPreviousCourseBtn_Click(object sender, EventArgs e)
@@ -35,7 +31,7 @@ namespace DSUScheduleBuilder.Main_Menu
                 return;
             }
 
-            HttpRequester.Default.AddPreviousCourse(tmp, (SuccessResponse succ) =>
+            HttpRequester.Default.AddPreviousCourse(tmp, CourseNameTxt.Text.ToLower(), (int)CreditsUpDown.Value, (SuccessResponse succ) =>
             {
                 if (succ.errorCode != null)
                 {
@@ -74,28 +70,25 @@ namespace DSUScheduleBuilder.Main_Menu
             PreviousCourseView.OnClickEvent(e);
         }
 
-        private void UpdatePasswordBtn_Click(object sender, EventArgs e)
+        private void EnrolledCourseView_Click(object sender, EventArgs e)
         {
-            if (PasswordTxt.Text != ConfirmPasswordTxt.Text)
-            {
-                MessageBox.Show("Passwords must match.", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
+            EnrolledCourseView.OnClickEvent(e);
+        }
 
-            HttpRequester.Default.ChangePassword(CurrPasswordTxt.Text, PasswordTxt.Text, (SuccessResponse succ) =>
-            {
-                if (succ.errorCode != null)
-                {
-                    MessageBox.Show("Error " + succ.errorCode + " : " + succ.errorMessage);
-                }
+        public void ResetToDefault()
+        {
+            EnrolledCourseView.Show();
+            PreviousCourseView.Hide();
 
-                if (succ.success == 1)
-                {
-                    MessageBox.Show("Succesfully changed password.");
-                }
+            List<Course> courses = HttpRequester.Default.GetEnrolledCourses();
+            EnrolledCourseView.SetCourses(courses);
 
-                return true;
-            });
+            List<PreviousCourse> pCourses = HttpRequester.Default.GetPreviousCourses();
+            PreviousCourseView.SetCourses(pCourses);
+
+            CourseNameTxt.Text = "";
+            PreviousCourseIdTxt.Text = "";
+            CreditsUpDown.Value = 3;
         }
     }
 }

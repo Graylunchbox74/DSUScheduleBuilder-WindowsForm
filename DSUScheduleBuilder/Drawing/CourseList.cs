@@ -20,6 +20,9 @@ namespace DSUScheduleBuilder.Drawing
 
     public abstract class CourseList<T> : Control where T : Course
     {
+        protected readonly Brush courseColor1;
+        protected readonly Brush courseColor2;
+
         protected List<T> courses;
         protected int numbersPerPage;
         protected int totalPages;
@@ -38,6 +41,8 @@ namespace DSUScheduleBuilder.Drawing
         public CourseList()
         {
             numbersPerPage = 5;
+            courseColor1 = new SolidBrush(Color.FromArgb(255, 100, 181, 246));
+            courseColor2 = new SolidBrush(Color.FromArgb(255, 255, 241, 118));
         }
 
         public virtual void SetCourses(List<T> cs)
@@ -66,6 +71,14 @@ namespace DSUScheduleBuilder.Drawing
 
         protected override void OnPaint(PaintEventArgs e)
         {
+            int h = this.Size.Height;
+            if (this.state == CourseListState.ClassList)
+            {
+                h -= bottomBarHeight;
+            }
+            e.Graphics.FillRectangle(Brushes.Black, 0, 0, this.Size.Width, h);
+            e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(255, 64, 64, 64)), 2, 2, this.Size.Width - 4, h - 4);
+
             switch (this.state)
             {
                 case CourseListState.ClassList:
@@ -87,7 +100,7 @@ namespace DSUScheduleBuilder.Drawing
                 return;
             }
 
-            g.FillRectangle(Brushes.Gold, 0, 0, this.Size.Width, this.Size.Height);
+            g.FillRectangle(courseColor2, 2, 2, this.Size.Width - 4, this.Size.Height - 4);
 
             Font font = new Font(FontFamily.GenericSansSerif, 14);
             string text = selectedCourse.CourseID;
@@ -134,7 +147,7 @@ namespace DSUScheduleBuilder.Drawing
 
         protected virtual void drawCourse(Graphics g, int number, T course)
         {
-            g.FillRectangle(number % 2 == 0 ? Brushes.Blue : Brushes.Gold, 0, number * cellHeight, Size.Width, cellHeight);
+            g.FillRectangle(number % 2 == 0 ? courseColor1 : courseColor2, 2, number * cellHeight + 2, Size.Width - 4, cellHeight - 4);
 
             Font font = new Font(FontFamily.GenericSansSerif, 14);
             SizeF textSize;

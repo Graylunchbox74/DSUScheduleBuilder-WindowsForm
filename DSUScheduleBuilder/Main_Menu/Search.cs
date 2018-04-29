@@ -15,7 +15,7 @@ namespace DSUScheduleBuilder.Main_Menu
     using Models;
     using Utils;
 
-    public partial class Search : UserControl
+    public partial class Search : UserControl, IResetable
     {
         public Search()
         {
@@ -93,6 +93,16 @@ namespace DSUScheduleBuilder.Main_Menu
         private void PrefixTextBox_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        public void ResetToDefault()
+        {
+            termComboBox.Text = "";
+            PrefixTextBox.Text = "";
+            CourseNumTextBox.Text = "";
+            IlnTextBox.Text = "";
+            timeCheckbox.Checked = false;
+            slotsUpDown.Value = 0;
         }
     }
 }

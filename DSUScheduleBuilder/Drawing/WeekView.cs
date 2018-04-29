@@ -8,8 +8,10 @@ using DSUScheduleBuilder.Models;
 
 namespace DSUScheduleBuilder.Drawing
 {
-
-    public class WeekView : Control
+    using Main_Menu;
+    using Network;
+    
+    public class WeekView : Control, IResetable
     {
         private List<CourseView> courses;
 
@@ -106,6 +108,12 @@ namespace DSUScheduleBuilder.Drawing
         {
             g.FillRectangle(Brushes.Black, r);
             g.FillRectangle(Brushes.Aqua, r.X + padding, r.Y + padding, r.Width - 2 * padding, r.Height - 2 * padding);
+        }
+
+        public void ResetToDefault()
+        {
+            List<Course> courses = HttpRequester.Default.GetEnrolledCourses();
+            SetCourses(courses);
         }
     }
 }

@@ -24,7 +24,7 @@ namespace DSUScheduleBuilder
 
         public enum ActiveController
         {
-            WeekView, Search, AccountSettings
+            WeekView, Search, AccountSettings, ManageCourses
         }
 
         private ActiveController controller;
@@ -156,22 +156,28 @@ namespace DSUScheduleBuilder
             Control_WeekView.Hide();
             Control_Search.Hide();
             Control_AccountSettings.Hide();
+            Control_ManageCourses.Hide();
 
             if (controller == ActiveController.WeekView)
             {
+                Control_WeekView.ResetToDefault();
                 Control_WeekView.Show();
-                List<Course> courses = HttpRequester.Default.GetEnrolledCourses();
-                Control_WeekView.SetCourses(courses);
             }
-            if (controller == ActiveController.Search) Control_Search.Show();
+            if (controller == ActiveController.Search)
+            {
+                Control_Search.ResetToDefault();
+                Control_Search.Show();
+            }
             if (controller == ActiveController.AccountSettings)
             {
+                Control_AccountSettings.ResetToDefault();
                 Control_AccountSettings.Show();
-                List<Course> courses = HttpRequester.Default.GetEnrolledCourses();
-                Control_AccountSettings.EnrolledCourseView.SetCourses(courses);
+            }
 
-                List<PreviousCourse> pCourses = HttpRequester.Default.GetPreviousCourses();
-                Control_AccountSettings.PreviousCourseView.SetCourses(pCourses);
+            if (controller == ActiveController.ManageCourses)
+            {
+                Control_ManageCourses.ResetToDefault();
+                Control_ManageCourses.Show();
             }
         
         }
@@ -195,14 +201,14 @@ namespace DSUScheduleBuilder
             ChangeActiveController(ActiveController.WeekView);
         }
 
-        private void Control_Search_Load(object sender, EventArgs e)
-        {
-
-        }
-
         private void AccountSettingsBtn_Click(object sender, EventArgs e)
         {
             ChangeActiveController(ActiveController.AccountSettings);
+        }
+
+        private void ManageCoursesBtn_Click(object sender, EventArgs e)
+        {
+            ChangeActiveController(ActiveController.ManageCourses);
         }
     }
 }

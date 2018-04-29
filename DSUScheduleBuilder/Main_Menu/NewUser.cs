@@ -13,7 +13,7 @@ namespace DSUScheduleBuilder.Main_Menu
 {
     using Network;
 
-    public partial class NewUser : UserControl
+    public partial class NewUser : UserControl, IResetable
     {
         public NewUser()
         {
@@ -76,6 +76,13 @@ namespace DSUScheduleBuilder.Main_Menu
         private void backButton_Click(object sender, EventArgs e)
         {
             ((MainWindow)this.Parent.Parent).ChangeState(MainWindow.States.Login);
+        }
+
+        public void ResetToDefault()
+        {
+            emailTextBox.Text = "";
+            passwordTextBox.Text = "";
+            confirmTextBox.Text = "";
         }
     }
 }

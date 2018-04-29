@@ -106,17 +106,23 @@
             // 
             // termComboBox
             // 
+            this.termComboBox.BackColor = System.Drawing.Color.Gray;
+            this.termComboBox.ForeColor = System.Drawing.Color.White;
             this.termComboBox.FormattingEnabled = true;
             this.termComboBox.Location = new System.Drawing.Point(30, 85);
-            this.termComboBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.termComboBox.Margin = new System.Windows.Forms.Padding(2);
             this.termComboBox.Name = "termComboBox";
             this.termComboBox.Size = new System.Drawing.Size(179, 21);
             this.termComboBox.TabIndex = 6;
             // 
             // PrefixTextBox
             // 
+            this.PrefixTextBox.BackColor = System.Drawing.Color.Gray;
+            this.PrefixTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.PrefixTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.PrefixTextBox.ForeColor = System.Drawing.Color.White;
             this.PrefixTextBox.Location = new System.Drawing.Point(30, 141);
-            this.PrefixTextBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.PrefixTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.PrefixTextBox.Name = "PrefixTextBox";
             this.PrefixTextBox.Size = new System.Drawing.Size(179, 20);
             this.PrefixTextBox.TabIndex = 7;
@@ -126,7 +132,7 @@
             // 
             this.searchButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.searchButton.Location = new System.Drawing.Point(30, 422);
-            this.searchButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.searchButton.Margin = new System.Windows.Forms.Padding(2);
             this.searchButton.Name = "searchButton";
             this.searchButton.Size = new System.Drawing.Size(178, 53);
             this.searchButton.TabIndex = 10;
@@ -136,8 +142,11 @@
             // 
             // CourseNumTextBox
             // 
+            this.CourseNumTextBox.BackColor = System.Drawing.Color.Gray;
+            this.CourseNumTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.CourseNumTextBox.ForeColor = System.Drawing.Color.White;
             this.CourseNumTextBox.Location = new System.Drawing.Point(30, 195);
-            this.CourseNumTextBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.CourseNumTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.CourseNumTextBox.Name = "CourseNumTextBox";
             this.CourseNumTextBox.Size = new System.Drawing.Size(179, 20);
             this.CourseNumTextBox.TabIndex = 8;
@@ -145,8 +154,11 @@
             // 
             // IlnTextBox
             // 
+            this.IlnTextBox.BackColor = System.Drawing.Color.Gray;
+            this.IlnTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.IlnTextBox.ForeColor = System.Drawing.Color.White;
             this.IlnTextBox.Location = new System.Drawing.Point(31, 255);
-            this.IlnTextBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.IlnTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.IlnTextBox.Name = "IlnTextBox";
             this.IlnTextBox.Size = new System.Drawing.Size(178, 20);
             this.IlnTextBox.TabIndex = 9;
@@ -157,7 +169,7 @@
             this.startTimePicker.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
             this.startTimePicker.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.startTimePicker.Location = new System.Drawing.Point(32, 308);
-            this.startTimePicker.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.startTimePicker.Margin = new System.Windows.Forms.Padding(2);
             this.startTimePicker.Name = "startTimePicker";
             this.startTimePicker.ShowUpDown = true;
             this.startTimePicker.Size = new System.Drawing.Size(86, 20);
@@ -192,7 +204,7 @@
             this.endTimePicker.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
             this.endTimePicker.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.endTimePicker.Location = new System.Drawing.Point(122, 308);
-            this.endTimePicker.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.endTimePicker.Margin = new System.Windows.Forms.Padding(2);
             this.endTimePicker.Name = "endTimePicker";
             this.endTimePicker.ShowUpDown = true;
             this.endTimePicker.Size = new System.Drawing.Size(87, 20);
@@ -203,7 +215,7 @@
             // 
             this.timeCheckbox.AutoSize = true;
             this.timeCheckbox.Location = new System.Drawing.Point(77, 332);
-            this.timeCheckbox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.timeCheckbox.Margin = new System.Windows.Forms.Padding(2);
             this.timeCheckbox.Name = "timeCheckbox";
             this.timeCheckbox.Size = new System.Drawing.Size(96, 17);
             this.timeCheckbox.TabIndex = 17;
@@ -212,8 +224,11 @@
             // 
             // slotsUpDown
             // 
+            this.slotsUpDown.BackColor = System.Drawing.Color.Gray;
+            this.slotsUpDown.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.slotsUpDown.ForeColor = System.Drawing.Color.White;
             this.slotsUpDown.Location = new System.Drawing.Point(32, 382);
-            this.slotsUpDown.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.slotsUpDown.Margin = new System.Windows.Forms.Padding(2);
             this.slotsUpDown.Name = "slotsUpDown";
             this.slotsUpDown.Size = new System.Drawing.Size(176, 20);
             this.slotsUpDown.TabIndex = 18;
@@ -261,7 +276,7 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Location = new System.Drawing.Point(186, 15);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Search";
             this.Size = new System.Drawing.Size(872, 513);
             ((System.ComponentModel.ISupportInitialize)(this.slotsUpDown)).EndInit();
