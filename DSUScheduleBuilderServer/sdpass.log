@@ -227,3 +227,35 @@
 2018-04-28 02:49:13 - /api/user/login/, 4: User already has a uuid
 2018-04-28 02:49:32 - /api/user/login/, 2: Password does not match
 2018-04-28 02:49:39 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-29 01:05:01 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-29 01:05:56 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-29 01:07:33 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-29 01:08:58 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-29 01:10:13 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-29 01:12:17 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-29 01:13:15 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-29 01:13:29 - /api/user/login/, 3: sql: no rows in result set
+2018-04-29 01:14:12 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-29 01:15:04 - /api/user/addPrevious/, 2: User has already listed this course
+2018-04-29 01:15:27 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-29 01:15:53 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-29 01:19:29 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-29 01:22:46 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-29 01:24:54 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-29 01:27:03 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-29 01:27:46 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-29 01:30:08 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-29 01:40:09 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-29 01:44:25 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-29 01:53:27 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-29 02:02:29 - /api/user/addPrevious/, 3: no such column: name
+2018-04-29 02:15:55 - /api/user/enroll/, 4: user has already enrolled in this course
+2018-04-29 02:21:40 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-29 02:28:19 - /api/user/enroll/, 4: User has not taken the required course: CSC-250
+2018-04-29 02:34:29 - /api/user/login/, 2: Password does not match
+2018-04-29 02:36:14 - /api/courses/previous/INVALID_TOKEN, 3: sql: no rows in result set
+2018-04-29 02:38:25 - /api/courses/enrolled/nSi5FdBUX99u7HDh1q1607C6XgxQFtBk6gszucQMkGcKxlQhQd, 3: sql: no rows in result set
+2018-04-29 02:38:25 - /api/courses/previous/nSi5FdBUX99u7HDh1q1607C6XgxQFtBk6gszucQMkGcKxlQhQd, 3: sql: no rows in result set
+2018-04-29 02:43:50 - /api/user/login/, 4: User already has a uuid
+2018-04-29 02:45:56 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-29 02:46:27 - /api/user/login/, 4: User already has a uuid

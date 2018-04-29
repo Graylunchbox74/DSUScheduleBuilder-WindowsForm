@@ -50,6 +50,12 @@ type enrolledCourse struct {
 	RequiredCourses    []string `json:"required"`
 }
 
+type previousCourse struct {
+	CourseID   string `json:"courseID"`
+	CourseName string `json:"courseName"`
+	Credits    int    `json:"credits"`
+}
+
 //(sectionID ,open, academicLevel , courseID , description , courseName , startDate, endDate , location , meetingInformation, supplies , credits , slotsAvailable , slotsCapacity,
 // slotsWaitlist, timeStart, timeEnd , professorEmails , prereqNonCourse , recConcurrentCourses, reqConcurrentCourses, prereqCoursesAnd, prereqCoursesOR,instructionalMethods,term);
 type availableCourse struct {
@@ -449,11 +455,12 @@ func addEnrolledClass(userID, key int) (enrolledCourse, int, error) {
 			return reqrec, 29, err
 		}
 		andCourses := strings.Split(prereqAnd, "|")
+		var tmp string
 		orCourses := strings.Split(prereqOr, "|")
 		for x := range andCourses {
 			andCourses[x] = strings.Replace(andCourses[x], "|", "", -1)
 			if andCourses[x] != "" {
-				err = db.QueryRow("SELECT uid from users where previousCourses like $1 and uid=$2", "%"+andCourses[x]+"%", userID).Scan(&userID)
+				err = db.QueryRow("SELECT userID from PreviousClasses where courseID=$1 and userID like $2", andCourses[x], "%"+strconv.Itoa(userID)+"%").Scan(&tmp)
 				if err == sql.ErrNoRows {
 					return reqrec, 5, errors.New("User has not taken the required course: " + andCourses[x])
 				}
@@ -477,7 +484,7 @@ func addEnrolledClass(userID, key int) (enrolledCourse, int, error) {
 					prereqCoursesOr = prereqCoursesOr + ", " + orCourses[x]
 
 				}
-				err = db.QueryRow("SELECT uid from users where previousCourses like $1 and uid=$2", "%"+orCourses[x]+"%", userID).Scan(&userID)
+				err = db.QueryRow("SELECT userID from PreviousClasses where courseID=$1 and userID like $2", andCourses[x], "%"+strconv.Itoa(userID)+"%").Scan(&tmp)
 				if err == nil {
 					isOr = true
 				}
@@ -707,36 +714,6 @@ func getEnrolledClasses(uid int) ([]course, int, error) {
 	return classes, 200, nil
 }
 
-//previous class database functions
-func addPreviousClass(class course) (int, error) {
-	//make sure this class does not exist for the user with this id already, else skip
-	var tmp int
-	location := "addPreviousClass"
-	var err error
-	tmp = -1
-	err = db.QueryRow("SELECT userID FROM PreviousClasses WHERE userID=$1 AND classID=$2", class.UserID, class.ClassID).Scan(&tmp)
-	checkLogError(location, "Checking if class already exists", err)
-	if tmp == -1 && err == nil {
-		_, err = db.Exec("INSERT INTO PreviousClasses (userID, classID, className, teacher, startTime, endTime, startDate, endDate, credits) values($1,$2,$3,$4,$5,$6,$7,$8,$9)", class.UserID, class.ClassID, class.ClassName, class.Teacher, class.StartTime, class.EndTime, class.StartDate, class.EndDate, class.Credits)
-		checkLogError(location, "Inserting the new class into database", err)
-		if err == nil {
-			return 200, err
-		}
-	} else if tmp != -1 {
-		return 501, err
-	}
-	return 500, err
-}
-
-func deletePreviousClass(key int) (int, error) {
-	var err error
-	_, err = db.Exec("DELETE FROM PreviousClasses WHERE key=", key)
-	if err == nil {
-		return 200, err
-	}
-	return 20, err
-}
-
 //updates an entry in the enrolledclasses table, although we cannot allow to change the userID
 func updatePreviousClass(classKey, keyword, newValue string) (course, int, error) {
 	var err error
@@ -761,56 +738,23 @@ func updatePreviousClass(classKey, keyword, newValue string) (course, int, error
 	return newClass, 200, err
 }
 
-func getPreviousClasses(uid int) ([]course, int, error) {
-	location := "getPreviousClasses"
-	var classes []course
-	var class course
-	parameter := "%|" + strconv.Itoa(uid) + "|%"
-	rows, err := db.Query(`
-		SELECT *
-		FROM PreviousClasses 
-		WHERE userID LIKE $1`, parameter,
-	)
-
-	defer rows.Close()
-	var tmp string
-	var teacherStr string
-	for rows.Next() {
-		class = course{}
-
-		err = rows.Scan(
-			&tmp, &class.ClassID, &class.ClassName, &teacherStr,
-			&class.StartTime, &class.EndTime, &class.StartDate, &class.EndDate, &class.Credits, &class.Key,
-		)
-
-		if err != nil {
-			go logError(location, "1", err)
-			return classes, 5, err
-		}
-
-		var teachers []string
-		teacherStr = strings.Replace(teacherStr, "|", "", 1)
-		teachers = strings.SplitAfter(teacherStr, "|")
-
-		for currentTeacher := range teachers {
-			teachers[currentTeacher] = strings.Replace(teachers[currentTeacher], "|", "", -1)
-			if teachers[currentTeacher] != "" {
-
-				class.Teacher = append(class.Teacher, teachers[currentTeacher])
-			}
-		}
-
-		classes = append(classes, class)
+func getPreviousClasses(uid int) ([]previousCourse, int, error) {
+	rows, err := db.Query("SELECT courseID,courseName,credits from PreviousClasses where userID like $1", "%"+strconv.Itoa(uid)+"%")
+	if err == sql.ErrNoRows {
+		return nil, 5, errors.New("User does not have any previous classes")
 	}
-
-	err = rows.Err()
-
 	if err != nil {
-		go logError(location, "2", err)
-		return classes, 5, err
+		return nil, 5, err
 	}
 
-	return classes, 200, nil
+	var previousClasses []previousCourse
+	var previousTMP previousCourse
+	for rows.Next() {
+		rows.Scan(&previousTMP.CourseID, &previousTMP.CourseName, &previousTMP.Credits)
+		previousClasses = append(previousClasses, previousTMP)
+	}
+
+	return previousClasses, 200, err
 }
 
 func init() {
@@ -823,6 +767,13 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+
+	//	make sure that no user sessions exist when starting the server
+
+	//_, err = db.Exec("DELETE FROM USER_SESSIONS WHERE 1=1")
+	//if err != nil {
+	//	panic(err)
+	//}
 }
 
 func main() {
@@ -1053,6 +1004,38 @@ func main() {
 				}
 				c.JSON(200, gin.H{"success": 1})
 			})
+			users.GET("/totalCredits/:uuid", func(c *gin.Context) {
+				uuid := c.Param("uuid")
+				var userID int
+				err := db.QueryRow("SELECT uid FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&userID)
+
+				if err == sql.ErrNoRows {
+					currentError := createErrorStruct(2, c.Request.URL.String(), "3", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				if err != nil {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				rows, err := db.Query("SELECT credits from PreviousClasses where userID like $1", "%"+strconv.Itoa(userID)+"%")
+				if err != nil {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "10", err)
+					c.JSON(500, currentError)
+					return
+				}
+				var totalCredits, tmp int
+				for rows.Next() {
+					rows.Scan(&tmp)
+					totalCredits = totalCredits + tmp
+				}
+
+				c.JSON(200, gin.H{"totalCredits": totalCredits})
+
+			})
 
 			users.POST("/addPrevious/", func(c *gin.Context) {
 				uuid := c.PostForm("uuid")
@@ -1071,11 +1054,10 @@ func main() {
 					return
 				}
 				courseID := c.PostForm("courseID")
-				println(courseID)
-				param := "%" + courseID + "%"
+
 				var previousCourses string
 				//check to make sure user has not already have this course listed
-				err = db.QueryRow("SELECT previousCourses from users where uid=$1 and previousCourses like $2", userID, param).Scan(&previousCourses)
+				err = db.QueryRow("SELECT courseName from PreviousClasses where userID like $1 and courseID=$2", "%"+strconv.Itoa(userID)+"%", courseID).Scan(&previousCourses)
 				if err != sql.ErrNoRows {
 					if err != nil {
 						currentError := createErrorStruct(5, c.Request.URL.String(), "3", err)
@@ -1086,21 +1068,34 @@ func main() {
 					c.JSON(500, currentError)
 					return
 				}
-				err = db.QueryRow("SELECT previousCourses from users where uid=$1", userID).Scan(&previousCourses)
-
-				if err != nil {
-					currentError := createErrorStruct(5, c.Request.URL.String(), "5", err)
+				//see if the course with this ID already exists
+				err = db.QueryRow("SELECT userID from PreviousClasses where courseID=$1", courseID).Scan(&previousCourses)
+				if err != sql.ErrNoRows && err != nil {
+					currentError := createErrorStruct(5, c.Request.URL.String(), "8", err)
 					c.JSON(500, currentError)
 					return
 				}
-
-				addPrevious := previousCourses + "|" + courseID + "|"
-				_, err = db.Exec("UPDATE users SET previousCourses=$1 where uid=$2", addPrevious, userID)
-				if err != nil {
-					currentError := createErrorStruct(15, c.Request.URL.String(), "4", err)
-					c.JSON(500, currentError)
-					return
+				if err == sql.ErrNoRows {
+					//insert the new course
+					courseName := c.PostForm("courseName")
+					credits := c.PostForm("credits")
+					_, err = db.Exec("INSERT into PreviousClasses (userID,courseID,courseName,credits) values($1,$2,$3,$4)", "|"+strconv.Itoa(userID)+"|", courseID, courseName, credits)
+					if err != nil {
+						currentError := createErrorStruct(30, c.Request.URL.String(), "5", err)
+						c.JSON(500, currentError)
+						return
+					}
+				} else {
+					//update the userID of the course
+					previousCourses = previousCourses + "|" + strconv.Itoa(userID) + "|"
+					_, err = db.Exec("UPDATE PreviousClasses set userID=$1 where courseID=$2", previousCourses, courseID)
+					if err != nil {
+						currentError := createErrorStruct(31, c.Request.URL.String(), "6", err)
+						c.JSON(500, currentError)
+						return
+					}
 				}
+
 				c.JSON(200, gin.H{"success": 1})
 			})
 
@@ -1122,27 +1117,25 @@ func main() {
 				}
 
 				courseID := c.PostForm("courseID")
-				param := "%" + courseID + "%"
 
 				//make sure that the course exists in the users previousCourses column
 				var previousCourses string
-				err = db.QueryRow("SELECT previousCourses from users where uid=$1 and previousCourses like $2", userID, param).Scan(&previousCourses)
+				err = db.QueryRow("SELECT userID from PreviousClasses where userID like $1 and courseID=$2", "%"+strconv.Itoa(userID)+"%", courseID).Scan(&previousCourses)
 
 				if err == sql.ErrNoRows {
-					currentError := createErrorStruct(3, c.Request.URL.String(), "6", errors.New("This class does exist in the users previous courses"))
+					currentError := createErrorStruct(3, c.Request.URL.String(), "6", errors.New("This class does exist in the users previously taken courses"))
 					c.JSON(500, currentError)
 					return
 				}
-
 				if err != nil {
 					currentError := createErrorStruct(3, c.Request.URL.String(), "7", err)
 					c.JSON(500, currentError)
 					return
 				}
 
-				previousCourses = strings.Replace(previousCourses, "|"+courseID+"|", "", -1)
+				previousCourses = strings.Replace(previousCourses, "|"+strconv.Itoa(userID)+"|", "", -1)
 
-				_, err = db.Exec("UPDATE users SET previousCourses=$1 where uid=$2", previousCourses, userID)
+				_, err = db.Exec("UPDATE PreviousClasses SET userID=$1 where courseID=$2", previousCourses, courseID)
 				if err != nil {
 					currentError := createErrorStruct(15, c.Request.URL.String(), "4", err)
 					c.JSON(500, currentError)
@@ -1374,23 +1367,12 @@ func main() {
 					return
 				}
 
-				var classes []string
-				var previousClasses string
-				err = db.QueryRow("select previousCourses from users where uid=$1", userID).Scan(&previousClasses)
+				classesReturn, errCode, err := getPreviousClasses(userID)
 				if err != nil {
-					currentError := createErrorStruct(5, c.Request.URL.String(), "4", err)
+					currentError := createErrorStruct(errCode, c.Request.URL.String(), "5", err)
 					c.JSON(500, currentError)
 					return
 				}
-				var classesReturn []string
-				classes = strings.Split(previousClasses, "|")
-				for x := range classes {
-					classes[x] = strings.Replace(classes[x], "|", "", -1)
-					if classes[x] != "" {
-						classesReturn = append(classesReturn, classes[x])
-					}
-				}
-
 				c.JSON(200, gin.H{"classes": classesReturn})
 			})
 
@@ -1664,7 +1646,7 @@ func main() {
 			admin.POST("/newMajor/", func(c *gin.Context) {
 				uuid := c.PostForm("uuid")
 				majorName := c.PostForm("majorName")
-				catalogYear := c.PostForm("catalogYear")
+				//catalogYear := c.PostForm("catalogYear")
 
 				var userID int
 				err := db.QueryRow("SELECT uid FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&userID)
@@ -1719,7 +1701,7 @@ func main() {
 					}
 				}
 
-				_, err = db.Exec("Insert into MajorCodeMap (id,name,catalogYears) values($1,$2,$3)", newMajorCode, majorName, catalogYear)
+				_, err = db.Exec("Insert into MajorCodeMap (id,name) values($1,$2)", newMajorCode, majorName)
 				if err != nil {
 					currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
 					c.JSON(500, currentError)
@@ -1766,11 +1748,20 @@ func main() {
 						c.JSON(500, currentError)
 						return
 					}
-					currentError := createErrorStruct(3, c.Request.URL.String(), "1", errors.New("Major already exists with this name"))
+					currentError := createErrorStruct(3, c.Request.URL.String(), "1", errors.New("This catalog year aready exists for this year"))
 					c.JSON(500, currentError)
 					return
 				}
+
 				//add the catalogYear to the majorCodeMap table
+				var currentCatalogYears string
+				err = db.QueryRow("SELECT catalogYears from MajorCodeMap where name=$1", majorName).Scan(&currentCatalogYears)
+				if err != nil {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "10", err)
+					c.JSON(500, currentError)
+					return
+				}
+				//currentCatalogYearsSpli := strings.Split(currentCatalogYears, "|")
 
 			})
 
