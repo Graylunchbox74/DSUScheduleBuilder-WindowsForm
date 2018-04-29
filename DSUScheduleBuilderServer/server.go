@@ -23,12 +23,12 @@ var errorChannel chan locationalError
 
 //holds the information for a single course being/has been offered
 type course struct {
-	UserID    string `json:"uid"`
-	Key       int    `json:"key"`var errorChannel chan locationalError
+	UserID string `json:"uid"`
+	Key    int    `json:"key"`
 
-	StartTime int    `json:"startTime"`
-	EndTime   int    `json:"endTime"`
-	Credits   int    `json:"credits"`
+	StartTime int `json:"startTime"`
+	EndTime   int `json:"endTime"`
+	Credits   int `json:"credits"`
 
 	ClassID    string   `json:"classID"`
 	ClassName  string   `json:"className"`
@@ -119,6 +119,16 @@ func checkLogError(location, sublocation string, err error) {
 
 func createUUID(size int) string {
 	const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+
+	b := make([]byte, size)
+	for i := range b {
+		b[i] = letterBytes[rand.Intn(len(letterBytes))]
+	}
+	return string(b)
+}
+
+func newMajorID(size int) string {
+	const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 	b := make([]byte, size)
 	for i := range b {
@@ -262,8 +272,14 @@ func newUser(fname, lname, email, password string) (int, error) {
 func addMajor(userID int, major string) (int, error) {
 	majors := "%|" + major + "|%"
 	var currentMajors string
-	//check if major already exits
-	err := db.QueryRow("select majors from users where majors like $1 and uid=$2", majors, userID).Scan(&currentMajors)
+	//check to make sure major exists (not made up)
+	err := db.QueryRow("select id from MajorCodeMap where name=$1", major).Scan(&currentMajors)
+	if err != sql.ErrNoRows {
+		return 31, errors.New("major does not currently exist in the database: " + major)
+	}
+
+	//check if major already exits for this user
+	err = db.QueryRow("select majors from users where majors like $1 and uid=$2", majors, userID).Scan(&currentMajors)
 
 	if err != sql.ErrNoRows {
 		return 14, errors.New("major already exists for that user")
@@ -1601,9 +1617,9 @@ func main() {
 			})
 
 		}
-		api.Group("/admin")
+		admin := api.Group("/admin")
 		{
-			courses.POST("/updateEnrolled/", func(c *gin.Context) {
+			admin.POST("/updateEnrolled/", func(c *gin.Context) {
 				uuid := c.PostForm("uuid")
 				var userID int
 				err := db.QueryRow("SELECT uid FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&userID)
@@ -1620,8 +1636,9 @@ func main() {
 					return
 				}
 
-				if userID > 3 {
-					currentError := createErrorStruct(11, c.Request.URL.String(), "4", err)
+				admin, errCode, err := isAdmin(userID)
+				if admin == false {
+					currentError := createErrorStruct(errCode, c.Request.URL.String(), "4", errors.New("User attempted to log in as admin USERID: "+strconv.Itoa(userID)))
 					c.JSON(500, currentError)
 					return
 				}
@@ -1639,6 +1656,126 @@ func main() {
 				}
 
 				c.JSON(200, gin.H{"success": 1})
+			})
+			// CSC150 # CSC-2017|CSC-2018|CO-2017
+			// CIS3XX|CIS4XX # CSC-2017|CSC-2018|CO-2017
+			//names of majors should always be sent all lowercase
+
+			admin.POST("/newMajor/", func(c *gin.Context) {
+				uuid := c.PostForm("uuid")
+				majorName := c.PostForm("majorName")
+				catalogYear := c.PostForm("catalogYear")
+
+				var userID int
+				err := db.QueryRow("SELECT uid FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&userID)
+
+				if err == sql.ErrNoRows {
+					currentError := createErrorStruct(2, c.Request.URL.String(), "3", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				if err != nil {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				admin, errCode, err := isAdmin(userID)
+				if admin == false {
+					currentError := createErrorStruct(errCode, c.Request.URL.String(), "4", errors.New("User attempted to log in as admin USERID: "+strconv.Itoa(userID)))
+					c.JSON(500, currentError)
+					return
+				}
+				//make sure major does not already exist
+				var existingMajor string
+				err = db.QueryRow("select id from MajorCodeMap where name=$1", majorName).Scan(&existingMajor)
+				if err != sql.ErrNoRows {
+					if err != nil {
+						currentError := createErrorStruct(3, c.Request.URL.String(), "9", err)
+						c.JSON(500, currentError)
+						return
+					}
+					currentError := createErrorStruct(3, c.Request.URL.String(), "1", errors.New("Major already exists with this name"))
+					c.JSON(500, currentError)
+					return
+				}
+
+				//generate new and unique 3 letter id for the new major
+				newMajorCode := newMajorID(3)
+				err = db.QueryRow("SELECT name from MajorCodeMap where id=$1", newMajorCode).Scan(&existingMajor)
+				if err != nil && err != sql.ErrNoRows {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
+					c.JSON(500, currentError)
+					return
+				}
+				for err != sql.ErrNoRows {
+					newMajorCode = newMajorID(3)
+					err = db.QueryRow("SELECT name from MajorCodeMap where id=$1", newMajorCode).Scan(&existingMajor)
+					if err != nil && err != sql.ErrNoRows {
+						currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
+						c.JSON(500, currentError)
+						return
+					}
+				}
+
+				_, err = db.Exec("Insert into MajorCodeMap (id,name,catalogYears) values($1,$2,$3)", newMajorCode, majorName, catalogYear)
+				if err != nil {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				c.JSON(200, gin.H{"success": 1})
+
+			})
+
+			admin.POST("/addCatalogYear/", func(c *gin.Context) {
+				uuid := c.PostForm("uuid")
+				majorName := c.PostForm("majorName")
+				catalogYear := c.PostForm("catalogYear")
+				//list of classes
+
+				var userID int
+				err := db.QueryRow("SELECT uid FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&userID)
+
+				if err == sql.ErrNoRows {
+					currentError := createErrorStruct(2, c.Request.URL.String(), "3", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				if err != nil {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				admin, errCode, err := isAdmin(userID)
+				if admin == false {
+					currentError := createErrorStruct(errCode, c.Request.URL.String(), "4", errors.New("User attempted to log in as admin USERID: "+strconv.Itoa(userID)))
+					c.JSON(500, currentError)
+					return
+				}
+				//make sure the catalogYear does not already exist
+				var existingMajor string
+				err = db.QueryRow("select id from MajorCodeMap where catalogYears like $1 and name=$2", "%"+catalogYear+"%", majorName).Scan(&existingMajor)
+				if err != sql.ErrNoRows {
+					if err != nil {
+						currentError := createErrorStruct(3, c.Request.URL.String(), "9", err)
+						c.JSON(500, currentError)
+						return
+					}
+					currentError := createErrorStruct(3, c.Request.URL.String(), "1", errors.New("Major already exists with this name"))
+					c.JSON(500, currentError)
+					return
+				}
+				//add the catalogYear to the majorCodeMap table
+
+			})
+
+			admin.POST("/updateCatalogYear/", func(c *gin.Context) {
+
 			})
 
 		}
