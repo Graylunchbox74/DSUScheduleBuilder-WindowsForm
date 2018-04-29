@@ -13,6 +13,7 @@ namespace DSUScheduleBuilder.Drawing
     
     public class WeekView : Control, IResetable
     {
+        private static Random courseColorRandomizer;
         private List<CourseView> courses;
 
         public readonly int DayOfWeekHeight = 32;
@@ -38,7 +39,7 @@ namespace DSUScheduleBuilder.Drawing
             {
                 this.courses = courses.ConvertAll<CourseView>((Course c) =>
                 {
-                    CourseView cv = new CourseView(this);
+                    CourseView cv = new CourseView(this, courseColorRandomizer);
                     cv.Course = c;
                     return cv;
                 });
@@ -92,8 +93,7 @@ namespace DSUScheduleBuilder.Drawing
                     c.Draw(e.Graphics);
                 }
             }
-
-
+            
             //Draw the lines between the days (vertical)
             for (int i = 0; i < 6; i++)
             {
@@ -112,6 +112,7 @@ namespace DSUScheduleBuilder.Drawing
 
         public void ResetToDefault()
         {
+            courseColorRandomizer = new Random(0xB00B5);
             List<Course> courses = HttpRequester.Default.GetEnrolledCourses();
             SetCourses(courses);
         }

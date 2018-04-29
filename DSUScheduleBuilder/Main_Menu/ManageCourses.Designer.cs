@@ -69,6 +69,9 @@
             // 
             // PreviousCourseIdTxt
             // 
+            this.PreviousCourseIdTxt.BackColor = System.Drawing.Color.Gray;
+            this.PreviousCourseIdTxt.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.PreviousCourseIdTxt.ForeColor = System.Drawing.Color.White;
             this.PreviousCourseIdTxt.Location = new System.Drawing.Point(250, 80);
             this.PreviousCourseIdTxt.Name = "PreviousCourseIdTxt";
             this.PreviousCourseIdTxt.Size = new System.Drawing.Size(131, 20);
@@ -107,6 +110,9 @@
             // 
             // CourseNameTxt
             // 
+            this.CourseNameTxt.BackColor = System.Drawing.Color.Gray;
+            this.CourseNameTxt.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.CourseNameTxt.ForeColor = System.Drawing.Color.White;
             this.CourseNameTxt.Location = new System.Drawing.Point(250, 113);
             this.CourseNameTxt.Name = "CourseNameTxt";
             this.CourseNameTxt.Size = new System.Drawing.Size(131, 20);
@@ -134,6 +140,9 @@
             // 
             // CreditsUpDown
             // 
+            this.CreditsUpDown.BackColor = System.Drawing.Color.Gray;
+            this.CreditsUpDown.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.CreditsUpDown.ForeColor = System.Drawing.Color.White;
             this.CreditsUpDown.Location = new System.Drawing.Point(250, 149);
             this.CreditsUpDown.Maximum = new decimal(new int[] {
             60,

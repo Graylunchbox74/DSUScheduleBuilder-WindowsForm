@@ -111,6 +111,9 @@
             // 
             // emailTextBox
             // 
+            this.emailTextBox.BackColor = System.Drawing.Color.Gray;
+            this.emailTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.emailTextBox.ForeColor = System.Drawing.Color.White;
             this.emailTextBox.Location = new System.Drawing.Point(351, 75);
             this.emailTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.emailTextBox.Name = "emailTextBox";
@@ -119,6 +122,9 @@
             // 
             // passwordTextBox
             // 
+            this.passwordTextBox.BackColor = System.Drawing.Color.Gray;
+            this.passwordTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.passwordTextBox.ForeColor = System.Drawing.Color.White;
             this.passwordTextBox.Location = new System.Drawing.Point(351, 108);
             this.passwordTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.passwordTextBox.Name = "passwordTextBox";
@@ -128,6 +134,9 @@
             // 
             // confirmTextBox
             // 
+            this.confirmTextBox.BackColor = System.Drawing.Color.Gray;
+            this.confirmTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.confirmTextBox.ForeColor = System.Drawing.Color.White;
             this.confirmTextBox.Location = new System.Drawing.Point(351, 143);
             this.confirmTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.confirmTextBox.Name = "confirmTextBox";
@@ -137,6 +146,9 @@
             // 
             // firstnameTextBox
             // 
+            this.firstnameTextBox.BackColor = System.Drawing.Color.Gray;
+            this.firstnameTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.firstnameTextBox.ForeColor = System.Drawing.Color.White;
             this.firstnameTextBox.Location = new System.Drawing.Point(351, 191);
             this.firstnameTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.firstnameTextBox.Name = "firstnameTextBox";
@@ -145,6 +157,9 @@
             // 
             // lastnameTextBox
             // 
+            this.lastnameTextBox.BackColor = System.Drawing.Color.Gray;
+            this.lastnameTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lastnameTextBox.ForeColor = System.Drawing.Color.White;
             this.lastnameTextBox.Location = new System.Drawing.Point(351, 230);
             this.lastnameTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.lastnameTextBox.Name = "lastnameTextBox";

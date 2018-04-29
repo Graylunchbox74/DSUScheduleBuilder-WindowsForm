@@ -84,6 +84,9 @@
             // 
             // CurrPasswordTxt
             // 
+            this.CurrPasswordTxt.BackColor = System.Drawing.Color.Gray;
+            this.CurrPasswordTxt.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.CurrPasswordTxt.ForeColor = System.Drawing.Color.White;
             this.CurrPasswordTxt.Location = new System.Drawing.Point(161, 61);
             this.CurrPasswordTxt.Margin = new System.Windows.Forms.Padding(2);
             this.CurrPasswordTxt.Name = "CurrPasswordTxt";
@@ -93,6 +96,9 @@
             // 
             // PasswordTxt
             // 
+            this.PasswordTxt.BackColor = System.Drawing.Color.Gray;
+            this.PasswordTxt.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.PasswordTxt.ForeColor = System.Drawing.Color.White;
             this.PasswordTxt.Location = new System.Drawing.Point(161, 95);
             this.PasswordTxt.Margin = new System.Windows.Forms.Padding(2);
             this.PasswordTxt.Name = "PasswordTxt";
@@ -101,6 +107,9 @@
             // 
             // ConfirmPasswordTxt
             // 
+            this.ConfirmPasswordTxt.BackColor = System.Drawing.Color.Gray;
+            this.ConfirmPasswordTxt.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.ConfirmPasswordTxt.ForeColor = System.Drawing.Color.White;
             this.ConfirmPasswordTxt.Location = new System.Drawing.Point(161, 132);
             this.ConfirmPasswordTxt.Margin = new System.Windows.Forms.Padding(2);
             this.ConfirmPasswordTxt.Name = "ConfirmPasswordTxt";
