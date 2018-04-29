@@ -309,7 +309,7 @@ namespace DSUScheduleBuilder.Network {
                 Resource = "api/user/changePassword"
             };
             req.AddParameter("uuid", _session_token);
-            req.AddParameter("oldPassword", oldPass);
+            req.AddParameter("currentPassword", oldPass);
             req.AddParameter("newPassword", newPass);
             var res = _client.Execute<SuccessResponse>(req);
             SuccessResponse succ = res.Data;

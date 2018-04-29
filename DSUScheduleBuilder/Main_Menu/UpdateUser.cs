@@ -76,9 +76,10 @@ namespace DSUScheduleBuilder.Main_Menu
 
         private void UpdatePasswordBtn_Click(object sender, EventArgs e)
         {
-            if (PasswordTxt.Text != CurrPasswordTxt.Text)
+            if (PasswordTxt.Text != ConfirmPasswordTxt.Text)
             {
                 MessageBox.Show("Passwords must match.", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
 
             HttpRequester.Default.ChangePassword(CurrPasswordTxt.Text, PasswordTxt.Text, (SuccessResponse succ) =>
