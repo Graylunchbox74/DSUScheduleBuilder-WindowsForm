@@ -259,3 +259,41 @@
 2018-04-29 02:43:50 - /api/user/login/, 4: User already has a uuid
 2018-04-29 02:45:56 - /api/user/logout/, 3: sql: no rows in result set
 2018-04-29 02:46:27 - /api/user/login/, 4: User already has a uuid
+2018-04-29 02:51:11 - /api/user/login/, 2: Password does not match
+2018-04-30 00:35:55 - /api/user/login/, 3: sql: no rows in result set
+2018-04-30 00:35:58 - /api/user/login/, 3: sql: no rows in result set
+2018-04-30 00:36:01 - /api/user/login/, 3: sql: no rows in result set
+2018-04-30 00:36:16 - newUser, 1: table users has no column named previousCourses
+2018-04-30 00:36:16 - /api/user/newUser/, 3: Error inserting new user into database
+2018-04-30 00:36:21 - /api/user/login/, 3: sql: no rows in result set
+2018-04-30 00:36:30 - /api/user/login/, 3: sql: no rows in result set
+2018-04-30 00:38:05 - newUser, 1: table users has no column named previousCourses
+2018-04-30 00:38:05 - /api/user/newUser/, 3: Error inserting new user into database
+2018-04-30 00:38:06 - /api/user/login/, 3: sql: no rows in result set
+2018-04-30 00:38:10 - /api/user/login/, 3: sql: no rows in result set
+2018-04-30 00:38:16 - /api/user/login/, 3: sql: no rows in result set
+2018-04-30 00:38:17 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-30 00:39:59 - newUser, 1: table users has no column named previousCourses
+2018-04-30 00:39:59 - /api/user/newUser/, 3: Error inserting new user into database
+2018-04-30 00:40:08 - /api/user/login/, 3: sql: no rows in result set
+2018-04-30 00:42:31 - newUser, 1: table users has no column named previousCourses
+2018-04-30 00:42:31 - /api/user/newUser/, 3: Error inserting new user into database
+2018-04-30 00:42:32 - /api/user/login/, 3: sql: no rows in result set
+2018-04-30 00:55:19 - /api/user/enroll/, 4: User has not taken the required course: CSC-250
+2018-04-30 00:55:43 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-30 00:55:53 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-30 01:23:59 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-30 01:24:01 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-30 01:25:14 - /api/user/login/, 3: sql: no rows in result set
+2018-04-30 01:25:40 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-30 01:34:04 - /api/user/login/, 3: sql: no rows in result set
+2018-04-30 01:36:58 - /api/user/enroll/, 4: User has not taken the required course: MATH-201
+2018-04-30 01:37:24 - /api/user/enroll/, 4: Class conflicts with CSC-105
+2018-04-30 01:43:30 - /api/user/login/, 3: sql: no rows in result set
+2018-04-30 01:44:24 - /api/user/login/, 3: sql: no rows in result set
+2018-04-30 01:47:31 - /api/user/delete/, 7: no such column: key
+2018-04-30 01:47:57 - /api/user/delete/, 3: sql: no rows in result set
+2018-04-30 01:48:08 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-30 01:48:13 - /api/user/delete/, 7: no such column: MATH
+2018-04-30 01:49:48 - /api/user/logout/, 3: sql: no rows in result set
+2018-04-30 01:49:54 - /api/user/login/, 3: sql: no rows in result set
