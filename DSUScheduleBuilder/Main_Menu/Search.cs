@@ -22,6 +22,13 @@ namespace DSUScheduleBuilder.Main_Menu
             InitializeComponent();
         }
 
+        #region CLICK METHODS
+
+        /// <summary>
+        /// What happens when the user clicks the search button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SearchButton_Click(object sender, EventArgs e)
         {
             int startTime, endTime;
@@ -68,11 +75,21 @@ namespace DSUScheduleBuilder.Main_Menu
             }
         }
 
+        /// <summary>
+        /// What happens when the user clicks on the AvailableCourseView
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void AvailableCourseView_Click(object sender, EventArgs e)
         {
             AvailableCourseView.OnClickEvent(e);
         }
 
+        #endregion
+
+        /// <summary>
+        /// Resets the view to the default state.
+        /// </summary>
         public void ResetToDefault()
         {
             termComboBox.Text = "";

@@ -15,13 +15,23 @@ namespace DSUScheduleBuilder.Drawing
 
     public class AvailableCourseView : CourseList<AvailableCourse>
     {
+        /// <summary>
+        /// Rectangle of the button to return to the list of courses
+        /// </summary>
         private Rectangle returnButtonRect;
+        /// <summary>
+        /// Rectangle of the button to enroll in the selected course
+        /// </summary>
         private Rectangle enrollButtonRect;
 
         public AvailableCourseView()
         {
         }
 
+        /// <summary>
+        /// Sets the current course list to be "cs" and sets up other variables needed later
+        /// </summary>
+        /// <param name="cs"></param>
         public override void SetCourses(List<AvailableCourse> cs)
         {
             base.SetCourses(cs);
@@ -33,6 +43,10 @@ namespace DSUScheduleBuilder.Drawing
             enrollButtonRect = new Rectangle(bx, this.Size.Height - this.bottomBarHeight - 48, 96, 48);
         }
 
+        /// <summary>
+        /// Draws the base course information and the description of the course
+        /// </summary>
+        /// <param name="g"></param>
         protected override void drawSelectedCourseExtra(Graphics g)
         {
             string text = selectedCourse.Description;
@@ -57,7 +71,13 @@ namespace DSUScheduleBuilder.Drawing
                 , enrollButtonRect.Y + (enrollButtonRect.Height - textSize.Height) / 2);
         }
 
-        #region Click Methods
+        #region CLICK METHODS
+
+        /// <summary>
+        /// The main handler for a click
+        /// </summary>
+        /// <param name="mx"></param>
+        /// <param name="my"></param>
         protected override void HandleClick(int mx, int my)
         {
             switch(state)
@@ -73,6 +93,11 @@ namespace DSUScheduleBuilder.Drawing
             }
         }
 
+        /// <summary>
+        /// Called when a click event happens on a selected course
+        /// </summary>
+        /// <param name="mx"></param>
+        /// <param name="my"></param>
         private void clickSpecificClass(int mx, int my)
         {
             if (returnButtonRect.Contains(mx, my))

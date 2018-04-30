@@ -10,17 +10,33 @@ namespace DSUScheduleBuilder.Drawing
     using Models;
     using Utils;
 
-    class CourseView
+    class WeekCourseView
     {
+
+        /// <summary>
+        /// The WeekView object that this CourseView belongs to
+        /// </summary>
         private WeekView weekView;
 
+        /// <summary>
+        /// Size and positioning variables for the course
+        /// </summary>
         private int x, y, w, h;
+        /// <summary>
+        /// List of what days the course is offered
+        /// </summary>
         private List<int> days;
 
+        /// <summary>
+        /// The text displayed
+        /// </summary>
         private string text;
+        /// <summary>
+        /// The color drawn behind the text
+        /// </summary>
         private SolidBrush color;
-
-        public CourseView(WeekView wv, Random r = null)
+        
+        public WeekCourseView(WeekView wv, Random r = null)
         {
             this.weekView = wv;
             days = new List<int>();
@@ -36,6 +52,9 @@ namespace DSUScheduleBuilder.Drawing
         }
 
         private Course _course;
+        /// <summary>
+        /// The underlying course being drawn
+        /// </summary>
         public Course Course
         {
             get { return _course; }
@@ -66,7 +85,11 @@ namespace DSUScheduleBuilder.Drawing
                 text = _course.CourseID + " : " + Converter.TimeIntToString(_course.StartTime) + " - " + Converter.TimeIntToString(_course.EndTime);
             }
         }
-
+        
+        /// <summary>
+        /// Draws the course to the given graphics object
+        /// </summary>
+        /// <param name="graphics"></param>
         public void Draw(Graphics graphics)
         {
             Font drawFont = SystemFonts.DefaultFont;

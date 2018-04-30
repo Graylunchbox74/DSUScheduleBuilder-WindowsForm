@@ -21,13 +21,12 @@ namespace DSUScheduleBuilder.Main_Menu
             InitializeComponent();
         }
 
-        public void ResetToDefault()
-        {
-            CurrPasswordTxt.Text = "";
-            PasswordTxt.Text = "";
-            ConfirmPasswordTxt.Text = "";
-        }
-
+        #region CLICK METHODS
+        /// <summary>
+        /// What happens when the user clicks the update passwords button.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void UpdatePasswordBtn_Click(object sender, EventArgs e)
         {
             if (ConfirmPasswordTxt.Text != PasswordTxt.Text)
@@ -52,6 +51,11 @@ namespace DSUScheduleBuilder.Main_Menu
             });
         }
 
+        /// <summary>
+        /// What happens when the user clicks the delete account button.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DeleteAccountBtn_Click(object sender, EventArgs e)
         {
             DialogResult res = MessageBox.Show("Are you sure you want to delete your account?\nThis action is not reversable.", "Delete Account", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
@@ -71,6 +75,18 @@ namespace DSUScheduleBuilder.Main_Menu
                     return true;
                 });
             }
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Resets the view to the default state.
+        /// </summary>
+        public void ResetToDefault()
+        {
+            CurrPasswordTxt.Text = "";
+            PasswordTxt.Text = "";
+            ConfirmPasswordTxt.Text = "";
         }
     }
 }

@@ -13,12 +13,32 @@ namespace DSUScheduleBuilder.Drawing
     
     public class WeekView : Control, IResetable
     {
+        /// <summary>
+        /// Internal randomizer for the course colors
+        /// </summary>
         private static Random courseColorRandomizer;
-        private List<CourseView> courses;
 
+        /// <summary>
+        /// The list of courses to display
+        /// </summary>
+        private List<WeekCourseView> courses;
+
+        /// <summary>
+        /// How tall the top row of days of week is
+        /// </summary>
         public readonly int DayOfWeekHeight = 32;
+        /// <summary>
+        /// How tall each time slot is
+        /// </summary>
         public readonly int TimeSlotHeight = 32;
+        /// <summary>
+        /// How wide the leftmost column is
+        /// </summary>
         public readonly int TimeSlotWidth = 40;
+
+        /// <summary>
+        /// How wide each cell is. Calculated from size and TimeSlotWidth
+        /// </summary>
         public int CellWidth
         {
             get
@@ -27,25 +47,36 @@ namespace DSUScheduleBuilder.Drawing
             }
         }
 
+        /// <summary>
+        /// List of the days of the week from 
+        /// </summary>
         private static readonly String[] _days = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday" };
 
         public WeekView()
         {
         }
-
+        
+        /// <summary>
+        /// Sets the currentl list of displayed courses. Converts from Course to WeekCouresView
+        /// </summary>
+        /// <param name="courses"></param>
         public void SetCourses(List<Course> courses)
         {
-            this.courses = courses?.ConvertAll<CourseView>((Course c) =>
+            this.courses = courses?.ConvertAll<WeekCourseView>((Course c) =>
             {
-                CourseView cv = new CourseView(this, courseColorRandomizer);
+                WeekCourseView cv = new WeekCourseView(this, courseColorRandomizer);
                 cv.Course = c;
                 return cv;
             });
         }
 
+        #region DRAW METHODS
+        /// <summary>
+        /// Main entry point of drawing. Called when the window wants to draw the WeekView
+        /// </summary>
+        /// <param name="e"></param>
         protected override void OnPaint(PaintEventArgs e)
         {
-
             //Draw the days of the week at the top
             for (int i = 0; i < 5; i++)
             {
@@ -85,7 +116,7 @@ namespace DSUScheduleBuilder.Drawing
 
             if (courses != null)
             {
-                foreach (CourseView c in courses)
+                foreach (WeekCourseView c in courses)
                 {
                     c.Draw(e.Graphics);
                 }
@@ -101,12 +132,23 @@ namespace DSUScheduleBuilder.Drawing
             }
         }
 
+        /// <summary>
+        /// How to draw a blank and empty cell
+        /// </summary>
+        /// <param name="g"></param>
+        /// <param name="r"></param>
+        /// <param name="padding"></param>
         private void _drawEmptyCell(Graphics g, Rectangle r, float padding = 1.0f)
         {
             g.FillRectangle(Brushes.Black, r);
             g.FillRectangle(Brushes.Aqua, r.X + padding, r.Y + padding, r.Width - 2 * padding, r.Height - 2 * padding);
         }
 
+        #endregion
+        
+        /// <summary>
+        /// Used to return the WeekView to its default state
+        /// </summary>
         public void ResetToDefault()
         {
             courseColorRandomizer = new Random(0xB00B5);

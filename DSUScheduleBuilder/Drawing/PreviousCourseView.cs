@@ -13,7 +13,14 @@ namespace DSUScheduleBuilder.Drawing
 
     public class PreviousCourseView : CourseList<PreviousCourse>
     {
+        /// <summary>
+        /// Rectangle of the button to return to the list of courses
+        /// </summary>
         private Rectangle returnButtonRect;
+
+        /// <summary>
+        /// Rectangle of the button to drop the selected course
+        /// </summary>
         private Rectangle dropButtonRect;
 
         public PreviousCourseView() : base()
@@ -21,6 +28,10 @@ namespace DSUScheduleBuilder.Drawing
             numbersPerPage = 10;
         }
 
+        /// <summary>
+        /// Sets the current course list to be "cs" and sets up other variables needed later
+        /// </summary>
+        /// <param name="cs"></param>
         public override void SetCourses(List<PreviousCourse> cs)
         {
             base.SetCourses(cs);
@@ -32,6 +43,7 @@ namespace DSUScheduleBuilder.Drawing
             dropButtonRect = new Rectangle(bx, this.Size.Height - this.bottomBarHeight - 48, 96, 48);
         }
 
+        #region DRAW METHODS
         protected override void drawCourse(Graphics g, int number, PreviousCourse course)
         {
             g.FillRectangle(number % 2 == 0 ? courseColor1 : courseColor2, 2, number * cellHeight + 2, Size.Width - 4, cellHeight - 4);
@@ -90,6 +102,15 @@ namespace DSUScheduleBuilder.Drawing
                 , dropButtonRect.Y + (dropButtonRect.Height - textSize.Height) / 2);
         }
 
+        #endregion
+
+
+        #region CLICK METHODS
+        /// <summary>
+        /// The main handler for a click
+        /// </summary>
+        /// <param name="mx"></param>
+        /// <param name="my"></param>
         protected override void HandleClick(int mx, int my)
         {
             switch(state)
@@ -103,6 +124,11 @@ namespace DSUScheduleBuilder.Drawing
             }
         }
 
+        /// <summary>
+        /// Called when a click event happens on a selected course
+        /// </summary>
+        /// <param name="mx"></param>
+        /// <param name="my"></param>
         private void ClickSpecificClass(int mx, int my)
         {
             if (returnButtonRect.Contains(mx, my))
@@ -139,5 +165,7 @@ namespace DSUScheduleBuilder.Drawing
                 state = CourseListState.ClassList;
             }
         }
+
+        #endregion
     }
 }

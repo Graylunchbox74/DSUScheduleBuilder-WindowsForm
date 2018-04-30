@@ -18,24 +18,67 @@ namespace DSUScheduleBuilder.Drawing
         SpecificClass
     }
 
+    /// <summary>
+    /// Represents a listing of courses and the way to display them.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public abstract class CourseList<T> : Control where T : Course
     {
+        /// <summary>
+        /// The primary brush color to use.
+        /// </summary>
         protected readonly Brush courseColor1;
+        /// <summary>
+        /// The secondary brush color to use.
+        /// </summary>
         protected readonly Brush courseColor2;
 
+        /// <summary>
+        /// The list of courses
+        /// </summary>
         protected List<T> courses;
+        /// <summary>
+        /// How many courses should be displayed per page
+        /// </summary>
         protected int numbersPerPage;
+        /// <summary>
+        /// How many pages there are. Calculated when adding courses
+        /// </summary>
         protected int totalPages;
+        /// <summary>
+        /// The currently selected page
+        /// </summary>
         protected int currPage;
 
+        /// <summary>
+        /// How wide each cell is
+        /// </summary>
         protected int cellWidth;
+        /// <summary>
+        /// How tall each cell is. Calculated when adding courses
+        /// </summary>
         protected int cellHeight = 1;
+        /// <summary>
+        /// How tall the bottom information bar is
+        /// </summary>
         protected int bottomBarHeight = 32;
 
+        /// <summary>
+        /// Rectangle of the back button
+        /// </summary>
         private Rectangle backButtonRect;
+        /// <summary>
+        /// Rectangle of the forward button
+        /// </summary>
         private Rectangle forwardButtonRect;
 
+        /// <summary>
+        /// The currently active state of the CourseList
+        /// </summary>
         protected CourseListState state;
+        /// <summary>
+        /// Which course is currently selected
+        /// </summary>
         protected T selectedCourse;
 
         public CourseList()
@@ -45,6 +88,10 @@ namespace DSUScheduleBuilder.Drawing
             courseColor2 = new SolidBrush(Color.FromArgb(255, 255, 241, 118));
         }
 
+        /// <summary>
+        /// Sets the current list of courses to be "cs" and is overloadable to allow for setting of other variables
+        /// </summary>
+        /// <param name="cs"></param>
         public virtual void SetCourses(List<T> cs)
         {
             this.courses = cs;
@@ -70,6 +117,10 @@ namespace DSUScheduleBuilder.Drawing
         }
         
         #region DRAWING FUNCTIONS
+        /// <summary>
+        /// This is called whenever the window wants to draw the course list
+        /// </summary>
+        /// <param name="e"></param>
         protected override void OnPaint(PaintEventArgs e)
         {
             int h = this.Size.Height;
@@ -93,6 +144,10 @@ namespace DSUScheduleBuilder.Drawing
             }
         }
 
+        /// <summary>
+        /// How to draw a class that has been selected
+        /// </summary>
+        /// <param name="g"></param>
         protected virtual void drawSpecificClass(Graphics g)
         {
             if (selectedCourse == null)
@@ -126,8 +181,16 @@ namespace DSUScheduleBuilder.Drawing
             drawSelectedCourseExtra(g);
         }
 
+        /// <summary>
+        /// Overloadable method to allow for drawing additional information about the class
+        /// </summary>
+        /// <param name="g"></param>
         protected abstract void drawSelectedCourseExtra(Graphics g);
 
+        /// <summary>
+        /// The main function to draw the list of classes
+        /// </summary>
+        /// <param name="g"></param>
         protected void drawClassList(Graphics g)
         {
             if (courses != null)
@@ -146,6 +209,12 @@ namespace DSUScheduleBuilder.Drawing
             }
         }
 
+        /// <summary>
+        /// How to draw a course in the list of courses
+        /// </summary>
+        /// <param name="g"></param>
+        /// <param name="number"></param>
+        /// <param name="course"></param>
         protected virtual void drawCourse(Graphics g, int number, T course)
         {
             g.FillRectangle(number % 2 == 0 ? courseColor1 : courseColor2, 2, number * cellHeight + 2, Size.Width - 4, cellHeight - 4);
@@ -173,6 +242,10 @@ namespace DSUScheduleBuilder.Drawing
             }
         }
 
+        /// <summary>
+        /// How to draw the bar containing different buttons at the bottom of the list
+        /// </summary>
+        /// <param name="g"></param>
         private void drawBottomBar(Graphics g)
         {
             int topY = this.Size.Height - bottomBarHeight;
@@ -193,7 +266,17 @@ namespace DSUScheduleBuilder.Drawing
         #endregion
 
         #region CLICK FUNCTIONS
+        /// <summary>
+        /// Specifies what should happen when the user clicks a region of the course list
+        /// </summary>
+        /// <param name="mx"></param>
+        /// <param name="my"></param>
         protected abstract void HandleClick(int mx, int my);
+
+        /// <summary>
+        /// The main handler for a click event. Called internally
+        /// </summary>
+        /// <param name="e"></param>
         public void OnClickEvent(EventArgs e)
         {
             int sx = PointToScreen(Point.Empty).X;
@@ -205,6 +288,12 @@ namespace DSUScheduleBuilder.Drawing
             this.Refresh();
         }
 
+        /// <summary>
+        /// Checks to see if the bottom bar has been clicked anywhere
+        /// </summary>
+        /// <param name="mx"></param>
+        /// <param name="my"></param>
+        /// <returns></returns>
         protected bool CheckBottomBarClick(int mx, int my)
         {
             if (courses == null) return true;
@@ -224,6 +313,11 @@ namespace DSUScheduleBuilder.Drawing
             return false;
         }
 
+        /// <summary>
+        /// Checks to see if the list of classes has been clicked anywhere
+        /// </summary>
+        /// <param name="mx"></param>
+        /// <param name="my"></param>
         protected void ClickClassList(int mx, int my)
         {
             if (!CheckBottomBarClick(mx, my))

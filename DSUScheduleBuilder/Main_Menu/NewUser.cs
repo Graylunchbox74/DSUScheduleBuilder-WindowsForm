@@ -20,7 +20,12 @@ namespace DSUScheduleBuilder.Main_Menu
             InitializeComponent();
         }
 
-        private bool CheckRegex(string s)
+        /// <summary>
+        /// Checks to ensure that the email is valid.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        private bool CheckEmailRegex(string s)
         {
             try
             {
@@ -32,6 +37,12 @@ namespace DSUScheduleBuilder.Main_Menu
             }
         }
 
+        #region CLICK METHODS
+        /// <summary>
+        /// What happens when the user clicks the create button.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Create_Click(object sender, EventArgs e)
         {
             if(emailTextBox.Text == "" && passwordTextBox.Text == "" && confirmTextBox.Text == "" && firstnameTextBox.Text == "" && lastnameTextBox.Text == "")
@@ -42,7 +53,7 @@ namespace DSUScheduleBuilder.Main_Menu
             {
                 MessageBox.Show("Error: Passwords do not match");
             }
-            else if(!CheckRegex(emailTextBox.Text))
+            else if(!CheckEmailRegex(emailTextBox.Text))
             {
                 MessageBox.Show("Please enter a valid email address");
             }
@@ -73,11 +84,21 @@ namespace DSUScheduleBuilder.Main_Menu
             }
         }
 
+        /// <summary>
+        /// What happens when the user clicks the back button.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BackButton_Click(object sender, EventArgs e)
         {
             ((MainWindow)this.Parent.Parent).ChangeState(MainWindow.States.Login);
         }
 
+        #endregion
+
+        /// <summary>
+        /// Resets the view to the default state.
+        /// </summary>
         public void ResetToDefault()
         {
             emailTextBox.Text = "";

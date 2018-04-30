@@ -22,6 +22,12 @@ namespace DSUScheduleBuilder.Main_Menu
             InitializeComponent();
         }
 
+        #region BUTTON CLICK METHODS
+        /// <summary>
+        /// What happens when the user clicks the Add Previous button. 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void AddPreviousCourseBtn_Click(object sender, EventArgs e)
         {
             string tmp = PreviousCourseIdTxt.Text.ToUpper();
@@ -49,6 +55,11 @@ namespace DSUScheduleBuilder.Main_Menu
             });
         }
 
+        /// <summary>
+        /// What happens when the user clicks the View Enrolled button.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ViewEnrolledBtn_Click(object sender, EventArgs e)
         {
             EnrolledCourseView.Show();
@@ -57,6 +68,11 @@ namespace DSUScheduleBuilder.Main_Menu
             PreviousCourseView.Refresh();
         }
 
+        /// <summary>
+        /// What happens when the user clicks the View Previous button.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ViewPreviousBtn_Click(object sender, EventArgs e)
         {
             PreviousCourseView.Show();
@@ -65,16 +81,31 @@ namespace DSUScheduleBuilder.Main_Menu
             PreviousCourseView.Refresh();
         }
 
+        /// <summary>
+        /// What happens when the previous course list. Forwards click to the PreviousCourseView.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void PreviousCourseView_Click(object sender, EventArgs e)
         {
             PreviousCourseView.OnClickEvent(e);
         }
-
+        
+        /// <summary>
+        /// What happens when the previous course list. Forwards click to the EnrolledCourseView.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void EnrolledCourseView_Click(object sender, EventArgs e)
         {
             EnrolledCourseView.OnClickEvent(e);
         }
 
+        #endregion
+
+        /// <summary>
+        /// Used to reset the view to the default state
+        /// </summary>
         public void ResetToDefault()
         {
             EnrolledCourseView.Show();
