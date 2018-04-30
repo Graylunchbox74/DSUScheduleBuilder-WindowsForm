@@ -32,7 +32,7 @@ namespace DSUScheduleBuilder.Main_Menu
             }
         }
 
-        private void create_Click(object sender, EventArgs e)
+        private void Create_Click(object sender, EventArgs e)
         {
             if(emailTextBox.Text == "" && passwordTextBox.Text == "" && confirmTextBox.Text == "" && firstnameTextBox.Text == "" && lastnameTextBox.Text == "")
             {
@@ -73,7 +73,7 @@ namespace DSUScheduleBuilder.Main_Menu
             }
         }
 
-        private void backButton_Click(object sender, EventArgs e)
+        private void BackButton_Click(object sender, EventArgs e)
         {
             ((MainWindow)this.Parent.Parent).ChangeState(MainWindow.States.Login);
         }

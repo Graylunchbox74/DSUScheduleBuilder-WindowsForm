@@ -68,7 +68,8 @@ namespace DSUScheduleBuilder.Drawing
             forwardButtonRect = new Rectangle(bx, this.Size.Height - this.bottomBarHeight, 32, 32);
             this.Refresh();
         }
-
+        
+        #region DRAWING FUNCTIONS
         protected override void OnPaint(PaintEventArgs e)
         {
             int h = this.Size.Height;
@@ -189,7 +190,9 @@ namespace DSUScheduleBuilder.Drawing
             g.DrawString(">", font, Brushes.Black, forwardButtonRect.X, forwardButtonRect.Y);
         }
 
+        #endregion
 
+        #region CLICK FUNCTIONS
         protected abstract void HandleClick(int mx, int my);
         public void OnClickEvent(EventArgs e)
         {
@@ -236,6 +239,8 @@ namespace DSUScheduleBuilder.Drawing
                 }
             }
         }
+
+        #endregion
     }
 
 }

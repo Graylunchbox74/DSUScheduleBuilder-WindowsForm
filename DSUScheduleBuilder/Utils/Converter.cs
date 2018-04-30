@@ -27,11 +27,6 @@ namespace DSUScheduleBuilder.Utils
             return hour + ":" + minute;
         }
 
-        public static int IntTimeFromString(string s)
-        {
-            return 0;
-        }
-
         public static string IntersperseNewLines(string s)
         {
             StringBuilder sb = new StringBuilder();

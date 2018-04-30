@@ -22,7 +22,7 @@ namespace DSUScheduleBuilder.Main_Menu
             InitializeComponent();
         }
 
-        private void searchButton_Click(object sender, EventArgs e)
+        private void SearchButton_Click(object sender, EventArgs e)
         {
             int startTime, endTime;
 
@@ -71,28 +71,6 @@ namespace DSUScheduleBuilder.Main_Menu
         private void AvailableCourseView_Click(object sender, EventArgs e)
         {
             AvailableCourseView.OnClickEvent(e);
-        }
-
-        public void ClearFields()
-        {
-            termComboBox.Text = "";
-            PrefixTextBox.Text = "";
-            CourseNumTextBox.Text = "";
-            IlnTextBox.Text = "";
-            timeCheckbox.Checked = false;
-        }
-
-        private void CourseNumTextBox_TextChanged(object sender, EventArgs e)
-        {
-            //if (!Regex.IsMatch(CourseNumTextBox.Text, @"[0-9]+"))
-            //{
-            //    CourseNumTextBox.Text.Remove(CourseNumTextBox.Text.Length - 1);
-            //}
-        }
-
-        private void PrefixTextBox_TextChanged(object sender, EventArgs e)
-        {
-
         }
 
         public void ResetToDefault()

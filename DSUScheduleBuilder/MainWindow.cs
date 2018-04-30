@@ -197,6 +197,7 @@ namespace DSUScheduleBuilder
         }
         #endregion
 
+        #region NAVIGATION BAR EVENTS
         private void MainMenu_SearchBtn_Click(object sender, EventArgs e)
         {
             ChangeActiveController(ActiveController.Search);
@@ -216,5 +217,7 @@ namespace DSUScheduleBuilder
         {
             ChangeActiveController(ActiveController.ManageCourses);
         }
+
+        #endregion
     }
 }

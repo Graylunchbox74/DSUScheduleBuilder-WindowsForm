@@ -177,7 +177,7 @@
             this.newUserButton.TabIndex = 11;
             this.newUserButton.Text = "Create User";
             this.newUserButton.UseVisualStyleBackColor = true;
-            this.newUserButton.Click += new System.EventHandler(this.create_Click);
+            this.newUserButton.Click += new System.EventHandler(this.Create_Click);
             // 
             // backButton
             // 
@@ -191,7 +191,7 @@
             this.backButton.TabIndex = 12;
             this.backButton.Text = "Back";
             this.backButton.UseVisualStyleBackColor = true;
-            this.backButton.Click += new System.EventHandler(this.backButton_Click);
+            this.backButton.Click += new System.EventHandler(this.BackButton_Click);
             // 
             // NewUser
             // 

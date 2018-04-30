@@ -7,7 +7,7 @@ using RestSharp;
 using DSUScheduleBuilder.Models;
 
 namespace DSUScheduleBuilder.Network {
-    static class Errors
+    static class ErrorPrinter
     {
         public static void BadData(string msg)
         {
@@ -19,13 +19,13 @@ namespace DSUScheduleBuilder.Network {
             Console.WriteLine("[Error " + error.errorCode + "] " + error.errorMessage);
         }
     }
-
+    
+    #region RESPONSE CLASSES
     class Errorable
     {
         public int? errorCode { get; set; }
         public string errorMessage { get; set; }
     }
-    
 
     class UserResponse : Errorable
     {
@@ -215,6 +215,8 @@ namespace DSUScheduleBuilder.Network {
         }
     }
 
+    #endregion
+
     class HttpRequester
     {
         //STATIC FIELD
@@ -246,6 +248,7 @@ namespace DSUScheduleBuilder.Network {
             _client = new RestClient(target);
         }
 
+        #region REQUESTS
         public void Login(string email, string password, HttpRCB<LoginResponse> callback)
         {
             Console.WriteLine("LOGGING IN");
@@ -261,7 +264,7 @@ namespace DSUScheduleBuilder.Network {
 
             if (response.Data == null)
             {
-                Errors.BadData("Failed to login");
+                ErrorPrinter.BadData("Failed to login");
                 return;
             }
 
@@ -310,7 +313,7 @@ namespace DSUScheduleBuilder.Network {
             var res = _client.Execute<SuccessResponse>(req);
             if (res.Data == null)
             {
-                Errors.BadData("Failed to add new user");
+                ErrorPrinter.BadData("Failed to add new user");
                 return;
             }
 
@@ -329,7 +332,7 @@ namespace DSUScheduleBuilder.Network {
 
             if (succ == null)
             {
-                Errors.BadData("Deleteing user failed");
+                ErrorPrinter.BadData("Deleteing user failed");
                 return;
             }
 
@@ -353,7 +356,7 @@ namespace DSUScheduleBuilder.Network {
 
             if (succ == null)
             {
-                Errors.BadData("Parsing change password failed");
+                ErrorPrinter.BadData("Parsing change password failed");
                 return;
             }
 
@@ -372,13 +375,13 @@ namespace DSUScheduleBuilder.Network {
 
             if (user == null)
             {
-                Errors.BadData("Parsing User failed");
+                ErrorPrinter.BadData("Parsing User failed");
                 return null;
             }
 
             if (user.errorCode != null)
             {
-                Errors.Code(user);
+                ErrorPrinter.Code(user);
                 //Handle the different error codes for a user here
                 return null;
             }
@@ -397,13 +400,13 @@ namespace DSUScheduleBuilder.Network {
 
             if (courses == null)
             {
-                Errors.BadData("Parsing Previous Courses failed");
+                ErrorPrinter.BadData("Parsing Previous Courses failed");
                 return null;
             }
 
             if (courses.errorCode != null)
             {
-                Errors.Code(courses);
+                ErrorPrinter.Code(courses);
                 return null;
             }
 
@@ -423,13 +426,13 @@ namespace DSUScheduleBuilder.Network {
 
             if (courses == null)
             {
-                Errors.BadData("Parsing Enrolled Courses failed");
+                ErrorPrinter.BadData("Parsing Enrolled Courses failed");
                 return null;
             }
 
             if (courses.errorCode != null)
             {
-                Errors.Code(courses);
+                ErrorPrinter.Code(courses);
                 //Properly handle errors
                 return null;
             }
@@ -450,13 +453,13 @@ namespace DSUScheduleBuilder.Network {
 
             if (courses == null)
             {
-                Errors.BadData("Parsing Available courses failed");
+                ErrorPrinter.BadData("Parsing Available courses failed");
                 return null;
             }
 
             if (courses.errorCode != null)
             {
-                Errors.Code(courses);
+                ErrorPrinter.Code(courses);
                 return null;
             }
 
@@ -489,7 +492,7 @@ namespace DSUScheduleBuilder.Network {
 
             if (courses == null)
             {
-                Errors.BadData("Parsing searched courses failed");
+                ErrorPrinter.BadData("Parsing searched courses failed");
                 return null;
             }
 
@@ -518,7 +521,7 @@ namespace DSUScheduleBuilder.Network {
 
             if (succ == null)
             {
-                Errors.BadData("Parsing enrolled class failed");
+                ErrorPrinter.BadData("Parsing enrolled class failed");
                 return;
             }
 
@@ -541,7 +544,7 @@ namespace DSUScheduleBuilder.Network {
 
             if (succ == null)
             {
-                Errors.BadData("Parsing drop course failed");
+                ErrorPrinter.BadData("Parsing drop course failed");
                 return;
             }
 
@@ -565,7 +568,7 @@ namespace DSUScheduleBuilder.Network {
 
             if (succ == null)
             {
-                Errors.BadData("Parsing add previous class failed");
+                ErrorPrinter.BadData("Parsing add previous class failed");
                 return;
             }
 
@@ -587,11 +590,13 @@ namespace DSUScheduleBuilder.Network {
 
             if (succ == null)
             {
-                Errors.BadData("Parsing delete previous class failed");
+                ErrorPrinter.BadData("Parsing delete previous class failed");
                 return;
             }
 
             callback(succ);
         }
+
+        #endregion
     }
 }

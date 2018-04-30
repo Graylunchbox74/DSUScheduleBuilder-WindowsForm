@@ -126,7 +126,6 @@
             this.PrefixTextBox.Name = "PrefixTextBox";
             this.PrefixTextBox.Size = new System.Drawing.Size(179, 20);
             this.PrefixTextBox.TabIndex = 11;
-            this.PrefixTextBox.TextChanged += new System.EventHandler(this.PrefixTextBox_TextChanged);
             // 
             // searchButton
             // 
@@ -138,7 +137,7 @@
             this.searchButton.TabIndex = 19;
             this.searchButton.Text = "Search!";
             this.searchButton.UseVisualStyleBackColor = true;
-            this.searchButton.Click += new System.EventHandler(this.searchButton_Click);
+            this.searchButton.Click += new System.EventHandler(this.SearchButton_Click);
             // 
             // CourseNumTextBox
             // 
@@ -150,7 +149,6 @@
             this.CourseNumTextBox.Name = "CourseNumTextBox";
             this.CourseNumTextBox.Size = new System.Drawing.Size(179, 20);
             this.CourseNumTextBox.TabIndex = 12;
-            this.CourseNumTextBox.TextChanged += new System.EventHandler(this.CourseNumTextBox_TextChanged);
             // 
             // IlnTextBox
             // 
