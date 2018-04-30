@@ -17,6 +17,13 @@ namespace DSUScheduleBuilder
     
     public partial class MainWindow: Form
     {
+        private static MainWindow _instance;
+
+        public static void SwitchState(States s)
+        {
+            _instance.ChangeState(s);
+        }
+
         public enum States
         {
             Login, NewUser, MainMenu, ForgotPassword
@@ -32,6 +39,7 @@ namespace DSUScheduleBuilder
         public MainWindow()
         {
             InitializeComponent();
+            _instance = this;
 
             ChangeState(States.Login);
             ChangeActiveController(ActiveController.WeekView);
@@ -111,11 +119,9 @@ namespace DSUScheduleBuilder
                 if (user != null)
                 {
                     ChangeState(States.MainMenu);
-
-                    List<Course> courses = HttpRequester.Default.GetEnrolledCourses();
-                    Control_WeekView.SetCourses(courses);
+                    ChangeActiveController(ActiveController.WeekView);
                     
-                    WelcomeLabel.Text = "Welcome " + user.FirstName + "!";
+                    WelcomeLabel.Text = "Welcome to TomAdvisor, " + user.FirstName + ".";
                 }
             }
             else

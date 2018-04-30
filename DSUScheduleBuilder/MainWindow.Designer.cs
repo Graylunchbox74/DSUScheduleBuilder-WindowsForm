@@ -41,19 +41,19 @@ namespace DSUScheduleBuilder
             this.Login_NewUserBtn = new System.Windows.Forms.Button();
             this.Login_PasswordTxt = new System.Windows.Forms.TextBox();
             this.NewUserPanel = new System.Windows.Forms.Panel();
-            this.NewUserControl = new DSUScheduleBuilder.Main_Menu.NewUser();
             this.MainMenuPanel = new System.Windows.Forms.Panel();
-            this.Control_ManageCourses = new DSUScheduleBuilder.Main_Menu.ManageCourses();
             this.ManageCoursesBtn = new System.Windows.Forms.Button();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
-            this.Control_AccountSettings = new DSUScheduleBuilder.Main_Menu.UserSettings();
             this.AccountSettingsBtn = new System.Windows.Forms.Button();
             this.MainMenu_WeekViewBtn = new System.Windows.Forms.Button();
-            this.Control_Search = new DSUScheduleBuilder.Main_Menu.Search();
             this.MainMenu_SearchBtn = new System.Windows.Forms.Button();
             this.MainMenu_LogoutBtn = new System.Windows.Forms.Button();
             this.WelcomeLabel = new System.Windows.Forms.Label();
+            this.Control_ManageCourses = new DSUScheduleBuilder.Main_Menu.ManageCourses();
+            this.Control_AccountSettings = new DSUScheduleBuilder.Main_Menu.UserSettings();
+            this.Control_Search = new DSUScheduleBuilder.Main_Menu.Search();
             this.Control_WeekView = new DSUScheduleBuilder.Drawing.WeekView();
+            this.NewUserControl = new DSUScheduleBuilder.Main_Menu.NewUser();
             this.LoginPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.NewUserPanel.SuspendLayout();
@@ -161,46 +161,30 @@ namespace DSUScheduleBuilder
             this.NewUserPanel.Size = new System.Drawing.Size(1010, 728);
             this.NewUserPanel.TabIndex = 2;
             // 
-            // NewUserControl
-            // 
-            this.NewUserControl.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.NewUserControl.Location = new System.Drawing.Point(72, 40);
-            this.NewUserControl.Margin = new System.Windows.Forms.Padding(2);
-            this.NewUserControl.Name = "NewUserControl";
-            this.NewUserControl.Size = new System.Drawing.Size(872, 513);
-            this.NewUserControl.TabIndex = 0;
-            // 
             // MainMenuPanel
             // 
-            this.MainMenuPanel.Controls.Add(this.Control_ManageCourses);
             this.MainMenuPanel.Controls.Add(this.ManageCoursesBtn);
             this.MainMenuPanel.Controls.Add(this.pictureBox2);
-            this.MainMenuPanel.Controls.Add(this.Control_AccountSettings);
             this.MainMenuPanel.Controls.Add(this.AccountSettingsBtn);
             this.MainMenuPanel.Controls.Add(this.MainMenu_WeekViewBtn);
-            this.MainMenuPanel.Controls.Add(this.Control_Search);
             this.MainMenuPanel.Controls.Add(this.MainMenu_SearchBtn);
             this.MainMenuPanel.Controls.Add(this.MainMenu_LogoutBtn);
             this.MainMenuPanel.Controls.Add(this.WelcomeLabel);
             this.MainMenuPanel.Controls.Add(this.Control_WeekView);
+            this.MainMenuPanel.Controls.Add(this.Control_ManageCourses);
+            this.MainMenuPanel.Controls.Add(this.Control_AccountSettings);
+            this.MainMenuPanel.Controls.Add(this.Control_Search);
             this.MainMenuPanel.Location = new System.Drawing.Point(-1, 0);
             this.MainMenuPanel.Name = "MainMenuPanel";
             this.MainMenuPanel.Size = new System.Drawing.Size(1010, 728);
             this.MainMenuPanel.TabIndex = 7;
-            // 
-            // Control_ManageCourses
-            // 
-            this.Control_ManageCourses.Location = new System.Drawing.Point(72, 118);
-            this.Control_ManageCourses.Name = "Control_ManageCourses";
-            this.Control_ManageCourses.Size = new System.Drawing.Size(872, 606);
-            this.Control_ManageCourses.TabIndex = 10;
             // 
             // ManageCoursesBtn
             // 
             this.ManageCoursesBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ManageCoursesBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ManageCoursesBtn.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.ManageCoursesBtn.Location = new System.Drawing.Point(307, 54);
+            this.ManageCoursesBtn.Location = new System.Drawing.Point(307, 67);
             this.ManageCoursesBtn.Name = "ManageCoursesBtn";
             this.ManageCoursesBtn.Size = new System.Drawing.Size(138, 46);
             this.ManageCoursesBtn.TabIndex = 3;
@@ -212,25 +196,17 @@ namespace DSUScheduleBuilder
             // 
             this.pictureBox2.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox2.BackgroundImage")));
             this.pictureBox2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pictureBox2.Location = new System.Drawing.Point(895, 12);
+            this.pictureBox2.Location = new System.Drawing.Point(896, 12);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(101, 101);
             this.pictureBox2.TabIndex = 8;
             this.pictureBox2.TabStop = false;
             // 
-            // Control_AccountSettings
-            // 
-            this.Control_AccountSettings.Location = new System.Drawing.Point(72, 118);
-            this.Control_AccountSettings.Margin = new System.Windows.Forms.Padding(2);
-            this.Control_AccountSettings.Name = "Control_AccountSettings";
-            this.Control_AccountSettings.Size = new System.Drawing.Size(872, 606);
-            this.Control_AccountSettings.TabIndex = 7;
-            // 
             // AccountSettingsBtn
             // 
             this.AccountSettingsBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.AccountSettingsBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.AccountSettingsBtn.Location = new System.Drawing.Point(451, 54);
+            this.AccountSettingsBtn.Location = new System.Drawing.Point(451, 67);
             this.AccountSettingsBtn.Name = "AccountSettingsBtn";
             this.AccountSettingsBtn.Size = new System.Drawing.Size(138, 46);
             this.AccountSettingsBtn.TabIndex = 4;
@@ -242,7 +218,7 @@ namespace DSUScheduleBuilder
             // 
             this.MainMenu_WeekViewBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.MainMenu_WeekViewBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MainMenu_WeekViewBtn.Location = new System.Drawing.Point(19, 54);
+            this.MainMenu_WeekViewBtn.Location = new System.Drawing.Point(19, 67);
             this.MainMenu_WeekViewBtn.Name = "MainMenu_WeekViewBtn";
             this.MainMenu_WeekViewBtn.Size = new System.Drawing.Size(138, 46);
             this.MainMenu_WeekViewBtn.TabIndex = 1;
@@ -250,20 +226,11 @@ namespace DSUScheduleBuilder
             this.MainMenu_WeekViewBtn.UseVisualStyleBackColor = true;
             this.MainMenu_WeekViewBtn.Click += new System.EventHandler(this.MainMenu_WeekViewBtn_Click);
             // 
-            // Control_Search
-            // 
-            this.Control_Search.Location = new System.Drawing.Point(72, 174);
-            this.Control_Search.Margin = new System.Windows.Forms.Padding(2);
-            this.Control_Search.Name = "Control_Search";
-            this.Control_Search.Size = new System.Drawing.Size(872, 513);
-            this.Control_Search.TabIndex = 4;
-            this.Control_Search.Visible = false;
-            // 
             // MainMenu_SearchBtn
             // 
             this.MainMenu_SearchBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.MainMenu_SearchBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MainMenu_SearchBtn.Location = new System.Drawing.Point(163, 54);
+            this.MainMenu_SearchBtn.Location = new System.Drawing.Point(163, 67);
             this.MainMenu_SearchBtn.Name = "MainMenu_SearchBtn";
             this.MainMenu_SearchBtn.Size = new System.Drawing.Size(138, 46);
             this.MainMenu_SearchBtn.TabIndex = 2;
@@ -275,7 +242,7 @@ namespace DSUScheduleBuilder
             // 
             this.MainMenu_LogoutBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.MainMenu_LogoutBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MainMenu_LogoutBtn.Location = new System.Drawing.Point(595, 54);
+            this.MainMenu_LogoutBtn.Location = new System.Drawing.Point(595, 67);
             this.MainMenu_LogoutBtn.Name = "MainMenu_LogoutBtn";
             this.MainMenu_LogoutBtn.Size = new System.Drawing.Size(138, 46);
             this.MainMenu_LogoutBtn.TabIndex = 5;
@@ -293,6 +260,30 @@ namespace DSUScheduleBuilder
             this.WelcomeLabel.TabIndex = 1;
             this.WelcomeLabel.Text = "welcome text";
             // 
+            // Control_ManageCourses
+            // 
+            this.Control_ManageCourses.Location = new System.Drawing.Point(72, 118);
+            this.Control_ManageCourses.Name = "Control_ManageCourses";
+            this.Control_ManageCourses.Size = new System.Drawing.Size(872, 606);
+            this.Control_ManageCourses.TabIndex = 10;
+            // 
+            // Control_AccountSettings
+            // 
+            this.Control_AccountSettings.Location = new System.Drawing.Point(72, 118);
+            this.Control_AccountSettings.Margin = new System.Windows.Forms.Padding(2);
+            this.Control_AccountSettings.Name = "Control_AccountSettings";
+            this.Control_AccountSettings.Size = new System.Drawing.Size(872, 606);
+            this.Control_AccountSettings.TabIndex = 7;
+            // 
+            // Control_Search
+            // 
+            this.Control_Search.Location = new System.Drawing.Point(72, 174);
+            this.Control_Search.Margin = new System.Windows.Forms.Padding(2);
+            this.Control_Search.Name = "Control_Search";
+            this.Control_Search.Size = new System.Drawing.Size(872, 513);
+            this.Control_Search.TabIndex = 4;
+            this.Control_Search.Visible = false;
+            // 
             // Control_WeekView
             // 
             this.Control_WeekView.Location = new System.Drawing.Point(4, 212);
@@ -300,6 +291,15 @@ namespace DSUScheduleBuilder
             this.Control_WeekView.Size = new System.Drawing.Size(993, 513);
             this.Control_WeekView.TabIndex = 0;
             this.Control_WeekView.Text = "weekView1";
+            // 
+            // NewUserControl
+            // 
+            this.NewUserControl.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.NewUserControl.Location = new System.Drawing.Point(72, 40);
+            this.NewUserControl.Margin = new System.Windows.Forms.Padding(2);
+            this.NewUserControl.Name = "NewUserControl";
+            this.NewUserControl.Size = new System.Drawing.Size(872, 513);
+            this.NewUserControl.TabIndex = 0;
             // 
             // MainWindow
             // 

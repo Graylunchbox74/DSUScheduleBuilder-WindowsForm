@@ -25,10 +25,8 @@ namespace DSUScheduleBuilder.Network {
         public int? errorCode { get; set; }
         public string errorMessage { get; set; }
     }
+    
 
-    //Many of the following fields do not have to be public
-    //because they are transformed into another object type before
-    //they are returned.
     class UserResponse : Errorable
     {
         //public int uid { get; set; }
@@ -231,6 +229,8 @@ namespace DSUScheduleBuilder.Network {
             }
         }
 
+        //HttpRCB is short for HttpRequestCallback
+        public delegate bool HttpRCB<T>(T t);
 
         //CLASS FIELDS
         private RestClient _client;
@@ -241,10 +241,12 @@ namespace DSUScheduleBuilder.Network {
             if (_default == null)
                 _default = this;
 
+            _session_token = "";
+
             _client = new RestClient(target);
         }
 
-        public void Login(string email, string password, Func<LoginResponse, bool> callback)
+        public void Login(string email, string password, HttpRCB<LoginResponse> callback)
         {
             Console.WriteLine("LOGGING IN");
             var postRequest = new RestRequest(Method.POST)
@@ -277,6 +279,7 @@ namespace DSUScheduleBuilder.Network {
 
         public void Logout()
         {
+            if (_session_token == "") return;
             Console.WriteLine("LOGGING OUT");
             var postRequest = new RestRequest(Method.POST)
             {
@@ -285,9 +288,13 @@ namespace DSUScheduleBuilder.Network {
 
             postRequest.AddParameter("uuid", _session_token);
             var response = _client.Execute<SuccessResponse>(postRequest);
+            if (response.Data?.success == 1)
+            {
+                _session_token = "";
+            }
         }
 
-        public void NewUser(string email, string password, string first, string last, Func<SuccessResponse, bool> callback)
+        public void NewUser(string email, string password, string first, string last, HttpRCB<SuccessResponse> callback)
         {
             Console.WriteLine("CREATING NEW USER");
             var req = new RestRequest(Method.POST)
@@ -310,7 +317,29 @@ namespace DSUScheduleBuilder.Network {
             callback(res.Data);
         }
 
-        public void ChangePassword(string oldPass, string newPass, Func<SuccessResponse, bool> callback)
+        public void DeleteUser(Func<SuccessResponse, bool> callback)
+        {
+            var req = new RestRequest(Method.POST)
+            {
+                Resource = "api/user/delete"
+            };
+            req.AddParameter("uuid", _session_token);
+            var res = _client.Execute<SuccessResponse>(req);
+            SuccessResponse succ = res.Data;
+
+            if (succ == null)
+            {
+                Errors.BadData("Deleteing user failed");
+                return;
+            }
+
+            if (callback(succ))
+            {
+                _session_token = "";
+            }
+        }
+
+        public void ChangePassword(string oldPass, string newPass, HttpRCB<SuccessResponse> callback)
         {
             var req = new RestRequest(Method.POST)
             {
@@ -383,6 +412,8 @@ namespace DSUScheduleBuilder.Network {
 
         public List<Course> GetEnrolledCourses()
         {
+            if (_session_token == "") return null;
+
             var getRequest = new RestRequest(Method.GET)
             {
                 Resource = "api/courses/enrolled/" + _session_token
@@ -408,6 +439,8 @@ namespace DSUScheduleBuilder.Network {
 
         public List<AvailableCourse> GetAvailableCourses()
         {
+            if (_session_token == "") return null;
+
             var req = new RestRequest(Method.GET)
             {
                 Resource = "api/courses/available/" + _session_token
@@ -430,8 +463,10 @@ namespace DSUScheduleBuilder.Network {
             return courses.ToCourses();
         }
 
-        public List<AvailableCourse> SearchForCourses(string term, string prefix, string number, string ilastname, int startTime, int endTime, int slots, Func<FullAvailableCourseResponse, bool> callback)
+        public List<AvailableCourse> SearchForCourses(string term, string prefix, string number, string ilastname, int startTime, int endTime, int slots, HttpRCB<FullAvailableCourseResponse> callback)
         {
+            if (_session_token == "") return null;
+
             var req = new RestRequest(Method.GET)
             {
                 Resource = "api/courses/search/" + _session_token
@@ -468,8 +503,10 @@ namespace DSUScheduleBuilder.Network {
             }
         }
 
-        public void EnrollInCourse(int courseKey, Func<FullEnrollResponse, bool> callback)
+        public void EnrollInCourse(int courseKey, HttpRCB<FullEnrollResponse> callback)
         {
+            if (_session_token == "") return;
+
             var req = new RestRequest(Method.POST)
             {
                 Resource = "api/user/enroll/"
@@ -488,8 +525,10 @@ namespace DSUScheduleBuilder.Network {
             callback(succ);
         }
 
-        public void DropCourse(int courseKey, Func<SuccessResponse, bool> callback)
+        public void DropCourse(int courseKey, HttpRCB<SuccessResponse> callback)
         {
+            if (_session_token == "") return;
+
             var req = new RestRequest(Method.POST)
             {
                 Resource = "api/user/dropEnrolledCourse"
@@ -509,8 +548,10 @@ namespace DSUScheduleBuilder.Network {
             callback(succ);
         }
 
-        public void AddPreviousCourse(string courseID, string courseName, int credits, Func<SuccessResponse, bool> callback)
+        public void AddPreviousCourse(string courseID, string courseName, int credits, HttpRCB<SuccessResponse> callback)
         {
+            if (_session_token == "") return;
+
             var req = new RestRequest(Method.POST)
             {
                 Resource = "api/user/addPrevious"
@@ -531,8 +572,10 @@ namespace DSUScheduleBuilder.Network {
             callback(succ);
         }
 
-        public void DeletePreviousCourse(string courseID, Func<SuccessResponse, bool> callback)
+        public void DeletePreviousCourse(string courseID, HttpRCB<SuccessResponse> callback)
         {
+            if (_session_token == "") return;
+
             var req = new RestRequest(Method.POST)
             {
                 Resource = "api/user/deletePrevious"

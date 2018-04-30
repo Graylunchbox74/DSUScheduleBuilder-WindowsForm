@@ -35,15 +35,12 @@ namespace DSUScheduleBuilder.Drawing
 
         public void SetCourses(List<Course> courses)
         {
-            if (courses != null)
+            this.courses = courses?.ConvertAll<CourseView>((Course c) =>
             {
-                this.courses = courses.ConvertAll<CourseView>((Course c) =>
-                {
-                    CourseView cv = new CourseView(this, courseColorRandomizer);
-                    cv.Course = c;
-                    return cv;
-                });
-            }
+                CourseView cv = new CourseView(this, courseColorRandomizer);
+                cv.Course = c;
+                return cv;
+            });
         }
 
         protected override void OnPaint(PaintEventArgs e)

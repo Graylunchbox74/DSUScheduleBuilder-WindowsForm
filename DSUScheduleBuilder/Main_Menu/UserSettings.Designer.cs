@@ -36,13 +36,15 @@
             this.PasswordTxt = new System.Windows.Forms.TextBox();
             this.ConfirmPasswordTxt = new System.Windows.Forms.TextBox();
             this.UpdatePasswordBtn = new System.Windows.Forms.Button();
+            this.DeleteAccountBtn = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // acctOptionsLabel
             // 
             this.acctOptionsLabel.AutoSize = true;
             this.acctOptionsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.acctOptionsLabel.Location = new System.Drawing.Point(20, 21);
+            this.acctOptionsLabel.Location = new System.Drawing.Point(23, 24);
             this.acctOptionsLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.acctOptionsLabel.Name = "acctOptionsLabel";
             this.acctOptionsLabel.Size = new System.Drawing.Size(167, 24);
@@ -92,7 +94,7 @@
             this.CurrPasswordTxt.Name = "CurrPasswordTxt";
             this.CurrPasswordTxt.ShortcutsEnabled = false;
             this.CurrPasswordTxt.Size = new System.Drawing.Size(150, 20);
-            this.CurrPasswordTxt.TabIndex = 4;
+            this.CurrPasswordTxt.TabIndex = 10;
             // 
             // PasswordTxt
             // 
@@ -103,7 +105,7 @@
             this.PasswordTxt.Margin = new System.Windows.Forms.Padding(2);
             this.PasswordTxt.Name = "PasswordTxt";
             this.PasswordTxt.Size = new System.Drawing.Size(150, 20);
-            this.PasswordTxt.TabIndex = 5;
+            this.PasswordTxt.TabIndex = 11;
             // 
             // ConfirmPasswordTxt
             // 
@@ -114,7 +116,7 @@
             this.ConfirmPasswordTxt.Margin = new System.Windows.Forms.Padding(2);
             this.ConfirmPasswordTxt.Name = "ConfirmPasswordTxt";
             this.ConfirmPasswordTxt.Size = new System.Drawing.Size(150, 20);
-            this.ConfirmPasswordTxt.TabIndex = 6;
+            this.ConfirmPasswordTxt.TabIndex = 12;
             // 
             // UpdatePasswordBtn
             // 
@@ -122,15 +124,38 @@
             this.UpdatePasswordBtn.Location = new System.Drawing.Point(66, 171);
             this.UpdatePasswordBtn.Name = "UpdatePasswordBtn";
             this.UpdatePasswordBtn.Size = new System.Drawing.Size(216, 35);
-            this.UpdatePasswordBtn.TabIndex = 18;
+            this.UpdatePasswordBtn.TabIndex = 13;
             this.UpdatePasswordBtn.Text = "Update Password";
             this.UpdatePasswordBtn.UseVisualStyleBackColor = true;
             this.UpdatePasswordBtn.Click += new System.EventHandler(this.UpdatePasswordBtn_Click);
+            // 
+            // DeleteAccountBtn
+            // 
+            this.DeleteAccountBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.DeleteAccountBtn.Location = new System.Drawing.Point(66, 519);
+            this.DeleteAccountBtn.Name = "DeleteAccountBtn";
+            this.DeleteAccountBtn.Size = new System.Drawing.Size(216, 35);
+            this.DeleteAccountBtn.TabIndex = 14;
+            this.DeleteAccountBtn.Text = "Delete Account";
+            this.DeleteAccountBtn.UseVisualStyleBackColor = true;
+            this.DeleteAccountBtn.Click += new System.EventHandler(this.DeleteAccountBtn_Click);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(27, 473);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(139, 24);
+            this.label1.TabIndex = 20;
+            this.label1.Text = "Danger Zone!";
             // 
             // UserSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.DeleteAccountBtn);
             this.Controls.Add(this.UpdatePasswordBtn);
             this.Controls.Add(this.ConfirmPasswordTxt);
             this.Controls.Add(this.PasswordTxt);
@@ -157,5 +182,7 @@
         private System.Windows.Forms.TextBox PasswordTxt;
         private System.Windows.Forms.TextBox ConfirmPasswordTxt;
         private System.Windows.Forms.Button UpdatePasswordBtn;
+        private System.Windows.Forms.Button DeleteAccountBtn;
+        private System.Windows.Forms.Label label1;
     }
 }

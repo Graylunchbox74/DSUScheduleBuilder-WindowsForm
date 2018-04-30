@@ -113,7 +113,7 @@
             this.termComboBox.Margin = new System.Windows.Forms.Padding(2);
             this.termComboBox.Name = "termComboBox";
             this.termComboBox.Size = new System.Drawing.Size(179, 21);
-            this.termComboBox.TabIndex = 6;
+            this.termComboBox.TabIndex = 10;
             // 
             // PrefixTextBox
             // 
@@ -125,7 +125,7 @@
             this.PrefixTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.PrefixTextBox.Name = "PrefixTextBox";
             this.PrefixTextBox.Size = new System.Drawing.Size(179, 20);
-            this.PrefixTextBox.TabIndex = 7;
+            this.PrefixTextBox.TabIndex = 11;
             this.PrefixTextBox.TextChanged += new System.EventHandler(this.PrefixTextBox_TextChanged);
             // 
             // searchButton
@@ -135,7 +135,7 @@
             this.searchButton.Margin = new System.Windows.Forms.Padding(2);
             this.searchButton.Name = "searchButton";
             this.searchButton.Size = new System.Drawing.Size(178, 53);
-            this.searchButton.TabIndex = 10;
+            this.searchButton.TabIndex = 19;
             this.searchButton.Text = "Search!";
             this.searchButton.UseVisualStyleBackColor = true;
             this.searchButton.Click += new System.EventHandler(this.searchButton_Click);
@@ -149,7 +149,7 @@
             this.CourseNumTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.CourseNumTextBox.Name = "CourseNumTextBox";
             this.CourseNumTextBox.Size = new System.Drawing.Size(179, 20);
-            this.CourseNumTextBox.TabIndex = 8;
+            this.CourseNumTextBox.TabIndex = 12;
             this.CourseNumTextBox.TextChanged += new System.EventHandler(this.CourseNumTextBox_TextChanged);
             // 
             // IlnTextBox
@@ -161,7 +161,7 @@
             this.IlnTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.IlnTextBox.Name = "IlnTextBox";
             this.IlnTextBox.Size = new System.Drawing.Size(178, 20);
-            this.IlnTextBox.TabIndex = 9;
+            this.IlnTextBox.TabIndex = 13;
             // 
             // startTimePicker
             // 
@@ -173,7 +173,7 @@
             this.startTimePicker.Name = "startTimePicker";
             this.startTimePicker.ShowUpDown = true;
             this.startTimePicker.Size = new System.Drawing.Size(86, 20);
-            this.startTimePicker.TabIndex = 13;
+            this.startTimePicker.TabIndex = 14;
             this.startTimePicker.Value = new System.DateTime(2069, 4, 20, 0, 0, 0, 0);
             // 
             // label6

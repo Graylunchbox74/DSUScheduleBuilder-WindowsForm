@@ -51,5 +51,26 @@ namespace DSUScheduleBuilder.Main_Menu
                 return false;
             });
         }
+
+        private void DeleteAccountBtn_Click(object sender, EventArgs e)
+        {
+            DialogResult res = MessageBox.Show("Are you sure you want to delete your account?\nThis action is not reversable.", "Delete Account", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (res == DialogResult.Yes)
+            {
+                HttpRequester.Default.DeleteUser((succ) =>
+                {
+                    if (succ.errorCode != null)
+                    {
+                        MessageBox.Show("Error " + succ.errorCode + " : " + succ.errorMessage);
+                        return false;
+                    }
+
+                    MessageBox.Show("Successfully deleted user account.\nYou will now be logged out.");
+                    
+                    MainWindow.SwitchState(MainWindow.States.Login);
+                    return true;
+                });
+            }
+        }
     }
 }
