@@ -263,8 +263,8 @@ func newUser(fname, lname, email, password string) (int, error) {
 
 	_, err = db.Exec(`
 		INSERT INTO users 
-		(fname,lname,email,password,majors,minors, grouping,previousCourses)
-		values($1,$2,$3,$4,$5,$6,$7,$8)`, fname, lname, email, password, "", "", "user", "",
+		(fname,lname,email,password,majors,minors, grouping)
+		values($1,$2,$3,$4,$5,$6,$7)`, fname, lname, email, password, "", "", "user",
 	)
 
 	if err != nil {
@@ -275,7 +275,7 @@ func newUser(fname, lname, email, password string) (int, error) {
 	return 200, nil
 }
 
-func addMajor(userID int, major string) (int, error) {
+func addMajor(userID int, major string, catalogYear string) (int, error) {
 	majors := "%|" + major + "|%"
 	var currentMajors string
 	//check to make sure major exists (not made up)
@@ -293,12 +293,55 @@ func addMajor(userID int, major string) (int, error) {
 	//get the current list of majors
 	err = db.QueryRow("select majors from users where uid=$1", userID).Scan(&currentMajors)
 
+	var majorID string
+	//store the id of that major
+	err = db.QueryRow("SELECT id from MajorCodeMap where name=$1", major).Scan(&majorID)
+	if err != nil {
+		return 5, err
+	}
+	//get the currentUsers in that catalogYear
+	var currentUsers string
+	err = db.QueryRow("SELECT userID from CatalogYears where majorID=$1 and catalogYear=$2", majorID, catalogYear).Scan(&currentUsers)
+	if err == sql.ErrNoRows {
+		//find the biggest year and store the user in that one
+		rows, err := db.Query("SELECT catalogYear from CatalogYears where majorID=$1", majorID)
+		if err != nil {
+			return 5, err
+		}
+		maxYear := -1
+		var currentYear int
+		var currentYearString string
+		for rows.Next() {
+			rows.Scan(&currentYearString)
+			currentYear, err = strconv.Atoi(currentYearString)
+			if err != nil {
+				return 33, err
+			}
+			if maxYear < currentYear {
+				maxYear = currentYear
+			}
+		}
+		maxYearString := strconv.Itoa(maxYear)
+		err = db.QueryRow("SELECT userID from CatalogYears where majorID=$1 and catalogYear=$2", majorID, maxYearString).Scan(&currentUsers)
+		if err != nil {
+			return 5, err
+		}
+		currentUsers = currentUsers + "|" + strconv.Itoa(userID) + "|"
+		_, err = db.Exec("UPDATE CatalogYears set userID=$1 where majorID=$2 and catalogYear=$3", currentUsers, majorID, catalogYear)
+
+	} else if err != nil {
+		return 500, err
+	} else {
+		//store user in the year of their choosing
+		currentUsers = currentUsers + "|" + strconv.Itoa(userID) + "|"
+		_, err = db.Exec("UPDATE CatalogYears set userID=$1 where majorID=$2 and catalogYear=$3", currentUsers, majorID, catalogYear)
+	}
+
 	if err != nil {
 		return 5, err
 	}
 	//add new major
-	currentMajors = currentMajors + "|" + major + "|"
-	_, err = db.Exec("UPDATE users set majors=$1 where uid=$2", currentMajors, userID)
+	_, err = db.Exec("UPDATE users set majors=$1 where uid=$2", "|"+majorID+"|", userID)
 	if err != nil {
 		return 15, err
 	}
@@ -321,34 +364,6 @@ func deleteMajor(userID int, major string) (int, error) {
 		return 15, err
 	}
 	return 200, err
-}
-
-//delete a user given a user struct from the database
-//NEEDS TO BE REFACTORED!
-func deleteUser(user User) (int, error) {
-	location := "deleteUser"
-	var err error
-	// if doesUserExistWithField("id", user.UID) {
-	// 	var uid int
-	// 	err := db.QueryRow("SELECT id FROM user WHERE id=$1", user.UID).Scan(&uid)
-	// 	checkLogError(location, "Check if user exists before deleting", err)
-	// 	return 500, err
-	// }
-	//delete the user from the user table
-	_, err = db.Exec("DELETE FROM user WHERE id=$1", user.UID)
-	checkLogError(location, "Delete user information from user table", err)
-	if err == nil {
-		_, err = db.Exec("DELETE FROM PreviousClasses WHERE userID=$1", user.UID)
-		checkLogError(location, "Delete user information from PreviousClasses", err)
-		if err == nil {
-			_, err = db.Exec("DELETE FROM EnrolledClasses WHERE userID=$1", user.UID)
-			checkLogError(location, "Delete user information from EnrolledClasses", err)
-			if err == nil {
-				return 200, err
-			}
-		}
-	}
-	return 500, err
 }
 
 //update information in the user table for a user KEYWORD = the column you want to change and NEWVALUE = the value to change to
@@ -915,6 +930,64 @@ func main() {
 				}
 				param := "%|" + strconv.Itoa(userID) + "|%"
 
+				//delete from CatalogYears where user exists
+				rows, err := db.Query("SELECT userID,majorID,catalogYear from CatalogYears where userID like $1", param)
+				var currentMajorID string
+				var currentCatalogYear string
+				var currentUserID string
+				var MajorID []string
+				var CatalogYear []string
+				var UsersID []string
+				for rows.Next() {
+					rows.Scan(&currentUserID, &currentMajorID, &currentCatalogYear)
+					currentUserID = strings.Replace(currentUserID, "|"+strconv.Itoa(userID)+"|", "", -1)
+					MajorID = append(MajorID, currentMajorID)
+					CatalogYear = append(CatalogYear, currentCatalogYear)
+					UsersID = append(UsersID, currentUserID)
+				}
+				for x := range UsersID {
+					execute := "UPDATE CatalogYears SET userID=\"" + UsersID[x] + "\" WHERE majorID=\"" + MajorID[x] + "\"" + " and catalogYear=\"" + CatalogYear[x] + "\""
+					_, err = db.Exec(execute)
+					if err != nil {
+						currentError := createErrorStruct(21, c.Request.URL.String(), "7", err)
+						c.JSON(500, currentError)
+						return
+					}
+				}
+
+				//delete from  previousClasses
+				_, err = db.Exec("DELETE from PreviousClasses where userID=$1", "|"+strconv.Itoa(userID)+"|")
+				if err != nil {
+					currentError := createErrorStruct(24, c.Request.URL.String(), "5", err)
+					c.JSON(500, currentError)
+					return
+				}
+				rows, err = db.Query("SELECT userID,courseID from PreviousClasses where userID like $1", param)
+				if err != sql.ErrNoRows && err != nil {
+					currentError := createErrorStruct(5, c.Request.URL.String(), "5", err)
+					c.JSON(500, currentError)
+					return
+				}
+				var PreviousUpdateCourse []string
+				var PreviousUpdateID []string
+				for rows.Next() {
+					var newUserID string
+					var courseID string
+					rows.Scan(&newUserID, &courseID)
+					newUserID = strings.Replace(newUserID, "|"+strconv.Itoa(userID)+"|", "", -1)
+					PreviousUpdateCourse = append(PreviousUpdateCourse, courseID)
+					PreviousUpdateID = append(PreviousUpdateID, newUserID)
+				}
+				for x := range PreviousUpdateID {
+					execute := "UPDATE PreviousClasses SET userID=\"" + PreviousUpdateID[x] + "\" WHERE courseID=\"" + PreviousUpdateCourse[x] + "\""
+					_, err = db.Exec(execute)
+					if err != nil {
+						currentError := createErrorStruct(21, c.Request.URL.String(), "7", err)
+						c.JSON(500, currentError)
+						return
+					}
+				}
+
 				//delete from enrolledClasses
 				_, err = db.Exec("DELETE from EnrolledClasses where userID=$1", "|"+strconv.Itoa(userID)+"|")
 				if err != nil {
@@ -922,7 +995,7 @@ func main() {
 					c.JSON(500, currentError)
 					return
 				}
-				rows, err := db.Query("SELECT userID,key from EnrolledClasses where userID like $1", param)
+				rows, err = db.Query("SELECT userID,key from EnrolledClasses where userID like $1", param)
 				if err != sql.ErrNoRows && err != nil {
 					currentError := createErrorStruct(5, c.Request.URL.String(), "5", err)
 					c.JSON(500, currentError)
@@ -1192,7 +1265,8 @@ func main() {
 				}
 
 				major := c.PostForm("major")
-				errCode, err := addMajor(userID, major)
+				catalogYear := c.PostForm("catalogYear")
+				errCode, err := addMajor(userID, major, catalogYear)
 
 				if err != nil {
 					currentError := createErrorStruct(errCode, c.Request.URL.String(), "4", err)
@@ -1716,6 +1790,7 @@ func main() {
 				uuid := c.PostForm("uuid")
 				majorName := c.PostForm("majorName")
 				catalogYear := c.PostForm("catalogYear")
+				//classes := c.PostForm("classes")
 				//list of classes
 
 				var userID int
@@ -1739,9 +1814,35 @@ func main() {
 					c.JSON(500, currentError)
 					return
 				}
+				var majorsID string
+				//make sure the major exists
+				err = db.QueryRow("Select id from MajorCodeMap where name=$1", majorName).Scan(&majorsID)
+				if err == sql.ErrNoRows {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "9", errors.New("Major does not exist"))
+					c.JSON(500, currentError)
+					return
+				}
+				if err != nil {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "19", err)
+					c.JSON(500, currentError)
+					return
+				}
+
 				//make sure the catalogYear does not already exist
 				var existingMajor string
 				err = db.QueryRow("select id from MajorCodeMap where catalogYears like $1 and name=$2", "%"+catalogYear+"%", majorName).Scan(&existingMajor)
+				if err != sql.ErrNoRows {
+					if err != nil {
+						currentError := createErrorStruct(3, c.Request.URL.String(), "10", err)
+						c.JSON(500, currentError)
+						return
+					}
+					currentError := createErrorStruct(3, c.Request.URL.String(), "11", errors.New("This catalog year aready exists for this year"))
+					c.JSON(500, currentError)
+					return
+				}
+
+				err = db.QueryRow("select courseID from CatalogYears where majorID=$1 and catalogYear=$2", majorsID, catalogYear).Scan(&existingMajor)
 				if err != sql.ErrNoRows {
 					if err != nil {
 						currentError := createErrorStruct(3, c.Request.URL.String(), "9", err)
@@ -1757,11 +1858,31 @@ func main() {
 				var currentCatalogYears string
 				err = db.QueryRow("SELECT catalogYears from MajorCodeMap where name=$1", majorName).Scan(&currentCatalogYears)
 				if err != nil {
-					currentError := createErrorStruct(3, c.Request.URL.String(), "10", err)
+					currentError := createErrorStruct(3, c.Request.URL.String(), "12", err)
 					c.JSON(500, currentError)
 					return
 				}
-				//currentCatalogYearsSpli := strings.Split(currentCatalogYears, "|")
+				currentCatalogYears = currentCatalogYears + "|" + catalogYear + "|"
+				_, err = db.Exec("UPDATE MajorCodeMap set catalogYears=$1 where name=$2", currentCatalogYears, majorName)
+				if err != nil {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "13", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				//add catalog year to the CatalogYear table
+				_, err = db.Exec("INSERT into CatalogYears (majorID,catalogYear,userID) values($1,$2,$3)", majorsID, catalogYear, "")
+				if err != nil {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "14", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				//add classes to db
+				//for x := range classes {
+				//	var tmp string
+				//	err = db.QueryRow("SELECT ")
+				//}
 
 			})
 
