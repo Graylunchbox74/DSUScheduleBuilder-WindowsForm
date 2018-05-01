@@ -133,7 +133,7 @@ def main():
                     unsuccessfulRun = False
                     continue
                 elif b.is_element_not_present_by_text("Section Selection Results", 1):
-                    raise
+                    raise Exception("Bad result, trying again")
                 currentPage, totalPages = "0", "1"
                 courses = []
                 while currentPage != totalPages:
@@ -149,7 +149,7 @@ def main():
                         while not b.is_text_present("Page {0} of {1}".format(int(currentPage) + 1, totalPages)) and attempts < maximumAttempts:
                             attempts += 1
                         if not b.is_text_present("Page {0} of {1}".format(int(currentPage) + 1, totalPages)):
-                            raise
+                            raise Exception("Bad result, trying again")
                 subjectCourses[subject] = {}
                 for c in courses:
                     if c.CourseCode in subjectCourses[subject]:
@@ -159,10 +159,14 @@ def main():
                 unsuccessfulRun = False
             except Exception as e:
                 print("Trying again after error: \n{0}".format(e))
-                b.execute_script("window.location.reload()")
-                while b.is_element_not_present_by_text("Search for Class Sections", 1):
-                    pass
-                    #You are not logged in. You must be logged in to access information. Try refreshing the page in your browser.
+                while 1:
+                    b.execute_script("window.location.reload()")
+                    attempts, maximumAttempts = 0, 10
+                    while b.is_element_not_present_by_text("Search for Class Sections", 1) and attempts < maximumAttempts:
+                        attempts += 1
+                    if b.is_element_not_present_by_text("Search for Class Sections", 1):
+                        continue
+                    break
     totalData[semester] = subjectCourses
     for t in teachers:
         totalData["Teachers"][teachers[t].Email] = objectToDict(teachers[t])
