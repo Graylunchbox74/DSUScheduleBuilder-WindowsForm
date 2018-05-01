@@ -90,7 +90,13 @@ teachers = {}
 totalData = {"Teachers": {}}
 
 def main():   
-    initToQuery()
+    badInit = True
+    while badInit:
+        try:
+            initToQuery()
+            badInit = False
+        except:
+            pass
     subjects  = getSubjects()
     semester = sys.argv[1]
     subjectCourses = {}
