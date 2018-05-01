@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 
-namespace DSUScheduleBuilder.Main_Menu
+namespace DSUScheduleBuilder.Tabs
 {
     using Network;
     using Models;
@@ -31,6 +31,7 @@ namespace DSUScheduleBuilder.Main_Menu
         /// <param name="e"></param>
         private void SearchButton_Click(object sender, EventArgs e)
         {
+            this.AvailableCourseView.ResetToDefault();
             int startTime, endTime;
 
             if (timeCheckbox.Checked)
@@ -50,12 +51,7 @@ namespace DSUScheduleBuilder.Main_Menu
                 {
                     if (res.errorCode != null)
                     {
-                        switch(res.errorCode)
-                        {
-                            default:
-                                MessageBox.Show("ERROR " + res.errorCode + ": " + res.errorMessage, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                break;
-                        }
+                        GeneralUtil.ShowError(res);
                         return false;
                     }
 

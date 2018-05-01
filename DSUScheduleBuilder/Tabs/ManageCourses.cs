@@ -8,9 +8,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace DSUScheduleBuilder.Main_Menu
+namespace DSUScheduleBuilder.Tabs
 {
     using Drawing;
+    using DSUScheduleBuilder.Utils;
     using Models;
     using Network;
     using System.Text.RegularExpressions;
@@ -41,7 +42,7 @@ namespace DSUScheduleBuilder.Main_Menu
             {
                 if (succ.errorCode != null)
                 {
-                    MessageBox.Show("Error " + succ.errorCode + " : " + succ.errorMessage);
+                    GeneralUtil.ShowError(succ);
                     return false;
                 }
 
