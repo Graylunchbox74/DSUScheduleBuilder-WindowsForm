@@ -77,29 +77,29 @@
     <Compile Include="MainWindow.Designer.cs">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="Main_Menu\ManageCourses.cs">
+    <Compile Include="Tabs\ManageCourses.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Main_Menu\ManageCourses.Designer.cs">
+    <Compile Include="Tabs\ManageCourses.Designer.cs">
       <DependentUpon>ManageCourses.cs</DependentUpon>
     </Compile>
-    <Compile Include="Main_Menu\NewUser.cs">
+    <Compile Include="Tabs\NewUser.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Main_Menu\NewUser.Designer.cs">
+    <Compile Include="Tabs\NewUser.Designer.cs">
       <DependentUpon>NewUser.cs</DependentUpon>
     </Compile>
-    <Compile Include="Main_Menu\IResetable.cs" />
-    <Compile Include="Main_Menu\Search.cs">
+    <Compile Include="Utils\IResetable.cs" />
+    <Compile Include="Tabs\Search.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Main_Menu\Search.Designer.cs">
+    <Compile Include="Tabs\Search.Designer.cs">
       <DependentUpon>Search.cs</DependentUpon>
     </Compile>
-    <Compile Include="Main_Menu\UserSettings.cs">
+    <Compile Include="Tabs\UserSettings.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Main_Menu\UserSettings.Designer.cs">
+    <Compile Include="Tabs\UserSettings.Designer.cs">
       <DependentUpon>UserSettings.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\AvailableCourse.cs" />
@@ -113,19 +113,20 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Utils\Converter.cs" />
+    <Compile Include="Utils\GeneralUtil.cs" />
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Main_Menu\ManageCourses.resx">
+    <EmbeddedResource Include="Tabs\ManageCourses.resx">
       <DependentUpon>ManageCourses.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Main_Menu\NewUser.resx">
+    <EmbeddedResource Include="Tabs\NewUser.resx">
       <DependentUpon>NewUser.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Main_Menu\Search.resx">
+    <EmbeddedResource Include="Tabs\Search.resx">
       <DependentUpon>Search.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Main_Menu\UserSettings.resx">
+    <EmbeddedResource Include="Tabs\UserSettings.resx">
       <DependentUpon>UserSettings.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">

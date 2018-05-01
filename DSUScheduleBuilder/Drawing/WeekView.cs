@@ -8,7 +8,8 @@ using DSUScheduleBuilder.Models;
 
 namespace DSUScheduleBuilder.Drawing
 {
-    using Main_Menu;
+    using Tabs;
+    using Utils;
     using Network;
     
     public class WeekView : Control, IResetable

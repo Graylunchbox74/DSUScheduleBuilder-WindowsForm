@@ -1,4 +1,4 @@
-﻿namespace DSUScheduleBuilder.Main_Menu
+﻿namespace DSUScheduleBuilder.Tabs
 {
     partial class Search
     {

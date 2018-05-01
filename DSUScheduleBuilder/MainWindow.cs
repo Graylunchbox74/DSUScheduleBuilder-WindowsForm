@@ -13,7 +13,7 @@ namespace DSUScheduleBuilder
     using Network;
     using Models;
     using Drawing;
-    using Main_Menu;
+    using Tabs;
     
     public partial class MainWindow: Form
     {
@@ -24,23 +24,37 @@ namespace DSUScheduleBuilder
             _instance.ChangeState(s);
         }
 
+        /// <summary>
+        /// Used to determine which state should be displayed
+        /// </summary>
         public enum States
         {
             Login, NewUser, MainMenu, ForgotPassword
         }
 
+        /// <summary>
+        /// Used to determine which active controller (tab) should be displayed
+        /// </summary>
         public enum ActiveController
         {
             WeekView, Search, AccountSettings, ManageCourses
         }
 
+        /// <summary>
+        /// The currently active controller
+        /// </summary>
         private ActiveController controller;
+
+        /// <summary>
+        /// The currently active state
+        /// </summary>
         private States state;
         public MainWindow()
         {
             InitializeComponent();
             _instance = this;
 
+            // Default to the Login state and the WeekView tab
             ChangeState(States.Login);
             ChangeActiveController(ActiveController.WeekView);
         }

@@ -2,7 +2,7 @@
 
 namespace DSUScheduleBuilder
 {
-    using Main_Menu;
+    using Tabs;
 
     partial class MainWindow
     {
@@ -49,11 +49,11 @@ namespace DSUScheduleBuilder
             this.MainMenu_SearchBtn = new System.Windows.Forms.Button();
             this.MainMenu_LogoutBtn = new System.Windows.Forms.Button();
             this.WelcomeLabel = new System.Windows.Forms.Label();
-            this.Control_ManageCourses = new DSUScheduleBuilder.Main_Menu.ManageCourses();
-            this.Control_AccountSettings = new DSUScheduleBuilder.Main_Menu.UserSettings();
-            this.Control_Search = new DSUScheduleBuilder.Main_Menu.Search();
+            this.Control_ManageCourses = new DSUScheduleBuilder.Tabs.ManageCourses();
+            this.Control_AccountSettings = new DSUScheduleBuilder.Tabs.UserSettings();
+            this.Control_Search = new DSUScheduleBuilder.Tabs.Search();
             this.Control_WeekView = new DSUScheduleBuilder.Drawing.WeekView();
-            this.NewUserControl = new DSUScheduleBuilder.Main_Menu.NewUser();
+            this.NewUserControl = new DSUScheduleBuilder.Tabs.NewUser();
             this.LoginPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.NewUserPanel.SuspendLayout();

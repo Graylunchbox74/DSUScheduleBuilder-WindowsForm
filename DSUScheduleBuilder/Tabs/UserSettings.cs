@@ -9,10 +9,11 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 
-namespace DSUScheduleBuilder.Main_Menu
+namespace DSUScheduleBuilder.Tabs
 {
     using Network;
     using Models;
+    using DSUScheduleBuilder.Utils;
 
     public partial class UserSettings : UserControl, IResetable
     {
@@ -38,7 +39,7 @@ namespace DSUScheduleBuilder.Main_Menu
             {
                 if (succ.errorCode != null)
                 {
-                    MessageBox.Show("Error " + succ.errorCode + " : " + succ.errorMessage, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    GeneralUtil.ShowError(succ);
                 }
 
                 if (succ.success == 1)
@@ -65,7 +66,7 @@ namespace DSUScheduleBuilder.Main_Menu
                 {
                     if (succ.errorCode != null)
                     {
-                        MessageBox.Show("Error " + succ.errorCode + " : " + succ.errorMessage);
+                        GeneralUtil.ShowError(succ);
                         return false;
                     }
 
