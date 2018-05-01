@@ -89,6 +89,16 @@ type availableCourse struct {
 	Key                  int      `json:"key"`
 }
 
+type club struct {
+	ClubID      string `json:"clubID"`
+	ClubName    string `json:"name"`
+	StartTime   int    `json:"startTime"`
+	EndTime     int    `json:"endTime"`
+	DaysOfWeek  string `json:"daysOfWeek"`
+	Location    string `json:"location"`
+	Description string `json:"description"`
+}
+
 type teacher struct {
 	name  string
 	email string
@@ -475,7 +485,7 @@ func addEnrolledClass(userID, key int) (enrolledCourse, int, error) {
 		for x := range andCourses {
 			andCourses[x] = strings.Replace(andCourses[x], "|", "", -1)
 			if andCourses[x] != "" {
-				err = db.QueryRow("SELECT userID from PreviousClasses where courseID=$1 and userID like $2", andCourses[x], "%"+strconv.Itoa(userID)+"%").Scan(&tmp)
+				err = db.QueryRow("SELECT userID from PreviousClasses where courseID=$1 and userID like $2", andCourses[x], "%|"+strconv.Itoa(userID)+"|%").Scan(&tmp)
 				if err == sql.ErrNoRows {
 					return reqrec, 5, errors.New("User has not taken the required course: " + andCourses[x])
 				}
@@ -499,7 +509,7 @@ func addEnrolledClass(userID, key int) (enrolledCourse, int, error) {
 					prereqCoursesOr = prereqCoursesOr + ", " + orCourses[x]
 
 				}
-				err = db.QueryRow("SELECT userID from PreviousClasses where courseID=$1 and userID like $2", andCourses[x], "%"+strconv.Itoa(userID)+"%").Scan(&tmp)
+				err = db.QueryRow("SELECT userID from PreviousClasses where courseID=$1 and userID like $2", andCourses[x], "%|"+strconv.Itoa(userID)+"|%").Scan(&tmp)
 				if err == nil {
 					isOr = true
 				}
@@ -754,7 +764,7 @@ func updatePreviousClass(classKey, keyword, newValue string) (course, int, error
 }
 
 func getPreviousClasses(uid int) ([]previousCourse, int, error) {
-	rows, err := db.Query("SELECT courseID,courseName,credits from PreviousClasses where userID like $1", "%"+strconv.Itoa(uid)+"%")
+	rows, err := db.Query("SELECT courseID,courseName,credits from PreviousClasses where userID like $1", "%|"+strconv.Itoa(uid)+"|%")
 	if err == sql.ErrNoRows {
 		return nil, 5, errors.New("User does not have any previous classes")
 	}
@@ -1094,7 +1104,7 @@ func main() {
 					return
 				}
 
-				rows, err := db.Query("SELECT credits from PreviousClasses where userID like $1", "%"+strconv.Itoa(userID)+"%")
+				rows, err := db.Query("SELECT credits from PreviousClasses where userID like $1", "%|"+strconv.Itoa(userID)+"|%")
 				if err != nil {
 					currentError := createErrorStruct(3, c.Request.URL.String(), "10", err)
 					c.JSON(500, currentError)
@@ -1108,6 +1118,212 @@ func main() {
 
 				c.JSON(200, gin.H{"totalCredits": totalCredits})
 
+			})
+
+			users.GET("/userClubs/:uuid", func(c *gin.Context) {
+				uuid := c.PostForm("uuid")
+				var userID int
+				err := db.QueryRow("SELECT uid FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&userID)
+
+				if err == sql.ErrNoRows {
+					currentError := createErrorStruct(2, c.Request.URL.String(), "3", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				if err != nil {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				rows, err := db.Query("SELECT clubID,clubName,startTime,endTime,location,description,daysOfWeek from Clubs where userID like $1", "%|"+strconv.Itoa(userID)+"|%")
+				if err != nil && err != sql.ErrNoRows {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "11", err)
+					c.JSON(500, currentError)
+					return
+				}
+				var userClubs []club
+				var currentClub club
+				for rows.Next() {
+					rows.Scan(&currentClub.ClubID, &currentClub.ClubName, &currentClub.StartTime, &currentClub.EndTime, &currentClub.Location, &currentClub.Description, &currentClub.DaysOfWeek)
+					userClubs = append(userClubs, currentClub)
+				}
+
+				c.JSON(200, gin.H{"clubs": userClubs})
+
+			})
+
+			users.POST("/addClub/", func(c *gin.Context) {
+				uuid := c.PostForm("uuid")
+				var userID int
+				err := db.QueryRow("SELECT uid FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&userID)
+
+				if err == sql.ErrNoRows {
+					currentError := createErrorStruct(2, c.Request.URL.String(), "3", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				if err != nil {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				clubID := c.PostForm("clubID")
+				//make sure the club exists
+				var currentUserID string
+				err = db.QueryRow("SELECT userID from Clubs where clubID=$1", clubID).Scan(&currentUserID)
+				if err == sql.ErrNoRows {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "1", errors.New("Club with that ID does not exist"))
+					c.JSON(500, currentError)
+					return
+				}
+				if err != nil {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				//make sure the user is not already in that club
+				err = db.QueryRow("SELECT userID from Clubs where clubID=$1 and userID like $2", clubID, "%|"+strconv.Itoa(userID)+"|%").Scan(&currentUserID)
+				if err != sql.ErrNoRows {
+					if err != nil {
+						currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
+						c.JSON(500, currentError)
+						return
+					}
+					currentError := createErrorStruct(3, c.Request.URL.String(), "1", errors.New("User is already enlisted in this club"))
+					c.JSON(500, currentError)
+					return
+				}
+				//check to make sure the club does not conflict with any classes the user is enrolled in or other clubs
+				//check classes first
+				var clubStartTime, clubEndTime int
+				var clubDaysOfWeek string
+				err = db.QueryRow("SELECT startTime,endTime,daysOfWeek from Clubs where clubID=$1", clubID).Scan(&clubStartTime, &clubEndTime, &clubDaysOfWeek)
+				if err != nil {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "3", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				//make the days a slice of actual days
+				daysSlice := strings.Split(clubDaysOfWeek, "|")
+				var daysOfWeek []string
+				for x := range daysSlice {
+					daysSlice[x] = strings.Replace(daysSlice[x], "|", "", -1)
+					if daysSlice[x] != "" {
+						daysOfWeek = append(daysOfWeek, daysSlice[x])
+					}
+				}
+				for x := 0; x < 6; x = x + 1 {
+					if x >= len(daysOfWeek) {
+						daysOfWeek = append(daysOfWeek, "ZZZZ")
+					}
+				}
+
+				//need a startTime, endTime, slice of size 5 (each for a day of the week)
+				err = db.QueryRow("SELECT classID from enrolledClasses where ((startTime >= $1 AND endTime <= $2) OR (startTime >= $1 AND startTime <= $2) OR (endTime >= $1 AND endTime <= $2)) and ((daysOfWeek like $3) or (daysOfWeek like $4) or (daysOfWeek like $5) or (daysOfWeek like $6) or (daysOfWeek like $7)) and userID like $8",
+					clubStartTime, clubEndTime, daysOfWeek[0], daysOfWeek[1], daysOfWeek[2], daysOfWeek[3], daysOfWeek[4], "%|"+strconv.Itoa(userID)+"%|").Scan(&currentUserID)
+				if err != sql.ErrNoRows {
+					if err != nil {
+						currentError := createErrorStruct(3, c.Request.URL.String(), "3", err)
+						c.JSON(500, currentError)
+						return
+					}
+					currentError := createErrorStruct(6, c.Request.URL.String(), "13", errors.New("Error this club conflicts with "+currentUserID))
+					c.JSON(500, currentError)
+					return
+				}
+
+				//now check for clubs
+				err = db.QueryRow("SELECT clubName from Clubs where ((startTime >= $1 AND endTime <= $2) OR (startTime >= $1 AND startTime <= $2) OR (endTime >= $1 AND endTime <= $2)) and ((daysOfWeek like $3) or (daysOfWeek like $4) or (daysOfWeek like $5) or (daysOfWeek like $6) or (daysOfWeek like $7)) and userID like $8",
+					clubStartTime, clubEndTime, daysOfWeek[0], daysOfWeek[1], daysOfWeek[2], daysOfWeek[3], daysOfWeek[4], "%|"+strconv.Itoa(userID)+"%|").Scan(&currentUserID)
+				if err != sql.ErrNoRows {
+					if err != nil {
+						currentError := createErrorStruct(3, c.Request.URL.String(), "3", err)
+						c.JSON(500, currentError)
+						return
+					}
+					currentError := createErrorStruct(6, c.Request.URL.String(), "13", errors.New("Error this club conflicts with "+currentUserID))
+					c.JSON(500, currentError)
+					return
+				}
+
+				//Now we can actually allow the user to sign up for the club
+				err = db.QueryRow("SELECT userID from Clubs where clubID=$1", clubID).Scan(&currentUserID)
+				if err != nil {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "3", err)
+					c.JSON(500, currentError)
+					return
+				}
+				currentUserID = currentUserID + "|" + strconv.Itoa(userID) + "|"
+				_, err = db.Exec("UPDATE Clubs set userID=\"" + currentUserID + "\" where clubID=\"" + clubID + "\"")
+				if err != nil {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "3", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				c.JSON(200, gin.H{"success": 1})
+
+			})
+
+			users.POST("/dropClub/", func(c *gin.Context) {
+				uuid := c.PostForm("uuid")
+				var userID int
+				err := db.QueryRow("SELECT uid FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&userID)
+
+				if err == sql.ErrNoRows {
+					currentError := createErrorStruct(2, c.Request.URL.String(), "3", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				if err != nil {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
+					c.JSON(500, currentError)
+					return
+				}
+				clubID := c.PostForm("clubID")
+				var currentUserID string
+				//make sure the club exists
+				err = db.QueryRow("SELECT userID from Clubs where clubID=$1", clubID).Scan(&currentUserID)
+				if err != nil {
+					if err == sql.ErrNoRows {
+						currentError := createErrorStruct(3, c.Request.URL.String(), "4", errors.New("Club with this ID does not exist"))
+						c.JSON(500, currentError)
+						return
+					}
+					currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
+					c.JSON(500, currentError)
+					return
+				}
+				//check to make sure that the user is in the club
+				err = db.QueryRow("SELECT userID from Clubs where clubID=$1 and userID like $2", clubID, "%|"+strconv.Itoa(userID)+"|%").Scan(&currentUserID)
+				if err != nil {
+					if err == sql.ErrNoRows {
+						currentError := createErrorStruct(3, c.Request.URL.String(), "4", errors.New("User is not currently listed for this club"))
+						c.JSON(500, currentError)
+						return
+					}
+					currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
+					c.JSON(500, currentError)
+					return
+				}
+				//now remove the user from the list of users in the club
+				currentUserID = strings.Replace(currentUserID, "|"+strconv.Itoa(userID)+"|", "", -1)
+				//update the db
+				_, err = db.Exec("UPDATE Clubs set userID=\"" + currentUserID + "\" where clubID=\"" + clubID + "\"")
+				if err != nil {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				c.JSON(200, gin.H{"success": 1})
 			})
 
 			users.POST("/addPrevious/", func(c *gin.Context) {
@@ -1130,7 +1346,7 @@ func main() {
 
 				var previousCourses string
 				//check to make sure user has not already have this course listed
-				err = db.QueryRow("SELECT courseName from PreviousClasses where userID like $1 and courseID=$2", "%"+strconv.Itoa(userID)+"%", courseID).Scan(&previousCourses)
+				err = db.QueryRow("SELECT courseName from PreviousClasses where userID like $1 and courseID=$2", "%|"+strconv.Itoa(userID)+"|%", courseID).Scan(&previousCourses)
 				if err != sql.ErrNoRows {
 					if err != nil {
 						currentError := createErrorStruct(5, c.Request.URL.String(), "3", err)
@@ -1193,7 +1409,7 @@ func main() {
 
 				//make sure that the course exists in the users previousCourses column
 				var previousCourses string
-				err = db.QueryRow("SELECT userID from PreviousClasses where userID like $1 and courseID=$2", "%"+strconv.Itoa(userID)+"%", courseID).Scan(&previousCourses)
+				err = db.QueryRow("SELECT userID from PreviousClasses where userID like $1 and courseID=$2", "%|"+strconv.Itoa(userID)+"|%", courseID).Scan(&previousCourses)
 
 				if err == sql.ErrNoRows {
 					currentError := createErrorStruct(3, c.Request.URL.String(), "6", errors.New("This class does exist in the users previously taken courses"))
@@ -1420,6 +1636,47 @@ func main() {
 
 				c.JSON(200, gin.H{"uuid": uuid, "user": user})
 			})
+		}
+		clubs := api.Group("clubs")
+		{
+
+			clubs.GET("/allClubs/:uuid", func(c *gin.Context) {
+				uuid := c.Param("uuid")
+				var userID int
+				err := db.QueryRow("SELECT uid FROM USER_SESSIONS WHERE uuid=$1", uuid).Scan(&userID)
+
+				if err == sql.ErrNoRows {
+					currentError := createErrorStruct(2, c.Request.URL.String(), "3", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				if err != nil {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				rows, err := db.Query("SELECT clubID,clubName,startTime,endTime,location,description,daysOfWeek from Clubs")
+				if err != nil {
+					currentError := createErrorStruct(3, c.Request.URL.String(), "1", err)
+					c.JSON(500, currentError)
+					return
+				}
+
+				var allClubs []club
+				for rows.Next() {
+					var currentClub club
+					rows.Scan(&currentClub.ClubID, &currentClub.ClubName, &currentClub.StartTime, &currentClub.EndTime, &currentClub.Location, &currentClub.Description)
+					allClubs = append(allClubs, currentClub)
+				}
+				c.JSON(200, gin.H{"clubs": allClubs})
+			})
+
+			clubs.GET("/search/:uuid", func(c *gin.Context) {
+
+			})
+
 		}
 		courses := api.Group("courses")
 		{
@@ -1830,7 +2087,7 @@ func main() {
 
 				//make sure the catalogYear does not already exist
 				var existingMajor string
-				err = db.QueryRow("select id from MajorCodeMap where catalogYears like $1 and name=$2", "%"+catalogYear+"%", majorName).Scan(&existingMajor)
+				err = db.QueryRow("select id from MajorCodeMap where catalogYears like $1 and name=$2", "%|"+catalogYear+"|%", majorName).Scan(&existingMajor)
 				if err != sql.ErrNoRows {
 					if err != nil {
 						currentError := createErrorStruct(3, c.Request.URL.String(), "10", err)
