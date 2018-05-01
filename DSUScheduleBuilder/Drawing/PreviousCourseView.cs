@@ -8,6 +8,7 @@ namespace DSUScheduleBuilder.Drawing
 {
     using System.Drawing;
     using System.Windows.Forms;
+    using Utils;
     using Models;
     using Network;
 
@@ -142,13 +143,7 @@ namespace DSUScheduleBuilder.Drawing
                 {
                     if (succ.errorCode != null)
                     {
-                        switch (succ.errorCode)
-                        {
-                            default:
-                                MessageBox.Show("Error " + succ.errorCode + " : " + succ.errorMessage);
-                                break;
-                        }
-
+                        GeneralUtil.ShowError(succ);
                         return false;
                     }
 

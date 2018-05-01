@@ -21,7 +21,7 @@ namespace DSUScheduleBuilder.Network {
     }
     
     #region RESPONSE CLASSES
-    class Errorable
+    public class Errorable
     {
         public int? errorCode { get; set; }
         public string errorMessage { get; set; }

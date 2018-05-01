@@ -9,8 +9,9 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 
-namespace DSUScheduleBuilder.Main_Menu
+namespace DSUScheduleBuilder.Tabs
 {
+    using Utils;
     using Network;
 
     public partial class NewUser : UserControl, IResetable
@@ -51,7 +52,7 @@ namespace DSUScheduleBuilder.Main_Menu
             }
             else if(passwordTextBox.Text != confirmTextBox.Text)
             {
-                MessageBox.Show("Error: Passwords do not match");
+                MessageBox.Show("Passwords do not match");
             }
             else if(!CheckEmailRegex(emailTextBox.Text))
             {

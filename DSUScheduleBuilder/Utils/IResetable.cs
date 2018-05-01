@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DSUScheduleBuilder.Main_Menu
+namespace DSUScheduleBuilder.Utils
 {
     /// <summary>
     /// Represents something that can be reset to a default state

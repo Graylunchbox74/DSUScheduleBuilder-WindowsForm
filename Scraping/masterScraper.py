@@ -1,6 +1,5 @@
 from splinter import Browser
-from time import time
-import glob, json, os, subprocess
+import glob, json, os, time, subprocess
 
 class Course:
     Open                 = False
@@ -121,8 +120,8 @@ def main():
 def initToQuery():
     url = "https://portal.sdbor.edu"
     b.visit(url)
-    b.find_by_id("username").fill(config["wa_username"])
-    b.find_by_id("password").fill(config["wa_password"] + "\n")
+    b.find_by_id("username").first.fill(config["wa_username"])
+    b.find_by_id("password").first.fill(config["wa_password"] + "\n")
     b.visit(url + "/dsu-student/Pages/default.aspx")
     while b.is_element_not_present_by_text("WebAdvisor for Prospective Students"):
         pass
@@ -145,6 +144,6 @@ def objectToDict(obj):
     return {attr: getattr(obj, attr) for attr in type(obj).__dict__ if not attr.startswith("__")}
 
 if __name__ == "__main__":
-    t = time()
+    t = time.time()
     main()
-    print("Scraping took {0} time".format(time() - t))
+    print("Scraping took {0} time".format(time.time() - t))

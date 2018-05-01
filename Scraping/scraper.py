@@ -1,6 +1,5 @@
 from re import match
 from splinter import Browser
-from time import sleep
 import glob, json, os, re, requests, sys
 
 class Course:
@@ -86,12 +85,18 @@ class Teacher:
 with open(glob.glob("*_config.json")[0]) as fi:
     config = json.load(fi)
 executable_path = {'executable_path': config['browser']}
-b = Browser(config['type'], headless=config['headless'], incognito=True, **executable_path)
+b = Browser(config['type'], headless=config['headless'], incognito=True, **executable_path, fullscreen=True)
 teachers = {}
 totalData = {"Teachers": {}}
 
 def main():   
-    initToQuery()
+    badInit = True
+    while badInit:
+        try:
+            initToQuery()
+            badInit = False
+        except:
+            pass
     subjects  = getSubjects()
     semester = sys.argv[1]
     subjectCourses = {}
@@ -119,19 +124,22 @@ def main():
                         pass
                 if b.is_element_not_present_by_id("VAR1", 5):
                     b.execute_script("window.location.reload()")
-                    sleep(5)
+                    attempts, maximumAttempts = 0, 7
+                    while b.is_element_not_present_by_text("Search for Class Sections", 1) and attempts < maximumAttempts:
+                        attempts += 1
                     continue
                 selectDropdown("VAR1", semester)
                 selectDropdown("LIST_VAR1_1", subject)
                 selectDropdown("VAR6", "DSU")
                 b.find_by_id("WASubmit").first.click()
-                sleep(7)
                 attempts, maximumAttempts = 0, 7
                 while b.is_element_not_present_by_text("Section Selection Results", 1) and attempts < maximumAttempts:
                     attempts += 1
                 if b.is_text_present("No classes meeting the search criteria have been found."):
                     unsuccessfulRun = False
                     continue
+                elif b.is_element_not_present_by_text("Section Selection Results", 1):
+                    raise Exception("Bad result, trying again")
                 currentPage, totalPages = "0", "1"
                 courses = []
                 while currentPage != totalPages:
@@ -141,10 +149,13 @@ def main():
                     currentPage, totalPages = m.groups(1)
                     courses.extend(scrapeTable(b.find_by_css('table[summary="Sections"]')))
                     handleExtraExits()
-                    b.find_by_css('input[value="NEXT"]').first.click()
                     if currentPage != totalPages:
-                        while not b.is_text_present("Page {0} of {1}".format(int(currentPage) + 1, totalPages)):
-                            sleep(3)
+                        b.find_by_css('input[value="NEXT"]').first.click()
+                        attempts, maximumAttempts = 0, 12
+                        while not b.is_text_present("Page {0} of {1}".format(int(currentPage) + 1, totalPages)) and attempts < maximumAttempts:
+                            attempts += 1
+                        if not b.is_text_present("Page {0} of {1}".format(int(currentPage) + 1, totalPages)):
+                            raise Exception("Bad result, trying again")
                 subjectCourses[subject] = {}
                 for c in courses:
                     if c.CourseCode in subjectCourses[subject]:
@@ -154,10 +165,14 @@ def main():
                 unsuccessfulRun = False
             except Exception as e:
                 print("Trying again after error: \n{0}".format(e))
-                b.execute_script("window.location.reload()")
-                while b.is_element_not_present_by_text("Search for Class Sections", 1):
-                    pass
-                    #You are not logged in. You must be logged in to access information. Try refreshing the page in your browser.
+                while 1:
+                    b.execute_script("window.location.reload()")
+                    attempts, maximumAttempts = 0, 10
+                    while b.is_element_not_present_by_text("Search for Class Sections", 1) and attempts < maximumAttempts:
+                        attempts += 1
+                    if b.is_element_not_present_by_text("Search for Class Sections", 1):
+                        continue
+                    break
     totalData[semester] = subjectCourses
     for t in teachers:
         totalData["Teachers"][teachers[t].Email] = objectToDict(teachers[t])
@@ -169,8 +184,8 @@ def main():
 def initToQuery():
     url = "https://portal.sdbor.edu"
     b.visit(url)
-    b.find_by_id("username").fill(config["wa_username"])
-    b.find_by_id("password").fill(config["wa_password"] + "\n")
+    b.find_by_id("username").first.fill(config["wa_username"])
+    b.find_by_id("password").first.fill(config["wa_password"] + "\n")
     b.visit(url + "/dsu-student/Pages/default.aspx")
     while b.is_element_not_present_by_text("WebAdvisor for Prospective Students"):
         pass
@@ -290,7 +305,7 @@ def scrapeTeachers(tab):
 
 def getPrereqs(s):
     AND = re.findall(r"\+ (\w+ \d+) ?", s) + re.findall(r"^(\w+ \d+) \+", s) + re.findall(r"^(\w+ \d+)$", s)
-    OR  = re.findall(r"\+ (\w+ \d+) ?", s) + re.findall(r"^(\w+ \d+) \+", s)
+    OR  = re.findall(r"(\w+ \d+),", s) + re.findall(r"or (\w+ \d+)", s)
     return {"and": replaceSpaces(AND), "or": replaceSpaces(OR)}
 
 def replaceSpaces(l):
@@ -309,7 +324,6 @@ def getTimes(s):
 	if r.group(4).lower() == "pm" and et < 1200:
 		et += 1200
 	return (st, et)
-
 
 def selectDropdown(ddt, t): #assumes that you're already on the Prospective students search page
     selects = b.find_by_id(ddt).first

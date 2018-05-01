@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace DSUScheduleBuilder.Drawing
 {
-    using Main_Menu;
+    using Tabs;
     using Models;
     using Network;
     using Utils;
@@ -111,12 +111,7 @@ namespace DSUScheduleBuilder.Drawing
                 {
                     if (enr.errorCode != null)
                     {
-                        switch (enr.errorCode)
-                        {
-                            default:
-                                MessageBox.Show("Error " + enr.errorCode + " : " + enr.errorMessage);
-                                break;
-                        }
+                        GeneralUtil.ShowError(enr);
                         return false;
                     }
                     else

@@ -11,6 +11,7 @@ namespace DSUScheduleBuilder.Drawing
 {
     using Models;
     using Utils;
+    using Tabs;
 
     public enum CourseListState
     {
@@ -22,7 +23,7 @@ namespace DSUScheduleBuilder.Drawing
     /// Represents a listing of courses and the way to display them.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class CourseList<T> : Control where T : Course
+    public abstract class CourseList<T> : Control, IResetable where T : Course
     {
         /// <summary>
         /// The primary brush color to use.
@@ -333,8 +334,13 @@ namespace DSUScheduleBuilder.Drawing
                 }
             }
         }
-
         #endregion
+
+        public void ResetToDefault()
+        {
+            state = CourseListState.ClassList;
+            selectedCourse = null;
+        }
     }
 
 }
