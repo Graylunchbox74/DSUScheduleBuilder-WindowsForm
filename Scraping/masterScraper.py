@@ -144,6 +144,29 @@ def objectToDict(obj):
     return {attr: getattr(obj, attr) for attr in type(obj).__dict__ if not attr.startswith("__")}
 
 if __name__ == "__main__":
-    t = time.time()
+    ts = time.time()
     main()
-    print("Scraping took {0} time".format(time.time() - t))
+    te = time.time()
+    timing = ""
+
+    hours = (te - ts) // 3600
+    minutes = (te - ts) % 3600 // 60
+    seconds = (te - ts) % 60 // 1
+
+    if hours:
+        timing += "{0} hour".format(hours) + ("s" if hours - 1 else "")
+
+    if minutes:
+        if hours:
+            if not seconds:
+                timing += ", and "
+            else:
+                timing += ", "
+        timing += "{0} minute".format(minutes) + ("s" if minutes - 1 else "")
+
+    if seconds:
+        if hours or minutes:
+            timing += ", and "
+        timing += "{0} second".format(seconds) + ("s" if seconds - 1 else "")
+
+    print("Scraping took " + timing + ".")
