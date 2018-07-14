@@ -1,9 +1,14 @@
 \.vs/
+
 Scraping/*_config.json
 Scraping/test*.json
 Scraping/*.log
+
 DSUScheduleBuilderServer/server
 DSUScheduleBuilderServer/server.exe
+DSUScheduleBuilderServer/dsu_schedule_builder.log
+
 DSUScheduleBuilder/bin/
 DSUScheduleBuilder/obj/
+
 *.user

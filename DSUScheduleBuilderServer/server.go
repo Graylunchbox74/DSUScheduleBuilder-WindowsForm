@@ -159,7 +159,7 @@ func logError(location, sublocation string, err error) {
 
 func errorDrain() {
 	var lErr locationalError
-	f, err := os.OpenFile("sdpass.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
+	f, err := os.OpenFile("dsu_schedule_builder.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
 
 	if err != nil {
 		panic(err)
