@@ -1,0 +1,84 @@
+CREATE TABLE COURSES (
+    open BOOLEAN,
+    academicLevel TEXT,
+    courseCode TEXT,
+    courseDescription TEXT,
+    courseName TEXT,
+    dateStart TEXT,
+    dateEnd TEXT,
+    location TEXT,
+    meetingInformation TEXT,
+    supplies TEXT,
+
+    enrolled TEXT,
+    previouslyEnrolled TEXT,
+    professorEmails TEXT,
+    prereqNonCourse TEXT,
+    recConcurrentCourses TEXT,
+    reqConcurrentCourses TEXT,
+    prereqCourses TEXT,
+
+    credits INTEGER,
+    slotsAvailable INTEGER,
+    slotsCapacity INTEGER,
+    slotsWaitlist INTEGER,
+    timeEnd INTEGER,
+    timeStart INTEGER,
+    cid INTEGER PRIMARY KEY AUTOINCREMENT 
+);
+NOTES:
+enrolled - pipe '|' seperated list of uids for students currently 
+enrolled in the courseCode, starts and ends with a pipe
+
+previouslyEnrolled - pipe '|' seperated list of uids for students 
+previously enrolled in the courseCode, starts and ends with a pipe
+
+professorEmails - pipe '|' seperated list of teacher emails for the class, 
+starts and ends with a pipe
+
+prereqNonCourse - pipe '|' seperated list of required non-courses for the class, 
+starts and ends with a pipe
+
+recConcurrentCourses and reqConcurrentCourses - pipe '|' seperated list of recommended
+and required (respectively) concurrent classes represented by their course codes for the class, 
+starts and ends with a pipe
+
+prereqCourses - pipe '|' seperated list of required courses represented by their course codes
+for the class, starts and ends with a pipe
+
+
+
+CREATE TABLE TEACHERS (
+    name TEXT,
+    phone TEXT,
+    email TEXT PRIMARY KEY
+);
+
+
+
+CREATE TABLE USER_SESSIONS (
+    uid int, 
+    uuid TEXT UNIQUE
+);
+
+
+
+CREATE TABLE USERS(
+    fname TEXT,
+    lname TEXT,
+    majors TEXT,
+    minors TEXT,
+    email TEXT,
+    password TEXT,
+    uid INTEGER PRIMARY KEY AUTOINCREMENT 
+);
+NOTES:
+majors - pipe '|' seperated list of majors for the student
+majors - pipe '|' seperated list of minors for the student
+
+CREATE TABLE PreviousClasses (userID TEXT, classID VARCHAR[20], className VARCHAR[50],
+ teacher VARCHAR[50], startTime INT, endTime INT, startDate VARCHAR[30], endDate VARCHAR[30],
+ credits INT);
+
+userID - pipe '|' seperated list of users that have taken this class
+

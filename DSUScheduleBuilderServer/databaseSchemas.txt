@@ -1,0 +1,5 @@
+
+EnrolledClasses:
+CREATE TABLE EnrolledClasses (userID INT,classID VARCHAR[20], className VARCHAR[50], teacher VARCHAR[50], location VARCHAR[50], startTime INT, endTime INT, startDate VARCHAR[30], endDate VARCHAR[30], credits INT);
+PreviousClasses:
+CREATE TABLE PreviousClasses (userID INT, classID VARCHAR[20], className VARCHAR[50], teacher VARCHAR[50], startTime INT, endTime INT, startDate VARCHAR[30], endDate VARCHAR[30], credits INT);
